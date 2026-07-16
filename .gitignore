@@ -20,6 +20,7 @@ Thumbs.db
 .vscode/
 __pycache__/
 *.py[cod]
+*.tsbuildinfo
 .venv/
 .local/
 *.db
