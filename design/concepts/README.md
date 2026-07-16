@@ -1,6 +1,8 @@
-# Orbit Frontend Concepts
+# Superseded Orbit Frontend Concepts
 
-These three project-bound PNGs were generated independently and then revised with the built-in image generation workflow on July 16, 2026. They use fictional data and are visual exploration artifacts, not production UI.
+These three project-bound PNGs were generated independently and then revised with the built-in image generation workflow on July 16, 2026. They are preserved as historical evidence but are superseded by the quieter concepts under `refined/`. Do not use these files as implementation targets without a new product decision.
+
+They are retained because they document the dashboard-oriented direction that was explicitly rejected: persistent ranked content, a visible context map, and an always-present lifecycle workspace.
 
 ## Daily Orbit prompt
 

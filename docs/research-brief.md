@@ -24,7 +24,7 @@ The strongest unmet need is not another general chat surface; it is coordinated 
 - Break: isolated tools and passive chat interfaces leave prioritization to the user.
 - Evidence: users describe demand for one morning brief spanning email, calendar, and tasks ([Reddit example](https://www.reddit.com/r/AgenticWorkers/comments/1s1o4ou/building_a_personal_ai_assistant_in_5_mins/)); others ask for proactive pattern detection with a proposal before scheduling ([Reddit example](https://www.reddit.com/r/AIPersonalAssistant/comments/1t1wo9v/how_to_turn_your_ai_into_a_personal_assistant/)).
 - Severity: high. Frequency signal: repeated anecdotal signal. Confidence: medium.
-- Product move: rank a maximum of three briefing items, expose source evidence, and support quick follow-up.
+- Product move: bring one timely concern into attention, keep additional concerns conversationally available, expose source evidence on demand, and support quick follow-up.
 
 ### 3. Personal access creates a trust threshold
 
@@ -54,7 +54,7 @@ The strongest unmet need is not another general chat surface; it is coordinated 
 
 ### First prototype
 
-- Three-item briefing with evidence and freshness.
+- Resting and single-concern attention states with evidence and freshness on demand.
 - Read-only connection education.
 - One transparent draft-to-verify action lifecycle.
 - Connection and capability controls in plain language.

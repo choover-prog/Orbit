@@ -1,3 +1,7 @@
+# Superseded Discovery Goal
+
+> This bootstrap-era goal produced Daily Orbit, Orbit Map, and Orbit Guide. It is preserved for provenance but is superseded by the quiet, conversation-first direction in `docs/design-principles.md`, `docs/interaction-model.md`, and `docs/concept-comparison.md`. Do not execute it as the current product direction.
+
 # Paste after `/goal`
 
 GOAL: Establish Orbit’s product foundation and generate three frontend concepts.

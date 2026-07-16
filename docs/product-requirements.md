@@ -31,7 +31,7 @@ Secondary participants may include household members whose shared calendars, hom
 ## Product principles
 
 - Consumer first: ordinary onboarding, plain language, and progressive disclosure.
-- Calm by default: prioritize three items over an endless feed.
+- Calm by default: show no concern unless it is currently relevant; expand one concern at a time.
 - Provider neutral: provider contracts never define Orbit Core.
 - Privacy first: purpose limitation, data minimization, clear retention, and scoped deletion.
 - Read before write: useful observation precedes action permission.
@@ -50,10 +50,11 @@ Secondary participants may include household members whose shared calendars, hom
 - Present requested capabilities, purpose, retention, and revocation in consumer language.
 - Default every connection to the minimum read-only capability set.
 
-### Daily briefing
+### Daily attention
 
-- Present no more than three prioritized items by default.
-- Show what changed, why it matters, freshness, confidence, and supporting evidence.
+- Present one focal concern when an eligible item requires attention; otherwise remain in a sparse resting state.
+- State that other concerns exist without exposing them until requested.
+- Show what changed and why it matters; reveal freshness, confidence, and evidence when decision-relevant or requested.
 - Allow dismiss, snooze, correction, and follow-up by voice or text.
 - Separate facts from model-generated interpretation.
 
@@ -87,9 +88,9 @@ Secondary participants may include household members whose shared calendars, hom
 
 - At least 80% of moderated participants can explain Orbit's role and read-only default after onboarding without assistance.
 - At least 80% correctly identify whether a shown action will execute immediately or awaits approval.
-- At least 90% can find why a briefing item appeared and which sources support it.
+- At least 90% can find why an attention item appeared and which sources support it.
 - At least 90% can revoke a capability or locate action history.
-- Median time to review a daily briefing is under two minutes.
+- Median time to understand the focal concern is under one minute.
 - No simulated consequential action executes without the required approval state.
 - Every simulated execution produces a verification and audit record.
 
@@ -97,7 +98,7 @@ These are discovery targets, not claims of achieved performance.
 
 ## Initial scope
 
-Included: onboarding, mocked provider connections, normalized read-only context, a three-item briefing, conversational follow-up, one drafted scheduling action, approval, mock execution, verification, audit, and conditional undo.
+Included: onboarding, mocked provider connections, normalized read-only context, resting and single-concern attention states, conversational follow-up, one drafted scheduling action, approval, mock execution, verification, audit, and conditional undo.
 
 Excluded: broad connector coverage, production credentials, autonomous purchasing, diagnosis, autonomous communication, custom models, workflow engines, smart-home platforms, hardware, commercial multi-tenancy, and production deployment.
 

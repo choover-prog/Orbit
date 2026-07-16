@@ -1,106 +1,104 @@
-# Frontend Concept Comparison
+# Revised Concept Comparison
 
-## Decision
+## Approved decision
 
-**Recommend Daily Orbit as the primary product direction.** It communicates immediate value fastest, keeps the person focused on three meaningful changes, and makes read-only evidence and the next safe step clear without teaching a new spatial or lifecycle model.
+**Quiet Orbit is the approved primary product direction.** It best expresses the resting and attention states, makes conversation the obvious next step, and proves that Orbit can feel useful without becoming a dashboard.
 
-Orbit Guide should inform the later recommendation-detail and action-review flow. Orbit Map should remain a research direction for optional cross-domain exploration rather than the default home screen. This recommendation selects one primary concept; it does not authorize implementation.
+The centered-person exploration is approved for relevant events and notifications, and Focus is approved as the progressive conversation, evidence, decision, and action behavior within the Quiet Orbit shell. Ambient Orbit remains a useful exploratory reference but is not the implementation target. Frontend implementation was authorized on July 16, 2026; production integrations remain deferred.
+
+## Why the prior direction was retired
+
+The earlier Daily Orbit, Orbit Map, and Orbit Guide concepts remain in `design/concepts/` as historical evidence. They are superseded because they permanently exposed ranked items, domain structure, or lifecycle state. Even after simplification, their page architecture assumed the user should continuously see what Orbit knows.
 
 ## Comparison
 
 Scores use a five-point discovery rubric, where five is strongest.
 
-| Criterion | Daily Orbit | Orbit Map | Orbit Guide |
+| Criterion | Quiet Orbit | Focus | Ambient Orbit |
 |---|---:|---:|---:|
-| Five-second clarity | 5 | 3 | 4 |
-| Daily briefing fit | 5 | 3 | 2 |
-| Evidence discoverability | 5 | 4 | 4 |
-| Approval comprehension | 3 | 3 | 5 |
-| Calmness and cognitive load | 5 | 4 | 5 |
-| Structural scalability | 4 | 3 | 4 |
-| Responsive potential | 5 | 3 | 4 |
-| Distinctive Orbit identity | 4 | 5 | 4 |
-| **Total** | **36** | **28** | **32** |
+| Calm resting-state fit | 5 | 3 | 5 |
+| One-concern clarity | 5 | 5 | 4 |
+| Conversation as navigation | 5 | 5 | 4 |
+| Progressive disclosure | 4 | 5 | 3 |
+| Approval-flow extensibility | 4 | 5 | 3 |
+| Orbit identity | 4 | 3 | 5 |
+| Mobile adaptability | 5 | 4 | 4 |
+| Risk of feeling like a dashboard | 5 | 5 | 5 |
+| **Total** | **37** | **35** | **33** |
 
-## Daily Orbit
+## Quiet Orbit
 
-![Daily Orbit concept](../design/concepts/daily-orbit.png)
-
-### Strengths
-
-- Makes the “three things that matter” promise concrete.
-- Uses strong editorial hierarchy instead of a dashboard grid.
-- Separates source facts, Orbit reasoning, freshness, and action.
-- Adapts naturally to mobile and spoken summary.
-- Provides the clearest read-only home state.
-
-### Risks
-
-- Could become an endless prioritized feed if the three-item constraint erodes.
-- Needs a dedicated detail flow for approval, verification, and undo.
-- Requires careful ranking and correction behavior to earn continued trust.
-
-### Validation focus
-
-Can users understand why the top item appeared, correct it, and reach a safe draft without mistaking the action for immediate execution?
-
-## Orbit Map
-
-![Orbit Map concept](../design/concepts/orbit-map.png)
+![Quiet Orbit](../design/concepts/refined/quiet-orbit.png)
 
 ### Strengths
 
-- Expresses the person-centered product metaphor directly.
-- Makes cross-domain relationships visible.
-- Offers a distinctive context-exploration model beyond chat or dashboards.
+- Treats empty space as a trustworthy resting condition.
+- One concern enters attention without creating a list or container grid.
+- The relationship between two facts is visible without exposing a context graph.
+- Conversation input remains primary and secondary concerns remain linguistic, not visual.
+- Provides the cleanest foundation for all four states.
 
 ### Risks
 
-- Uses more visual interpretation and screen area for the same decision.
-- Has the weakest small-screen adaptation.
-- Can drift into decorative network complexity as domains grow.
-- A literal central portrait may not suit every user's privacy or preference.
+- Sparse composition must still communicate system health and availability.
+- The “two other things” line requires careful prioritization and accessibility behavior.
+- Frequent high-priority concerns could make the calm state feel unstable without interruption limits.
 
-### Validation focus
+### Mobile thinking
 
-Does the map help users discover a relationship faster than a grouped list, and can it remain legible with realistic domain density?
+Stack the greeting, concern, fact relationship, and action in one centered column. Keep input anchored above the safe area. Replace the curved fact relationship with a short vertical connector when width is limited. History and Settings move behind one quiet utility menu.
 
-## Orbit Guide
+## Focus
 
-![Orbit Guide concept](../design/concepts/orbit-guide.png)
+![Focus](../design/concepts/refined/focus.png)
 
 ### Strengths
 
-- Makes the action lifecycle and current decision explicit without showing every internal state.
-- Groups the flow into four understandable moments: noticed, drafted, approve, and verify.
-- Provides excellent space for exact effects, recipients, evidence, and risk explanation.
-- Supports trust repair and partial-failure states.
+- Makes conversation visibly replace navigation.
+- Reveals bounded options without accumulating a chat transcript.
+- Uses text rows and hairlines rather than cards.
+- Provides the clearest bridge from question to draft and focused approval.
 
 ### Risks
 
-- Still too process-specific for a default daily home screen.
-- The compact progress cue needs validation on narrow mobile screens.
-- May make low-risk interactions feel bureaucratic if applied universally.
+- Works best after a concern is already selected; it is not a complete resting shell by itself.
+- Numbered options may feel procedural if used for simple answers.
+- Needs careful handling when evidence is uncertain or no safe option exists.
 
-### Validation focus
+### Mobile thinking
 
-Can users accurately predict what happens after “Review and approve,” distinguish draft from execution, and understand qualified undo?
+Use a full-height reading column with the user question at the top, options as large touch rows, and the input fixed above the safe area. The selected partial-orbit stroke becomes a short top or left accent without enclosing the row.
 
-## Recommended product composition after selection validation
+## Ambient Orbit
 
-Daily Orbit should own the home and briefing hierarchy. A later implementation may use Orbit Guide's state clarity inside the selected recommendation flow, but only after testing it as a subordinate pattern. Orbit Map should not be included in the first implementation goal without separate usability evidence.
+![Ambient Orbit](../design/concepts/refined/ambient-orbit.png)
 
-## Concept review
+### Strengths
 
-- Exactly three final PNG concepts exist; each was independently revised after visual review.
-- Each uses fictional data anchored to July 16, 2026.
-- Each has a distinct information architecture and interaction model.
-- No existing UI was available, so an audit was intentionally skipped.
-- All concepts preserve read-only or pre-approval state and avoid claiming unverified execution.
-- Visible scenario details are illustrative; implementation fixtures must use one internally consistent fictional itinerary.
-- Generated images are design targets, not accessible or production-ready interfaces. Typography, contrast, semantics, and responsive behavior require implementation-time validation.
-- The final revision removed secondary navigation and evidence density from Daily Orbit, reduced Orbit Map to one active relationship, and compressed Orbit Guide to one decision plus four grouped states.
+- Expresses “entering Orbit” and receding after resolution with the least chrome.
+- Feels visually distinctive without becoming a node graph.
+- Makes one relevant signal the only object competing for attention.
+- Offers a strong reduced-content resting and listening identity.
 
-## Hard stop
+### Risks
 
-No image-to-code, frontend scaffolding, production integration, deployment, or release is included in this phase.
+- The large path may become decorative if motion and state semantics are not precise.
+- The composition may feel too empty or mysterious for first-time users.
+- Spatial motion requires strong reduced-motion and screen-reader equivalents.
+
+### Mobile thinking
+
+Crop the partial path into a shallow arc above the concern. Keep the signal point, title, action, and input within one thumb-friendly vertical stack. History and Settings move into a single utility menu; reduced-motion mode replaces entry motion with an immediate focus transition.
+
+## Visual review
+
+- Exactly three new independent PNG concepts exist under `design/concepts/refined/`.
+- Each uses one focal concern and fictional data anchored to July 16, 2026.
+- None uses a dashboard grid, persistent domain navigation, provider logos, or a context graph.
+- The concepts are structurally distinct: attention scene, progressive conversational workspace, and ambient signal environment.
+- The supplied Apple and Pinterest analyses influenced whitespace, hierarchy, geometry, and accent discipline without direct imitation.
+- Images are concept targets, not accessible or production-ready interfaces. Contrast, semantics, focus, input behavior, responsive layout, and reduced motion require implementation-time validation.
+
+## Discovery-phase hard stop
+
+The discovery phase ended before frontend implementation. The approved implementation goal may now build the mocked frontend foundation and Presence Lab, but it must not add production integrations, deployment, or a pull request.

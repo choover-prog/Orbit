@@ -1,3 +1,7 @@
+# Superseded Discovery Prompt
+
+> This bootstrap-era prompt produced the first concept set. It is preserved for provenance but is superseded by `docs/design-principles.md`, `docs/interaction-model.md`, and `docs/design-brief.md`. Do not use it to plan frontend implementation.
+
 # Paste after `/plan`
 
 Inspect the complete Orbit repository and create a staged plan for the initial product-discovery and frontend-concept phase.

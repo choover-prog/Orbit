@@ -5,9 +5,12 @@ node_modules/
 dist/
 build/
 coverage/
+playwright-report/
+test-results/
 .cache/
 .turbo/
 .next/
+.vercel/
 *.tmp
 *.swp
 .DS_Store
@@ -18,6 +21,10 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 .venv/
+.local/
+*.db
+*.sqlite
+*.sqlite3
 secrets/
 private/
 data/personal/

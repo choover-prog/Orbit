@@ -21,22 +21,22 @@ All examples use fictional people and records.
 - Skipping an optional service does not block core onboarding.
 - Connection status and revocation are discoverable from the confirmation screen.
 
-## Journey 2: Review the daily briefing
+## Journey 2: Respond to one relevant concern
 
 **Goal:** Understand the day in under two minutes.
 
-1. Orbit shows three prioritized items, not a general activity feed.
-2. The first says a fictional flight lands after a project review begins.
-3. Maya opens “Why this matters” to see the flight and calendar records, their source, and freshness.
-4. She corrects an incorrectly linked contact on another item and snoozes a low-priority reminder.
-5. A short spoken summary is available, with detail on request.
+1. Orbit is resting with only a greeting and input until one concern passes the attention threshold.
+2. A fictional flight conflict enters focus as the only concern on screen.
+3. Maya asks “Why does that matter?” to reveal the flight and calendar records, their source, and freshness.
+4. Orbit quietly states that two other things are available when she is ready but does not display them.
+5. Maya says “What else?” only after resolving or deferring the travel conflict.
 
 **Acceptance criteria**
 
-- Every item distinguishes source fact from Orbit inference.
+- The concern distinguishes source fact from Orbit inference.
 - Evidence and freshness are available without leaving the item.
 - Correction, snooze, and dismiss are accessible by keyboard and screen reader.
-- The default briefing contains at most three primary items.
+- The default attention state contains exactly one focal concern.
 
 ## Journey 3: Ask a follow-up and draft an action
 
@@ -95,7 +95,7 @@ All examples use fictional people and records.
 
 1. Maya opens Connected services.
 2. Each service shows capabilities, purpose, last synchronization, and health.
-3. She removes calendar write access while retaining read-only briefings.
+3. She removes calendar write access while retaining read-only attention and conversation features.
 4. Orbit explains which features stop working and confirms revocation.
 5. She requests deletion of stored normalized email context while preserving redacted security audit records required by policy.
 

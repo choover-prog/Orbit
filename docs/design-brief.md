@@ -1,68 +1,64 @@
-# Orbit Design Brief
+# Orbit Revised Design Brief
 
-## Design target and outcome
+## Design target
 
-Design a desktop-first responsive product home experience for ordinary adults who want help coordinating a fragmented day without learning prompts or automation. The primary outcome is to understand the three things that matter now, inspect why each appeared, and safely progress one recommendation toward a reviewed action.
+Create a quiet, minimalist, ambient assistant for ordinary adults. Orbit is not a dashboard. It is a conversational environment where one relevant concern temporarily enters attention, expands only as requested, and recedes when resolved.
 
-## Brand character
+## Intended outcome
 
-Calm, capable, warm, modern, trustworthy, and lightly playful. Orbit should feel like a dependable consumer product—not a command center, sci-fi cockpit, generic AI chat, or childish space theme.
+The user should immediately know whether anything needs attention, understand one concern without scanning a feed, ask naturally for context or options, and enter a focused permission moment only when an action is proposed.
 
-Working line: **Everything that matters, in Orbit.** The wake word is user-configurable and separate from the brand.
+## Primary states
 
-## Experience rules
+1. **Resting:** nearly empty greeting, Orbit mark, input, and optional reassurance.
+2. **Attention:** one concern, one reason, one next step; other concerns remain hidden.
+3. **Conversation:** the surface expands only enough to answer the active question.
+4. **Action:** temporary focused scene for proposal, evidence, approval, verification, and undo.
 
-- The person is the center, but literal orbital rings are used sparingly.
-- Start with one focused hero use case and at most two supporting areas.
-- Prefer hierarchy, spacing, typography, and alignment over nested cards and decoration.
-- Keep primary body type equivalent to 14–16 px and meet WCAG 2.2 AA contrast targets.
-- Show source, freshness, confidence, and “why this matters” without overwhelming the default view.
-- Make read-only mode, pending approval, execution, verification, and undo visually distinct.
-- Voice is an entry point, not the whole layout.
-- Use fictional names, events, messages, health summaries, and providers.
+## Visual language
 
-## Fictional scenario anchor
+- warm parchment and white surfaces
+- near-black ink and one restrained Orbit blue action color
+- open-source/system sans typography with confident scale and tight display tracking
+- substantial negative space
+- flat surfaces with almost no shadows
+- one focal object per viewport
+- simple 16px/32px/pill geometry
+- open circle, center point, and partial path used functionally
+- restrained transitions with reduced-motion alternatives
 
-Current date: July 16, 2026.
+The supplied Apple and Pinterest design analyses are systems and mood references only. Do not copy proprietary fonts, branded actions, marketing layouts, masonry grids, product photography, or recognizable brand chrome.
 
-Maya Chen's fictional Thursday briefing contains:
+## Fictional scenario
 
-1. **Travel conflict:** Flight OA 218 lands at 3:10 PM; Project Review begins at 2:30 PM. Highest priority.
-2. **School form:** A fictional field-trip form is due tomorrow; draft reminder only.
-3. **Weather shift:** Thunderstorms begin near the evening commute; informational.
+Current date: July 16, 2026. Maya Chen has a fictional travel conflict: flight OA 218 lands at 3:10 PM while Project Review begins at 2:30 PM. Orbit may propose moving the review to 4:30 PM and notifying three fictional attendees.
 
-The hero recommendation is to review two alternate Project Review times and draft a reschedule. No real records or credentials appear.
+## Concept directions
 
-## Required trust cues
+### Quiet Orbit
 
-- Read-only status in the default state.
-- Evidence and freshness attached to recommendations.
-- Plain-language explanation of why an item matters.
-- Exact effects and recipients before approval.
-- Verified result distinct from provider acceptance.
-- Undo shown only with scope and limitations.
+An almost-empty resting experience. The polished image should show the transition point where one concern has gently entered attention, while the input and surrounding environment remain calm.
 
-## Three structurally distinct directions
+### Focus
 
-### Daily Orbit
+A single-task conversational workspace. One issue progressively reveals a concise answer, bounded options, and a path toward a focused approval without displaying a feed or full transcript.
 
-A briefing-first home screen. A strong editorial hierarchy centers the top concern, followed by two quieter items. Evidence and a clear draft action are progressively disclosed. Voice entry is present but secondary.
+### Ambient Orbit
 
-### Orbit Map
+A restrained spatial environment. One relevant signal moves toward the center while inactive context remains implied, not mapped. It must not become a node graph or decorative solar system.
 
-A user-centered spatial workspace. Maya and her current attention state sit at the center; a small number of legible domain regions show active signals and relationships. A side workspace explains the selected signal. It must function as a context navigator, not a decorative network.
+## Output
 
-### Orbit Guide
+- exactly three new independent desktop concept PNGs under `design/concepts/refined/`
+- one polished image per direction, with mobile behavior described in documentation
+- preserve the three earlier concept images unchanged and mark them superseded
+- no frontend implementation, image-to-code, deployment, or pull request
 
-A lifecycle-oriented workspace. The selected concern moves through observation, recommendation, draft, approval, execution, verification, and undo. The current state, next decision, and completed history are immediately clear.
+## Evaluation
 
-## Dimensions and output
-
-- One independent 1440 × 1024 desktop UI mockup per direction.
-- Exactly three PNG files under `design/concepts/`.
-- No browser or device chrome.
-- No frontend implementation or image-to-code work in this phase.
-
-## Evaluation criteria
-
-Clarity in five seconds, evidence discoverability, approval comprehension, accessibility, calmness, structural distinctness, responsive potential, and fit with the first vertical slice.
+- one concern is clear within five seconds
+- the default feels calm rather than empty or broken
+- conversation is visibly the navigation model
+- evidence remains available without being continuously exposed
+- approval is a focused moment
+- the Orbit theme aids state understanding rather than decoration

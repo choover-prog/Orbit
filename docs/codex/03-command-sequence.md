@@ -1,4 +1,10 @@
-# Orbit Codex Command Sequence
+# Superseded Orbit Codex Command Sequence
+
+> Preserved for provenance. The referenced bootstrap prompts are no longer the active product direction. Use the revised design and interaction documents before creating a new implementation goal.
+
+## Current next goal
+
+After a frontend shell exists and is ready for an isolated motion experiment, run `/goal` with the contents of `docs/codex/04-presence-lab-goal.md`. This goal creates one shared Presence component with five live variants inside a development-only comparison lab; it must not duplicate or redesign the surrounding application.
 
 Run from the Orbit repository root.
 
