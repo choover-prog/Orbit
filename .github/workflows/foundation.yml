@@ -1,0 +1,31 @@
+name: Foundation checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required foundation files
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(README.md LICENSE .gitignore AGENTS.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md)
+          for file in "${required[@]}"; do
+            test -s "$file"
+          done
+      - name: Reject committed environment files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -E '(^|/)\.env($|\.)' | grep -vE '(^|/)\.env\.example$'; then
+            echo "Tracked environment file detected."
+            exit 1
+          fi
