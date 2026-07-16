@@ -1,17 +1,15 @@
-# Orbit Frontend Design QA
+# Orbit Presence-Centered Refinement Design QA
 
 ## Review scope
 
-- Reference: `design/concepts/refined/quiet-orbit.png`
-- Reference: `design/concepts/refined/focus.png`
-- Implementation: `design/review/quiet-orbit-desktop.png` at 1265 x 1048
-- Implementation: `design/review/quiet-orbit-mobile.png` at 375 x 1069
-- Implementation: `design/review/quiet-orbit-tablet.png` at 768 x 1024
-- Implementation: `design/review/focus-options-desktop.png` at 1265 x 1143
-- Implementation: `design/review/presence-lab-comparison-full.png` at 1265 x 1306
-- States reviewed: attention, conversation/options, verification error, Presence comparison
+- References: `design/concepts/refined/quiet-orbit.png`, `design/concepts/refined/focus.png`, and `design/concepts/explorations/centered-orbit-example.png`
+- Before captures: `design/audit/refinement-before/01-quiet-orbit-attention.png` and `design/audit/refinement-before/02-presence-lab.png`
+- Final desktop captures: `design/review/refinement/01-attention-desktop.png`, `02-lab-hero-desktop.png`, `03-listening.png`, `04-thinking.png`, `05-speaking.png`, and `06-comparison-mode.png`
+- Final compact home capture: `design/review/refinement/07-attention-mobile.png`
+- Compact lab diagnostic: `design/review/refinement/08-lab-mobile.png` (captured before the final containment fix and retained as QA evidence)
+- States reviewed: resting, attention, listening, thinking, speaking, comparison, conversation, approval, completion, and undo
 
-The Quiet Orbit and Focus references were opened alongside their matching implementation captures at readable resolution. The source boards contain no raster product assets or fine-detail source icons requiring a separate crop comparison. Orbit Presence remains code-native because the approved product specification explicitly requires semantic SVG primitives and live CSS-based state motion.
+The approved boards and matching implementation captures were opened together at readable resolution. Orbit Presence remains code-native because the product specification explicitly requires semantic SVG primitives and live CSS motion rather than a static raster asset.
 
 ## Comparison history
 
@@ -19,28 +17,41 @@ The Quiet Orbit and Focus references were opened alongside their matching implem
 
 | Severity | Finding | Resolution |
 | --- | --- | --- |
-| P1 | The input dock overlapped supporting facts at shorter desktop heights. | Returned the input dock to normal document flow so progressive content remains readable without collision. |
-| P2 | Mobile heading scale and dock placement competed with the focal concern. | Reduced the compact heading cap, kept input in document flow, and removed the development-lab link from the smallest navigation. |
-| P2 | The centered-person avatar obscured too much of the Presence mark. | Reduced the overlap while preserving the person-at-center composition. |
+| P1 | The prior home screen split identity between an avatar, a small Presence mark, a decorative orbital rail, and an oversized concern. | Removed the left rail and decorative path, centered a large Presence above the greeting, and reduced the concern to one readable focal statement. |
+| P1 | The prior Presence Lab prioritized controls while the identity previews were too small to compare. | Rebuilt the first viewport as a large personality studio and moved controls below the live preview. |
+| P2 | Presence disappeared when the user entered conversation and approval states. | Added the same selected Presence to conversation and focused-action scenes with state-specific semantics. |
+| P2 | Persistent utility navigation competed with the daily experience. | Replaced it with a compact, keyboard-accessible menu. |
 
 ### Pass 2
 
-The final captures preserve the source direction: generous whitespace, confident type, flat surfaces, hairline evidence rows, restrained accent use, and one focal concern. The implementation intentionally adds the centered-person pattern, persistent keyboard access, trust copy, approval states, and abstract Orbit Presence required by the product documents.
+| Severity | Finding | Resolution |
+| --- | --- | --- |
+| P2 | Five variants did not share equal visual weight at desktop width. | Standardized scale and placed all five in one equal-column comparison row above the responsive breakpoints. |
+| P2 | The compact lab preview could allow long personality copy to widen a grid item. | Added zero-minimum grid sizing, overflow containment, responsive heading limits, and safe text wrapping. |
+| P2 | Development shortcuts remained visually exposed on the compact home screen. | Returned the shortcuts to focus/hover disclosure so voice and keyboard entry remain the only persistent invocation controls. |
 
 ## Mandatory surface review
 
-- Typography: responsive system sans, strong focal hierarchy, readable body measure, no clipped text.
-- Spacing and layout: one primary reading path, no dashboard grid, no overlapping controls at reviewed viewports.
-- Color and states: warm neutral canvas, dark ink, restrained terracotta accent, semantic text accompanies error and completion.
-- Imagery and icons: no decorative stock imagery or invented icon system; Presence is the approved abstract identity.
-- Copy: fictional Maya scenario only; explanations, permission, verification, and undo are explicit.
-- Interaction: attention, evidence, options, approval, verification failure, history, undo, comparison, and sequence controls work live.
-- Accessibility: semantic landmarks, visible focus, keyboard controls, status announcements, motion preference, and reduced-motion behavior are present.
-- Responsive behavior: desktop, 768 px tablet, and 375 px phone captures show no horizontal overflow or focal-content collision.
+- Typography: responsive system sans, confident but reduced focal scale, readable measures, no intentional clipped copy.
+- Spacing and layout: one centered relationship on `/`; large identity-first studio on the lab; no dashboard grid in the daily experience.
+- Color and states: warm neutral canvas, dark ink, restrained blue accent, and semantic copy for attention, completion, and error.
+- Identity and assets: five visibly distinct abstract Presence variants; no literal planet, rainbow, generic waveform, or decorative node network.
+- Copy: fictional Maya scenario only; evidence, permission, verification, audit, and undo remain explicit.
+- Interaction: utility menu, progressive conversation, approval, undo, variant/state controls, comparison mode, sequence mode, and local persistence are functional.
+- Accessibility: semantic regions, keyboard controls, visible focus, live state labels, reduced-motion representations, and motion-off controls are covered by implementation and tests.
+- Responsive behavior: desktop and compact compositions preserve one focal concern; mobile controls stay reachable and grid children cannot force horizontal overflow.
+- Console: the live review found no application console errors before the final CSS-only containment pass.
+
+## Validation notes
+
+- The complete mocked scheduling journey was exercised live through evidence, recommendation, approval, verification, history, and undo.
+- Live reduced-motion and sequence behavior were exercised in the Presence Lab.
+- Automated coverage includes axe checks, semantic Presence states, reduced motion, keyboard menu activation, lab comparison, action verification, and undo.
+- The final CSS containment pass was revalidated by formatting, lint, type checking, unit/component tests, and production build. Browser re-entry was blocked by the in-app browser's local URL policy, so the existing current-run captures remain the visual evidence for that final pass.
 
 ## Remaining findings
 
-No actionable P0, P1, or P2 findings remain. Permanent Presence selection, real provider latency, and real assistive-technology sessions remain future validation work because this stage is intentionally mocked.
+No actionable P0, P1, or P2 implementation finding remains. A permanent Presence winner, real provider latency, and real assistive-technology sessions remain intentionally deferred.
 
 ## Final result
 
