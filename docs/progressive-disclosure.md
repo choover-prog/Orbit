@@ -6,16 +6,16 @@ Orbit reveals the minimum information needed for the current decision and gives 
 
 ## Disclosure ladder
 
-| Level | Default content | User trigger |
-|---|---|---|
-| Rest | Greeting, input, quiet status | A concern becomes eligible or user asks |
-| Concern | What changed and why it matters | “Why?”, “Show me”, or select concern |
-| Evidence | Specific source facts, freshness, uncertainty | Request source or explanation |
-| Options | Two or three bounded alternatives | “What are my options?” |
-| Draft | Exact proposed effect without side effect | “Handle it” or choose option |
-| Approval | Recipients, timing, permissions, consequences | Attempt consequential action |
-| Result | Verified outcome, failure, or unknown state | Execution completes |
-| Recovery | Undo or bounded recovery path | Verified eligibility or failure |
+| Level    | Default content                               | User trigger                            |
+| -------- | --------------------------------------------- | --------------------------------------- |
+| Rest     | Greeting, input, quiet status                 | A concern becomes eligible or user asks |
+| Concern  | What changed and why it matters               | “Why?”, “Show me”, or select concern    |
+| Evidence | Specific source facts, freshness, uncertainty | Request source or explanation           |
+| Options  | Two or three bounded alternatives             | “What are my options?”                  |
+| Draft    | Exact proposed effect without side effect     | “Handle it” or choose option            |
+| Approval | Recipients, timing, permissions, consequences | Attempt consequential action            |
+| Result   | Verified outcome, failure, or unknown state   | Execution completes                     |
+| Recovery | Undo or bounded recovery path                 | Verified eligibility or failure         |
 
 ## Content rules
 

@@ -86,11 +86,7 @@ Build one component API rather than independent implementations scattered across
 
 ```ts
 type OrbitPresenceVariant =
-  | "mark"
-  | "pulse"
-  | "trail"
-  | "constellation"
-  | "hybrid";
+  "mark" | "pulse" | "trail" | "constellation" | "hybrid";
 
 type OrbitPresenceSize = "small" | "medium" | "large";
 ```

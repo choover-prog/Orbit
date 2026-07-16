@@ -14,17 +14,17 @@ The earlier Daily Orbit, Orbit Map, and Orbit Guide concepts remain in `design/c
 
 Scores use a five-point discovery rubric, where five is strongest.
 
-| Criterion | Quiet Orbit | Focus | Ambient Orbit |
-|---|---:|---:|---:|
-| Calm resting-state fit | 5 | 3 | 5 |
-| One-concern clarity | 5 | 5 | 4 |
-| Conversation as navigation | 5 | 5 | 4 |
-| Progressive disclosure | 4 | 5 | 3 |
-| Approval-flow extensibility | 4 | 5 | 3 |
-| Orbit identity | 4 | 3 | 5 |
-| Mobile adaptability | 5 | 4 | 4 |
-| Risk of feeling like a dashboard | 5 | 5 | 5 |
-| **Total** | **37** | **35** | **33** |
+| Criterion                        | Quiet Orbit |  Focus | Ambient Orbit |
+| -------------------------------- | ----------: | -----: | ------------: |
+| Calm resting-state fit           |           5 |      3 |             5 |
+| One-concern clarity              |           5 |      5 |             4 |
+| Conversation as navigation       |           5 |      5 |             4 |
+| Progressive disclosure           |           4 |      5 |             3 |
+| Approval-flow extensibility      |           4 |      5 |             3 |
+| Orbit identity                   |           4 |      3 |             5 |
+| Mobile adaptability              |           5 |      4 |             4 |
+| Risk of feeling like a dashboard |           5 |      5 |             5 |
+| **Total**                        |      **37** | **35** |        **33** |
 
 ## Quiet Orbit
 

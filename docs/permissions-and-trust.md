@@ -12,14 +12,14 @@ Example: “Read calendar event titles and times for the next 30 days” is dist
 
 ## Risk classes
 
-| Class | Examples | Default policy |
-|---|---|---|
-| R0 Observe | Read weather, list connected-service status | Allowed within granted read scope |
-| R1 Summarize | Create a private briefing from authorized facts | Allowed; show sources and corrections |
-| R2 Draft | Draft a private message or proposed event change | Allowed; no external side effect |
-| R3 Reversible action | Create a task, change a private event | Explicit approval for exact plan; verify and offer undo |
-| R4 Consequential action | Message another person, change shared home state | Strong confirmation, current evidence, recipient/effect review, verification |
-| R5 Prohibited in initial scope | Purchase, diagnose, unlock access, irreversible deletion | Blocked regardless of model recommendation |
+| Class                          | Examples                                                 | Default policy                                                               |
+| ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| R0 Observe                     | Read weather, list connected-service status              | Allowed within granted read scope                                            |
+| R1 Summarize                   | Create a private briefing from authorized facts          | Allowed; show sources and corrections                                        |
+| R2 Draft                       | Draft a private message or proposed event change         | Allowed; no external side effect                                             |
+| R3 Reversible action           | Create a task, change a private event                    | Explicit approval for exact plan; verify and offer undo                      |
+| R4 Consequential action        | Message another person, change shared home state         | Strong confirmation, current evidence, recipient/effect review, verification |
+| R5 Prohibited in initial scope | Purchase, diagnose, unlock access, irreversible deletion | Blocked regardless of model recommendation                                   |
 
 Risk may increase based on recipients, shared resources, health context, money, location, security, timing, or missing evidence.
 

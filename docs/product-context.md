@@ -70,6 +70,7 @@ Orbit differentiates through:
 ## Product domains
 
 Initial:
+
 - Calendar
 - Email
 - Contacts
@@ -79,6 +80,7 @@ Initial:
 - Health
 
 Later:
+
 - Notes and second brain
 - Files and documents
 - Family coordination
@@ -93,6 +95,7 @@ Later:
 Orbit should be useful before it can act.
 
 Default progression:
+
 - Connect
 - Observe
 - Explain
