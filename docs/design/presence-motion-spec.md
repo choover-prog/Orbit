@@ -4,11 +4,11 @@ Motion is semantic, state-driven, and subordinate to comprehension. Continuous l
 
 | State | Visual behavior | Baseline timing | Easing | Reduced-motion representation |
 | --- | --- | --- | --- | --- |
-| Idle | Almost-still vertical drift with no active path traversal | 9 s alternate | `cubic-bezier(0.45, 0, 0.55, 1)` | Stable core and faint open path |
+| Idle | Almost-still vertical drift with no active path traversal | 9 s alternate | `cubic-bezier(0.45, 0, 0.55, 1)` | Stable open gesture or soft field |
 | Noticing | Satellite gently turns toward a newly relevant signal | 2.8 s | `cubic-bezier(0.22, 1, 0.36, 1)` | Slightly brighter satellite and path |
-| Listening | Soft field and core breathe with simulated amplitude; no orbit | 3.2 s, audio-adjusted | `cubic-bezier(0.37, 0, 0.63, 1)` | Stronger static receptive field |
+| Listening | Soft fields and gestural strokes breathe with simulated amplitude; no orbit | 3.2 s, audio-adjusted | `cubic-bezier(0.37, 0, 0.63, 1)` | Stronger static receptive field or stroke |
 | Thinking | Satellite follows a measured temporary path; relationships form | 5.2 s | `cubic-bezier(0.65, 0, 0.35, 1)` | Defined dashed path or links |
-| Speaking | Satellite makes a conversational sweep; tapered trail and core respond to amplitude | 2.6 s sweep, 2 s tail | `cubic-bezier(0.16, 1, 0.3, 1)` | Visible static speaking trail |
+| Speaking | Satellite or Ribbon destination makes a conversational sweep; tapered trails respond to amplitude | 2.6 s sweep, 2 s tail | `cubic-bezier(0.16, 1, 0.3, 1)` | Visible static speaking trail |
 | Attention | Receptive field settles into restrained focus | 3.4 s | `cubic-bezier(0.22, 1, 0.36, 1)` | Accent orientation plus accessible label |
 | Completed | Particles briefly converge and resolve | 1.2 s once | `cubic-bezier(0.22, 1, 0.36, 1)` | Static success color plus result text |
 | Error | Calm broken path; no shake or loop | none | none | Static broken path plus error text |
@@ -24,6 +24,8 @@ Transitions remain long enough to be perceived without implying indefinite loadi
 ## Performance
 
 Motion is implemented with transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, expensive blur loop, or per-frame JavaScript is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount.
+
+Ribbon uses the same timing contract as the other variants: the front stroke breathes while listening, dash rhythm travels while thinking, the flare becomes most expressive while speaking, and the two paths resolve into a continuous gesture on completion.
 
 ## Accessibility
 

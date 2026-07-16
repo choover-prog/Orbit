@@ -25,10 +25,10 @@ describe("PresenceLab", () => {
     const comparison = screen.getByRole("region", {
       name: "Compare personality",
     });
-    expect(comparison.querySelectorAll("article")).toHaveLength(5);
+    expect(comparison.querySelectorAll("article")).toHaveLength(6);
     expect(
       screen.getAllByRole("status", { name: "Orbit is speaking" }),
-    ).toHaveLength(6);
+    ).toHaveLength(7);
   });
 
   it("keeps the studio controls accessible", async () => {

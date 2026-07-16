@@ -1,5 +1,5 @@
 export type OrbitPresenceVariant =
-  "mark" | "pulse" | "trail" | "constellation" | "hybrid";
+  "mark" | "pulse" | "trail" | "constellation" | "hybrid" | "ribbon";
 
 export type OrbitPresenceState =
   | "idle"
@@ -42,6 +42,7 @@ export const presenceVariants: OrbitPresenceVariant[] = [
   "trail",
   "constellation",
   "hybrid",
+  "ribbon",
 ];
 
 export const presenceStates: OrbitPresenceState[] = [

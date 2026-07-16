@@ -24,6 +24,8 @@ const variantPersonality: Record<OrbitPresenceVariant, string> = {
     "Relational and thoughtful — a few signals gathering with purpose.",
   hybrid:
     "Calm, warm, and articulate — breath, orbit, and voice in one identity.",
+  ribbon:
+    "Fluid and intuitive — a living gesture that unfolds without becoming a ring.",
 };
 
 const stateMeaning: Record<OrbitPresenceState, string> = {

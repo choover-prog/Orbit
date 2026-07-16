@@ -1,15 +1,15 @@
-# Orbit Presence-Centered Refinement Design QA
+# Orbit Presence Visual-Style Revision Design QA
 
 ## Review scope
 
-- References: `design/concepts/refined/quiet-orbit.png`, `design/concepts/refined/focus.png`, and `design/concepts/explorations/centered-orbit-example.png`
-- Before captures: `design/audit/refinement-before/01-quiet-orbit-attention.png` and `design/audit/refinement-before/02-presence-lab.png`
-- Final desktop captures: `design/review/refinement/01-attention-desktop.png`, `02-lab-hero-desktop.png`, `03-listening.png`, `04-thinking.png`, `05-speaking.png`, and `06-comparison-mode.png`
-- Final compact home capture: `design/review/refinement/07-attention-mobile.png`
-- Compact lab diagnostic: `design/review/refinement/08-lab-mobile.png` (captured before the final containment fix and retained as QA evidence)
-- States reviewed: resting, attention, listening, thinking, speaking, comparison, conversation, approval, completion, and undo
+- Source visual: `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-f815166d-d52f-4daa-8dc0-76f51d190f5e.png`
+- Before capture: `design/audit/style-revision-before/presence-lab.png`
+- Final captures: `design/review/style-revision/04-ribbon-hero.png`, `07-six-way-listening.png`, `08-six-way-thinking.png`, and `10-final-six-way-speaking.png`
+- Desktop review viewport: 1281 by 720 CSS pixels
+- Compact diagnostic viewport: 391 by 844 CSS pixels; measured document width remained within the viewport with no horizontal overflow
+- States reviewed: idle, listening, thinking, speaking, comparison, motion off, and reduced motion
 
-The approved boards and matching implementation captures were opened together at readable resolution. Orbit Presence remains code-native because the product specification explicitly requires semantic SVG primitives and live CSS motion rather than a static raster asset.
+The supplied source and the final six-way implementation capture were opened together at readable resolution. The source itself uses several concentric dark-center forms; this revision intentionally departs from that detail to honor the user's request that Orbit not resemble an eye. Orbit Presence remains code-native because the product specification explicitly requires semantic inline SVG primitives and live CSS motion rather than a static raster asset.
 
 ## Comparison history
 
@@ -17,25 +17,24 @@ The approved boards and matching implementation captures were opened together at
 
 | Severity | Finding | Resolution |
 | --- | --- | --- |
-| P1 | The prior home screen split identity between an avatar, a small Presence mark, a decorative orbital rail, and an oversized concern. | Removed the left rail and decorative path, centered a large Presence above the greeting, and reduced the concern to one readable focal statement. |
-| P1 | The prior Presence Lab prioritized controls while the identity previews were too small to compare. | Rebuilt the first viewport as a large personality studio and moved controls below the live preview. |
-| P2 | Presence disappeared when the user entered conversation and approval states. | Added the same selected Presence to conversation and focused-action scenes with state-specific semantics. |
-| P2 | Persistent utility navigation competed with the daily experience. | Replaced it with a compact, keyboard-accessible menu. |
+| P1 | Several existing variants used concentric rings and dominant center dots that could read as an iris and pupil. | Removed dominant central cores, opened circular geometry, shifted focal points off-center, and introduced asymmetry across Pulse, Trail, Constellation, and Hybrid. |
+| P1 | Motion states lacked the source's visual confidence and were difficult to distinguish at a glance. | Added restrained luminous accents, clearer state-specific trails, glints, node relationships, and stronger speaking treatments without adding rainbow color or excessive glow. |
+| P2 | The comparison offered only the five specified orbital variants and no independent stylistic counterpoint. | Added Ribbon as a sixth exploratory variant within the same component and state API. |
 
 ### Pass 2
 
 | Severity | Finding | Resolution |
 | --- | --- | --- |
-| P2 | Five variants did not share equal visual weight at desktop width. | Standardized scale and placed all five in one equal-column comparison row above the responsive breakpoints. |
-| P2 | The compact lab preview could allow long personality copy to widen a grid item. | Added zero-minimum grid sizing, overflow containment, responsive heading limits, and safe text wrapping. |
-| P2 | Development shortcuts remained visually exposed on the compact home screen. | Returned the shortcuts to focus/hover disclosure so voice and keyboard entry remain the only persistent invocation controls. |
+| P2 | The first Ribbon draft bent toward a closed loop and introduced another eye-like silhouette. | Rebuilt it as an open, calligraphic S-curve with separated endpoints and no enclosed center. |
+| P2 | Speaking emphasis on Trail and Hybrid appeared at the wrong end of the path. | Reversed the animated path direction and strengthened the highlight nearest the satellite. |
+| P2 | Six variants could wrap unevenly and weaken direct comparison. | Updated comparison mode to six equal desktop columns with clean responsive collapse. |
 
 ## Mandatory surface review
 
 - Typography: responsive system sans, confident but reduced focal scale, readable measures, no intentional clipped copy.
 - Spacing and layout: one centered relationship on `/`; large identity-first studio on the lab; no dashboard grid in the daily experience.
 - Color and states: warm neutral canvas, dark ink, restrained blue accent, and semantic copy for attention, completion, and error.
-- Identity and assets: five visibly distinct abstract Presence variants; no literal planet, rainbow, generic waveform, or decorative node network.
+- Identity and assets: six visibly distinct abstract Presence variants; no pupil geometry, literal planet, rainbow, generic waveform, or decorative node network.
 - Copy: fictional Maya scenario only; evidence, permission, verification, audit, and undo remain explicit.
 - Interaction: utility menu, progressive conversation, approval, undo, variant/state controls, comparison mode, sequence mode, and local persistence are functional.
 - Accessibility: semantic regions, keyboard controls, visible focus, live state labels, reduced-motion representations, and motion-off controls are covered by implementation and tests.
@@ -44,14 +43,14 @@ The approved boards and matching implementation captures were opened together at
 
 ## Validation notes
 
-- The complete mocked scheduling journey was exercised live through evidence, recommendation, approval, verification, history, and undo.
-- Live reduced-motion and sequence behavior were exercised in the Presence Lab.
-- Automated coverage includes axe checks, semantic Presence states, reduced motion, keyboard menu activation, lab comparison, action verification, and undo.
-- The final CSS containment pass was revalidated by formatting, lint, type checking, unit/component tests, and production build. Browser re-entry was blocked by the in-app browser's local URL policy, so the existing current-run captures remain the visual evidence for that final pass.
+- Source and final implementation screenshots were compared together after the last visual revision.
+- Live listening, thinking, speaking, comparison, motion-off, and reduced-motion behavior were reviewed in the Presence Lab.
+- Automated coverage iterates every Presence variant through every shared state and includes reduced motion, semantic status, lab comparison, action verification, and undo.
+- Formatting, lint, type checking, all 15 unit/component tests, production build, dependency audit, console inspection, and final Git checks passed before handoff.
 
 ## Remaining findings
 
-No actionable P0, P1, or P2 implementation finding remains. A permanent Presence winner, real provider latency, and real assistive-technology sessions remain intentionally deferred.
+No actionable P0, P1, or P2 implementation finding remains. Ribbon is intentionally exploratory, and a permanent Presence winner plus real assistive-technology sessions remain deferred.
 
 ## Final result
 

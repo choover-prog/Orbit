@@ -15,7 +15,7 @@ Build Quiet Orbit as a responsive daily shell. Use the centered-person compositi
 | History                   | `src/app/history/page.tsx` presents mocked audit, verification, and undo status.                                                                           |
 | Connections               | `src/app/connections/page.tsx` presents mocked connection health and capability scopes.                                                                    |
 | Settings                  | `src/app/settings/page.tsx` presents local-only motion, voice, privacy, and accessibility preferences.                                                     |
-| Orbit Presence            | `src/components/orbit-presence/` owns one component API, five variants, eight states, reduced motion, and local selection.                                 |
+| Orbit Presence            | `src/components/orbit-presence/` owns one component API, six variants, eight states, reduced motion, and local selection.                                  |
 | Presence Lab              | `src/app/design-lab/presence/page.tsx` provides controls, comparison, contexts, and replayable sequence mode.                                              |
 | Visual system             | `src/app/globals.css` and colocated CSS Modules define warm neutral tokens, responsive type, focus, layout, and motion.                                    |
 | Validation                | `src/**/*.test.ts(x)` covers domain and components; `e2e/` covers routes, accessibility smoke checks, responsive views, and the full scheduling journey.   |

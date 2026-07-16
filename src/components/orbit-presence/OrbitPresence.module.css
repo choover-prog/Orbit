@@ -31,13 +31,24 @@
 .presence :global(.presence-path),
 .presence :global(.presence-pulse),
 .presence :global(.presence-link),
-.presence :global(.presence-tail) {
+.presence :global(.presence-tail),
+.presence :global(.presence-ribbon),
+.presence :global(.presence-mark-tick),
+.presence :global(.presence-glint),
+.presence :global(.presence-trail-echo) {
   fill: none;
   stroke: currentColor;
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+}
+
+.presence :global(.presence-mark-tick),
+.presence :global(.presence-glint),
+.presence :global(.presence-trail-echo) {
+  stroke-width: 1.35;
+  opacity: 0.3;
 }
 
 .presence :global(.presence-ring) {
@@ -53,10 +64,28 @@
 }
 .presence :global(.presence-tail) {
   color: var(--presence-accent);
-  stroke-width: 3.1;
+  stroke-width: 3.8;
   stroke-dasharray: 0 110;
   stroke-dashoffset: 0;
   opacity: 0;
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--presence-accent) 32%, transparent)
+  );
+}
+.presence :global(.presence-ribbon) {
+  stroke: var(--presence-accent);
+  stroke-width: 2.8;
+}
+.presence :global(.presence-ribbon-back) {
+  opacity: 0.2;
+  stroke-width: 1.4;
+}
+.presence :global(.presence-ribbon-front) {
+  opacity: 0.76;
+}
+.presence :global(.presence-ribbon-flare) {
+  opacity: 0.34;
+  stroke-dasharray: 8 5;
 }
 
 .presence :global(.presence-center),
@@ -66,6 +95,20 @@
 }
 .presence :global(.presence-satellite) {
   fill: var(--presence-accent);
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--presence-accent) 42%, transparent)
+  );
+}
+.presence :global(.presence-spark) {
+  fill: color-mix(in srgb, var(--presence-accent) 52%, white);
+  opacity: 0.68;
+}
+.presence[data-variant="constellation"] :global(.particle-two),
+.presence[data-variant="constellation"] :global(.particle-four) {
+  fill: var(--presence-accent);
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--presence-accent) 28%, transparent)
+  );
 }
 .presence :global(.presence-core-soft) {
   fill: var(--presence-accent);
@@ -82,12 +125,20 @@
   fill: color-mix(in srgb, var(--presence-ink) 78%, var(--presence-accent));
 }
 .presence[data-variant="pulse"] :global(.presence-pulse) {
-  fill: var(--presence-accent);
+  fill: color-mix(in srgb, var(--presence-accent) 82%, white);
   stroke: none;
-  opacity: 0.06;
+  opacity: 0.08;
+  filter: drop-shadow(
+    0 0 9px color-mix(in srgb, var(--presence-accent) 20%, transparent)
+  );
 }
 .presence[data-variant="pulse"] :global(.presence-pulse-inner) {
-  opacity: 0.14;
+  opacity: 0.2;
+}
+.presence[data-variant="hybrid"] :global(.presence-pulse-inner) {
+  fill: color-mix(in srgb, var(--presence-accent) 74%, white);
+  stroke: none;
+  opacity: 0.12;
 }
 
 .presence[data-state="noticing"],
@@ -106,7 +157,8 @@
 .presence[data-motion="on"][data-state="idle"] :global(.pulse-shape),
 .presence[data-motion="on"][data-state="idle"] :global(.trail-shape),
 .presence[data-motion="on"][data-state="idle"] :global(.constellation-shape),
-.presence[data-motion="on"][data-state="idle"] :global(.hybrid-shape) {
+.presence[data-motion="on"][data-state="idle"] :global(.hybrid-shape),
+.presence[data-motion="on"][data-state="idle"] :global(.ribbon-shape) {
   transform-origin: 50px 50px;
   animation: presence-drift 9s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
@@ -117,6 +169,11 @@
 .presence[data-motion="on"][data-state="noticing"] :global(.presence-orbiter) {
   transform-origin: 50px 50px;
   animation: presence-notice 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.presence[data-motion="on"][data-state="noticing"] :global(.ribbon-spark-two) {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: presence-spark-arrive 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .presence[data-state="noticing"] :global(.presence-path) {
   opacity: 0.34;
@@ -139,10 +196,15 @@
 }
 .presence[data-motion="on"][data-state="listening"]
   :global(.presence-satellite),
-.presence[data-motion="on"][data-state="listening"]
-  :global(.presence-particle) {
+.presence[data-motion="on"][data-state="listening"] :global(.presence-particle),
+.presence[data-motion="on"][data-state="listening"] :global(.presence-ribbon) {
   animation: presence-receive 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite
     alternate;
+}
+.presence[data-motion="on"][data-state="listening"]
+  :global(.presence-ribbon-front) {
+  animation: presence-ribbon-listen var(--presence-breathe)
+    cubic-bezier(0.37, 0, 0.63, 1) infinite;
 }
 
 /* Thinking alone uses a measured temporary orbit and draws the relationship. */
@@ -166,6 +228,10 @@
 .presence[data-motion="on"][data-state="thinking"] :global(.presence-path),
 .presence[data-motion="on"][data-state="thinking"] :global(.presence-link) {
   animation: presence-path-form var(--presence-turn)
+    cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.presence[data-motion="on"][data-state="thinking"] :global(.presence-ribbon) {
+  animation: presence-ribbon-think var(--presence-turn)
     cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 .presence[data-motion="on"][data-state="thinking"] :global(.presence-particle) {
@@ -203,6 +269,16 @@
   animation: presence-tail-speak var(--presence-speaking-tail)
     cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
+.presence[data-motion="on"][data-state="speaking"]
+  :global(.presence-ribbon-front) {
+  animation: presence-ribbon-speak var(--presence-speaking-tail)
+    cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.presence[data-motion="on"][data-state="speaking"]
+  :global(.presence-ribbon-flare) {
+  animation: presence-ribbon-flare var(--presence-speaking-turn) ease-in-out
+    infinite;
+}
 .presence[data-motion="on"][data-state="speaking"] :global(.presence-core),
 .presence[data-motion="on"][data-state="speaking"]
   :global(.presence-core-soft) {
@@ -235,6 +311,9 @@
   transform-box: fill-box;
   transform-origin: center;
   animation: presence-complete 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+}
+.presence[data-motion="on"][data-state="completed"] :global(.presence-ribbon) {
+  animation: presence-ribbon-complete 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
 }
 .presence[data-state="error"] :global(.presence-path),
 .presence[data-state="error"] :global(.presence-ring) {
@@ -272,6 +351,17 @@
     transform: rotate(-16deg);
   }
 }
+@keyframes presence-spark-arrive {
+  0%,
+  100% {
+    transform: scale(0.8) translate3d(-2px, 2px, 0);
+    opacity: 0.56;
+  }
+  48% {
+    transform: scale(1.18) translate3d(1px, -1px, 0);
+    opacity: 1;
+  }
+}
 @keyframes presence-listen {
   50% {
     transform: scale(
@@ -284,6 +374,13 @@
   to {
     transform: translate3d(-2px, 1px, 0)
       scale(calc(1 + 0.12 * var(--presence-audio)));
+  }
+}
+@keyframes presence-ribbon-listen {
+  50% {
+    stroke-width: 3.7px;
+    stroke-dashoffset: -4;
+    opacity: 0.92;
   }
 }
 @keyframes presence-think {
@@ -306,6 +403,17 @@
   50% {
     stroke-dashoffset: -18;
     opacity: 0.48;
+  }
+}
+@keyframes presence-ribbon-think {
+  0%,
+  100% {
+    stroke-dasharray: 14 7;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 28 5;
+    stroke-dashoffset: -26;
   }
 }
 @keyframes presence-gather {
@@ -334,6 +442,25 @@
   55% {
     stroke-dashoffset: -24;
     opacity: 1;
+  }
+}
+@keyframes presence-ribbon-speak {
+  0%,
+  100% {
+    stroke-dasharray: 20 6;
+    stroke-dashoffset: 8;
+    opacity: 0.56;
+  }
+  55% {
+    stroke-dasharray: 42 4;
+    stroke-dashoffset: -22;
+    opacity: 1;
+  }
+}
+@keyframes presence-ribbon-flare {
+  50% {
+    stroke-dashoffset: -18;
+    opacity: 0.72;
   }
 }
 @keyframes presence-voice {
@@ -368,6 +495,15 @@
   100% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+@keyframes presence-ribbon-complete {
+  0% {
+    stroke-dasharray: 16 6;
+  }
+  100% {
+    stroke-dasharray: 80 0;
+    stroke-dashoffset: -8;
   }
 }
 

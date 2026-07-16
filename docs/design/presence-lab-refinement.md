@@ -12,7 +12,7 @@ Variant, state, intensity, speed, simulated audio, size, theme, animation, and r
 
 ## Comparison mode
 
-All five variants appear at the same large scale and in the same selected state. Desktop uses one equal row; narrower screens move to two columns and then one. Each preview includes a short personality description rather than only a loader-like label.
+All six variants appear at the same large scale and in the same selected state. Desktop uses one equal row; narrower screens move to two columns and then one. Each preview includes a short personality description rather than only a loader-like label.
 
 ## Context mode
 

@@ -9,6 +9,7 @@ import { OrbitConstellation } from "./variants/OrbitConstellation";
 import { OrbitHybrid } from "./variants/OrbitHybrid";
 import { OrbitMark } from "./variants/OrbitMark";
 import { OrbitPulse } from "./variants/OrbitPulse";
+import { OrbitRibbon } from "./variants/OrbitRibbon";
 import { OrbitTrail } from "./variants/OrbitTrail";
 
 const variants = {
@@ -17,6 +18,7 @@ const variants = {
   trail: OrbitTrail,
   constellation: OrbitConstellation,
   hybrid: OrbitHybrid,
+  ribbon: OrbitRibbon,
 };
 
 interface PresenceStyle extends CSSProperties {

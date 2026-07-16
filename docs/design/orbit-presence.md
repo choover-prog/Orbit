@@ -14,7 +14,7 @@
 />
 ```
 
-Variants: `mark`, `pulse`, `trail`, `constellation`, and `hybrid`.
+Variants: `mark`, `pulse`, `trail`, `constellation`, `hybrid`, and the exploratory `ribbon` direction.
 
 States: `idle`, `noticing`, `listening`, `thinking`, `speaking`, `attention`, `completed`, and `error`.
 
