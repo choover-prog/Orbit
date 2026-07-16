@@ -1,58 +1,145 @@
 .lab {
-  width: min(calc(100% - 3rem), 88rem);
-  margin: 2.5rem auto 8rem;
+  width: min(calc(100% - 3rem), 86rem);
+  margin: 1.5rem auto 8rem;
 }
 .labHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 3rem;
+  width: min(100%, 48rem);
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+.labHeader > *,
+.heroStudio > * {
+  min-width: 0;
 }
 .labHeader h1 {
-  margin: 0.25rem 0 0.7rem;
-  font-size: clamp(3.5rem, 8vw, 7rem);
-  line-height: 0.92;
-  letter-spacing: -0.07em;
+  margin: 0.2rem 0 0.6rem;
+  font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
 }
 .labHeader p:last-child {
-  margin: 0;
-  max-width: 44rem;
+  margin: 0 auto;
+  max-width: 40rem;
   color: var(--muted);
 }
-.modeButtons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: end;
-  gap: 0.6rem;
+
+.heroStudio {
+  min-height: min(43rem, calc(100svh - 7rem));
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border-radius: 2.5rem;
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      rgb(255 255 255 / 92%),
+      transparent 21rem
+    ),
+    var(--surface);
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(18rem, 1.2fr) minmax(
+      12rem,
+      0.8fr
+    );
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  overflow: hidden;
 }
+.heroStudio[data-theme="dark"],
+.contextStack[data-theme="dark"],
+.comparisonGrid[data-theme="dark"] {
+  --ink: #f6f1e8;
+  --muted: #aaa59c;
+  --quiet: #817d76;
+  --line: #403e39;
+  --line-strong: #605c54;
+  --surface: #1a1a18;
+  --canvas: #1a1a18;
+  --success: #78c9a3;
+  --danger: #ec8f82;
+  color: var(--ink);
+  background-color: var(--surface);
+}
+.heroCopy > p:first-child,
+.sectionHeading > p {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 720;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.heroCopy h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+.heroCopy > p:last-child,
+.heroState > p {
+  max-width: 19rem;
+  color: var(--muted);
+}
+.heroPresenceWrap {
+  min-height: 23rem;
+  display: grid;
+  place-items: center;
+}
+.heroPresence {
+  width: 15rem;
+  height: 15rem;
+  filter: drop-shadow(0 18px 38px rgb(30 27 20 / 8%));
+}
+.heroState {
+  justify-self: start;
+}
+.heroState button {
+  margin-top: 0.75rem;
+}
+.modeButtons {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  gap: 0.55rem;
+}
+
 .controls {
-  margin-top: 3.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgb(255 253 249 / 65%);
+  margin: 2rem auto 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.controls > summary {
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.controlBody {
+  padding: 0.75rem 0 1.5rem;
 }
 .controls fieldset {
-  margin: 0 0 1.2rem;
+  margin: 0 0 1rem;
   padding: 0;
   border: 0;
 }
 .controls legend {
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.5rem;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .segmented {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 .segmented button {
-  min-height: 2.35rem;
-  padding: 0.45rem 0.8rem;
+  min-height: 2.3rem;
+  padding: 0.42rem 0.78rem;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: transparent;
@@ -67,15 +154,15 @@
 .controlGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(10rem, 1fr));
-  gap: 1.2rem;
+  gap: 1.1rem;
   align-items: end;
 }
 .controlGrid label {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 0.45rem;
+  gap: 0.4rem;
   color: var(--muted);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
 }
 .controlGrid input[type="range"] {
   grid-column: 1 / -1;
@@ -84,149 +171,195 @@
 }
 .controlGrid select {
   grid-column: 1 / -1;
-  min-height: 2.6rem;
+  min-height: 2.55rem;
+  padding: 0.4rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: 0.65rem;
   background: var(--surface);
   color: var(--ink);
-  padding: 0.45rem 0.65rem;
 }
 .controlGrid .switchLabel {
+  min-height: 2.55rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 2.6rem;
 }
 .switchLabel input {
   width: 1.1rem;
   height: 1.1rem;
   accent-color: var(--accent);
 }
-.liveState {
-  color: var(--muted);
-  font-size: 0.86rem;
+
+.contextSection,
+.comparisonSection {
+  margin-top: 5rem;
 }
-.contextGrid,
+.sectionHeading {
+  margin-bottom: 1.5rem;
+}
+.sectionHeading h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  letter-spacing: -0.052em;
+}
+.contextStack,
 .comparisonGrid {
-  margin-top: 1rem;
-  padding: clamp(1rem, 3vw, 2.5rem);
-  border-radius: var(--radius-large);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.contextGrid[data-theme="dark"],
-.comparisonGrid[data-theme="dark"] {
-  --ink: #f6f1e8;
-  --muted: #aaa59c;
-  --line: #403e39;
-  --surface: #1a1a18;
-  --canvas: #1a1a18;
-  --success: #78c9a3;
-  --danger: #ec8f82;
-  color: var(--ink);
+  border-radius: 2rem;
+  overflow: hidden;
   background: var(--surface);
 }
-.contextGrid {
+.contextStack article {
+  min-height: 28rem;
+  padding: clamp(2rem, 5vw, 5rem);
+  border-bottom: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 1.1fr 1.4fr 1.1fr;
-  gap: 1rem;
-}
-.contextGrid article {
-  min-height: 23rem;
-  padding: 1.4rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: 3rem;
 }
-.contextGrid article > span {
-  align-self: flex-start;
-  margin-bottom: auto;
+.contextStack article:last-child {
+  border-bottom: 0;
+}
+.contextStack article > div {
+  max-width: 32rem;
+}
+.contextStack article:nth-child(even) > div {
+  justify-self: end;
+}
+.contextStack span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.contextStack h3 {
+  margin: 0.65rem 0 0.5rem;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+.contextStack p {
   color: var(--muted);
-  font-size: 0.75rem;
 }
-.contextGrid h2 {
-  margin: 1.2rem 0 0.35rem;
-  max-width: 15ch;
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
-  line-height: 1.05;
-  letter-spacing: -0.045em;
+.contextStack button {
+  margin-top: 1rem;
 }
-.contextGrid p {
-  margin: 0 0 auto;
-  color: var(--muted);
+.contextStack :global([role="status"]) {
+  justify-self: center;
 }
-.contextGrid button {
-  margin-top: 1.5rem;
-}
+
 .comparisonGrid {
+  padding: clamp(1rem, 2.5vw, 2rem);
   display: grid;
-  grid-template-columns: repeat(5, minmax(9rem, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
 }
 .comparisonGrid article {
-  min-height: 18rem;
-  padding: 1rem;
-  border-right: 1px solid var(--line);
+  min-height: 25rem;
+  padding: 1.5rem 1rem;
+  background: var(--surface);
   display: grid;
   place-items: center;
   align-content: center;
   text-align: center;
 }
-.comparisonGrid article:last-child {
-  border-right: 0;
-}
-.comparisonGrid h2 {
-  margin: 1.2rem 0 0;
-  font-size: 1rem;
+.comparisonGrid h3 {
+  margin: 1.4rem 0 0.35rem;
+  font-size: 1.35rem;
 }
 .comparisonGrid p {
-  margin: 0.2rem 0 0;
+  margin: 0;
+  max-width: 23rem;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 62rem) {
-  .labHeader {
-    align-items: start;
-    flex-direction: column;
+  .heroStudio {
+    min-height: auto;
+    grid-template-columns: 1fr 1.3fr;
   }
-  .modeButtons {
-    justify-content: start;
+  .heroState {
+    grid-column: 1 / -1;
+    justify-self: center;
+    text-align: center;
+  }
+  .heroState > p {
+    max-width: 30rem;
   }
   .controlGrid {
     grid-template-columns: repeat(2, minmax(10rem, 1fr));
   }
-  .contextGrid {
-    grid-template-columns: 1fr;
-  }
-  .contextGrid article {
-    min-height: 18rem;
-  }
   .comparisonGrid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .comparisonGrid article {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
+  .comparisonGrid article:last-child {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 38rem) {
+@media (max-width: 48rem) {
   .lab {
-    width: min(calc(100% - 2rem), 88rem);
-    margin-top: 1.5rem;
+    width: min(calc(100% - 2rem), 86rem);
   }
-  .controlGrid {
+  .heroStudio {
+    padding: 2rem 1.25rem;
     grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .labHeader h1 {
+    font-size: clamp(2.45rem, 13vw, 4rem);
+  }
+  .labHeader p,
+  .heroCopy p,
+  .heroState p {
+    overflow-wrap: anywhere;
+  }
+  .heroCopy > p:last-child {
+    margin-inline: auto;
+  }
+  .heroPresenceWrap {
+    min-height: 14rem;
+  }
+  .heroState {
+    grid-column: auto;
+  }
+  .modeButtons {
+    grid-column: auto;
+  }
+  .contextStack article {
+    min-height: 31rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .contextStack article:nth-child(even) > div,
+  .contextStack article > div {
+    justify-self: center;
+  }
+  .attentionPreview :global([role="status"]),
+  .actionPreview :global([role="status"]) {
+    order: -1;
   }
   .comparisonGrid {
     grid-template-columns: 1fr;
   }
+  .comparisonGrid article:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 36rem) {
+  .controlGrid {
+    grid-template-columns: 1fr;
+  }
+  .modeButtons {
+    flex-direction: column;
+    width: 100%;
+  }
   .comparisonGrid article {
-    min-height: 13rem;
+    min-height: 21rem;
   }
 }

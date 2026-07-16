@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { UtilityMenu } from "@/components/navigation/UtilityMenu";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -31,14 +32,9 @@ export default function RootLayout({
             <span className="wordmark-dot" aria-hidden="true" />
             Orbit
           </Link>
-          <nav aria-label="Primary navigation">
-            <Link href="/history">History</Link>
-            <Link href="/connections">Connections</Link>
-            <Link href="/settings">Settings</Link>
-            {process.env.NODE_ENV !== "production" ? (
-              <Link href="/design-lab/presence">Presence Lab</Link>
-            ) : null}
-          </nav>
+          <UtilityMenu
+            showPresenceLab={process.env.NODE_ENV !== "production"}
+          />
         </header>
         {children}
       </body>

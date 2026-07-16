@@ -4,24 +4,43 @@ import {
   travelRecommendation,
 } from "@/mocks/fixtures";
 import type { ConversationStep } from "@/domain/orbit/types";
+import {
+  OrbitPresence,
+  type OrbitPresenceVariant,
+} from "@/components/orbit-presence";
 import styles from "./QuietOrbit.module.css";
 
 interface ConversationSceneProps {
   step: ConversationStep;
   onStep: (step: ConversationStep) => void;
   onPropose: () => void;
+  variant: OrbitPresenceVariant;
+  motionEnabled: boolean;
 }
 
 export function ConversationScene({
   step,
   onStep,
   onPropose,
+  variant,
+  motionEnabled,
 }: ConversationSceneProps) {
   return (
     <section
       className={styles.conversationScene}
       aria-labelledby="conversation-title"
     >
+      <div className={styles.conversationPresence}>
+        <OrbitPresence
+          variant={variant}
+          state="speaking"
+          size="medium"
+          intensity={0.7}
+          audioLevel={0.52}
+          motionEnabled={motionEnabled}
+        />
+        <span>Orbit is speaking</span>
+      </div>
       <p className={styles.eyebrow}>Travel conflict</p>
       <h1 id="conversation-title">Let’s make the conflict workable.</h1>
 

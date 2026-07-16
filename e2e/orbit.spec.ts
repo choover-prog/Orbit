@@ -58,7 +58,7 @@ test("Presence Lab compares every variant, sequences states, and persists select
   await page.getByRole("button", { name: "Compare all" }).click();
   await expect(
     page
-      .getByRole("region", { name: /all variants in speaking state/i })
+      .getByRole("region", { name: "Compare personality" })
       .locator("article"),
   ).toHaveCount(5);
   await page.reload();

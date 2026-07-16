@@ -162,6 +162,7 @@ export function QuietOrbitShell({
             state={presenceOverride ?? "idle"}
             size="large"
             motionEnabled={preferences.motionEnabled}
+            className={styles.heroPresence}
           />
           <p className={styles.greeting}>Good morning, Maya</p>
           <h1 id="resting-title">Nothing needs your attention.</h1>
@@ -187,6 +188,8 @@ export function QuietOrbitShell({
       {state === "conversation" ? (
         <ConversationScene
           step={conversationStep}
+          variant={variant}
+          motionEnabled={preferences.motionEnabled}
           onStep={setConversationStep}
           onPropose={() => {
             setState("action");
@@ -199,6 +202,8 @@ export function QuietOrbitShell({
 
       {state === "action" ? (
         <ActionScene
+          variant={variant}
+          motionEnabled={preferences.motionEnabled}
           onApprove={approve}
           onCancel={() => setState("attention")}
         />

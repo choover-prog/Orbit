@@ -1,9 +1,19 @@
 export function OrbitMark() {
   return (
     <g className="mark-shape">
-      <circle className="presence-ring" cx="50" cy="50" r="30" />
-      <circle className="presence-center" cx="50" cy="50" r="4" />
-      <circle className="presence-satellite" cx="73" cy="30" r="3.5" />
+      <path
+        className="presence-ring presence-open-ring"
+        d="M 72 27 C 87 40 88 61 73 75 C 58 90 34 86 23 69 C 13 53 18 32 34 23"
+      />
+      <circle
+        className="presence-core presence-mark-core"
+        cx="47"
+        cy="51"
+        r="5"
+      />
+      <g className="presence-satellite-group">
+        <circle className="presence-satellite" cx="76" cy="29" r="4" />
+      </g>
     </g>
   );
 }

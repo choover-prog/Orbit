@@ -1,14 +1,34 @@
 import { evidence, moveReviewProposal } from "@/mocks/fixtures";
+import {
+  OrbitPresence,
+  type OrbitPresenceVariant,
+} from "@/components/orbit-presence";
 import styles from "./QuietOrbit.module.css";
 
 interface ActionSceneProps {
   onApprove: (forceFailure?: boolean) => void;
   onCancel: () => void;
+  variant: OrbitPresenceVariant;
+  motionEnabled: boolean;
 }
 
-export function ActionScene({ onApprove, onCancel }: ActionSceneProps) {
+export function ActionScene({
+  onApprove,
+  onCancel,
+  variant,
+  motionEnabled,
+}: ActionSceneProps) {
   return (
     <section className={styles.actionScene} aria-labelledby="action-title">
+      <div className={styles.conversationPresence}>
+        <OrbitPresence
+          variant={variant}
+          state="noticing"
+          size="medium"
+          motionEnabled={motionEnabled}
+        />
+        <span>Orbit prepared a change</span>
+      </div>
       <p className={styles.eyebrow}>
         Approval required · reversible calendar action
       </p>

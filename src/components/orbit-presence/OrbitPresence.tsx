@@ -49,13 +49,13 @@ export function OrbitPresence({
   const style: PresenceStyle = {
     "--presence-intensity": Math.max(0, Math.min(1, intensity)),
     "--presence-audio": Math.max(0, Math.min(1, audioLevel)),
-    "--presence-turn": `${4 / speedScale}s`,
-    "--presence-idle-turn": `${12 / speedScale}s`,
-    "--presence-speaking-turn": `${2.2 / speedScale}s`,
-    "--presence-breathe": `${Math.max(1.25, 3.6 - audioLevel) / speedScale}s`,
-    "--presence-tail-speed": `${3 / speedScale}s`,
-    "--presence-speaking-tail": `${1.7 / speedScale}s`,
-    "--presence-particle-speed": `${3 / speedScale}s`,
+    "--presence-turn": `${5.2 / speedScale}s`,
+    "--presence-idle-turn": `${10 / speedScale}s`,
+    "--presence-speaking-turn": `${2.6 / speedScale}s`,
+    "--presence-breathe": `${Math.max(1.4, 3.8 - audioLevel) / speedScale}s`,
+    "--presence-tail-speed": `${3.4 / speedScale}s`,
+    "--presence-speaking-tail": `${2 / speedScale}s`,
+    "--presence-particle-speed": `${3.6 / speedScale}s`,
   };
 
   return (
