@@ -1,0 +1,435 @@
+.shell {
+  width: min(calc(100% - 3rem), var(--content));
+  min-height: calc(100svh - 5.5rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 5.5rem) 0 10rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.restingScene,
+.resultScene {
+  width: min(100%, 48rem);
+  margin: auto 0;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 1.15rem;
+}
+.restingScene h1,
+.resultScene h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  letter-spacing: -0.065em;
+  line-height: 0.98;
+}
+.restingScene > p:not(.greeting),
+.resultScene > p:not(.eyebrow):not(.errorEyebrow) {
+  margin: 0;
+  max-width: 39rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+.greeting {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+}
+
+.attentionScene {
+  width: min(100%, 68rem);
+  min-height: 35rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(3rem, 6vw, 5rem);
+}
+.centerPerson {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+}
+.centerPerson > p {
+  margin: 0;
+  font-weight: 650;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 4.3rem;
+  height: 4.3rem;
+  margin-top: -0.7rem;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  border: 1px solid var(--line-strong);
+  font-weight: 680;
+  box-shadow: 0 0 0 0.35rem var(--canvas);
+}
+.signalLine {
+  position: absolute;
+  z-index: 0;
+  left: 9rem;
+  right: 9rem;
+  top: 50%;
+  height: 10rem;
+  border-top: 1px solid var(--line-strong);
+  border-radius: 50%;
+  transform: rotate(-5deg);
+  opacity: 0.62;
+}
+.focalSignal {
+  position: relative;
+  z-index: 1;
+  max-width: 51rem;
+}
+.signalDot {
+  display: block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-bottom: 1rem;
+  box-shadow: 0 0 0 0.5rem var(--canvas);
+}
+.signalLabel,
+.eyebrow,
+.errorEyebrow {
+  margin: 0 0 0.8rem;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 720;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.errorEyebrow {
+  color: var(--danger);
+}
+.focalSignal h1,
+.conversationScene h1,
+.actionScene h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 5.35vw, 4.75rem);
+  letter-spacing: -0.065em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.factPair {
+  margin: 2rem 0 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 2rem;
+  color: var(--muted);
+}
+.factPair span + span::before {
+  content: "·";
+  margin-right: 2rem;
+  color: var(--line-strong);
+}
+.reason {
+  max-width: 37rem;
+  margin: 1.1rem 0 1.75rem;
+  font-size: 1.12rem;
+  color: var(--muted);
+}
+.otherThings {
+  margin: 1.25rem 0 0;
+  color: var(--quiet);
+  font-size: 0.92rem;
+}
+
+.conversationScene,
+.actionScene {
+  width: min(100%, 50rem);
+  margin: auto 0;
+}
+.conversationScene h1,
+.actionScene h1 {
+  max-width: 13ch;
+}
+.conversationAnswer {
+  margin-top: 3rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+.conversationAnswer > p {
+  margin: 0 0 2rem;
+  max-width: 40rem;
+  color: var(--muted);
+  font-size: 1.15rem;
+}
+.conversationAnswer .largeAnswer {
+  color: var(--ink);
+  font-size: clamp(1.55rem, 3vw, 2.3rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.promptActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.evidenceList,
+.optionsList {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+.evidenceList article {
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+}
+.evidenceList article p {
+  margin: 0.2rem 0;
+}
+.evidenceSource,
+.freshness {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.freshness {
+  text-align: right;
+}
+.evidenceList > button {
+  margin-top: 1.5rem;
+}
+.answerLead {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  font-weight: 670;
+  letter-spacing: -0.04em;
+}
+.optionRow {
+  min-height: 5.4rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+.optionRow > span {
+  color: var(--accent);
+  font-weight: 680;
+}
+.optionRow p {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.3vw, 1.35rem);
+}
+.trustLine {
+  margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.actionSummary {
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+.actionDetails {
+  margin: 2.4rem 0 0;
+  border-top: 1px solid var(--line);
+}
+.actionDetails > div {
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.5rem;
+}
+.actionDetails dt {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.actionDetails dd {
+  margin: 0;
+}
+.actionEvidence {
+  margin: 1.4rem 0;
+  padding: 0.95rem 0;
+}
+.actionEvidence summary {
+  cursor: pointer;
+  font-weight: 630;
+}
+.actionEvidence p {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.actionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.actionButtons a {
+  text-decoration: none;
+}
+
+.inputDock {
+  width: min(100%, 44rem);
+  margin-top: auto;
+  padding-top: 3.5rem;
+  position: static;
+  z-index: 10;
+}
+.orbitInput {
+  min-height: 4.25rem;
+  padding: 0.45rem 0.5rem 0.45rem 1.5rem;
+  background: rgb(255 253 249 / 92%);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 8px 35px rgb(50 42 30 / 7%);
+}
+.orbitInput:focus-within {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 3px rgb(36 95 218 / 16%);
+}
+.orbitInput input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.05rem;
+}
+.orbitInput input::placeholder {
+  color: var(--muted);
+}
+.listenButton,
+.sendButton {
+  min-width: 3rem;
+  min-height: 3rem;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+.listenButton {
+  background: transparent;
+  color: var(--muted);
+}
+.sendButton {
+  background: var(--accent);
+  color: white;
+}
+.sendButton:disabled {
+  background: var(--line);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.quietControls {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.inputDock:focus-within .quietControls,
+.inputDock:hover .quietControls {
+  opacity: 1;
+}
+
+@media (max-width: 48rem) {
+  .shell {
+    width: min(calc(100% - 2rem), var(--content));
+    min-height: calc(100svh - 4.5rem);
+    padding-top: 2.5rem;
+  }
+  .attentionScene {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+    text-align: center;
+  }
+  .centerPerson {
+    order: 0;
+  }
+  .focalSignal {
+    order: 1;
+  }
+  .signalLine {
+    left: 50%;
+    right: auto;
+    top: 7rem;
+    width: 1px;
+    height: 6rem;
+    border: 0;
+    border-left: 1px solid var(--line-strong);
+    transform: none;
+  }
+  .signalDot {
+    margin-inline: auto;
+  }
+  .factPair {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .factPair span + span::before {
+    content: none;
+  }
+  .reason {
+    margin-inline: auto;
+  }
+  .evidenceList article {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+  .freshness {
+    text-align: left;
+  }
+  .optionRow {
+    grid-template-columns: 1.5rem 1fr;
+  }
+  .optionRow button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .actionDetails > div {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+  .inputDock {
+    padding-top: 2.5rem;
+  }
+}
+
+@media (max-width: 31rem) {
+  .shell {
+    padding-top: 1.5rem;
+    padding-bottom: 8rem;
+  }
+  .focalSignal h1,
+  .conversationScene h1,
+  .actionScene h1,
+  .restingScene h1,
+  .resultScene h1 {
+    font-size: clamp(2.15rem, 10.5vw, 2.8rem);
+    line-height: 1.01;
+  }
+  .factPair {
+    font-size: 0.9rem;
+  }
+  .orbitInput {
+    padding-left: 1rem;
+  }
+  .listenButton {
+    display: none;
+  }
+  .quietControls {
+    opacity: 1;
+  }
+}

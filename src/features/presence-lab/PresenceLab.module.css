@@ -1,0 +1,232 @@
+.lab {
+  width: min(calc(100% - 3rem), 88rem);
+  margin: 2.5rem auto 8rem;
+}
+.labHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 3rem;
+}
+.labHeader h1 {
+  margin: 0.25rem 0 0.7rem;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: -0.07em;
+}
+.labHeader p:last-child {
+  margin: 0;
+  max-width: 44rem;
+  color: var(--muted);
+}
+.modeButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.6rem;
+}
+.controls {
+  margin-top: 3.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgb(255 253 249 / 65%);
+}
+.controls fieldset {
+  margin: 0 0 1.2rem;
+  padding: 0;
+  border: 0;
+}
+.controls legend {
+  margin-bottom: 0.55rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.segmented button {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--surface);
+}
+.controlGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(10rem, 1fr));
+  gap: 1.2rem;
+  align-items: end;
+}
+.controlGrid label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.controlGrid input[type="range"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--accent);
+}
+.controlGrid select {
+  grid-column: 1 / -1;
+  min-height: 2.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.45rem 0.65rem;
+}
+.controlGrid .switchLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.6rem;
+}
+.switchLabel input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+.liveState {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+.contextGrid,
+.comparisonGrid {
+  margin-top: 1rem;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.contextGrid[data-theme="dark"],
+.comparisonGrid[data-theme="dark"] {
+  --ink: #f6f1e8;
+  --muted: #aaa59c;
+  --line: #403e39;
+  --surface: #1a1a18;
+  --canvas: #1a1a18;
+  --success: #78c9a3;
+  --danger: #ec8f82;
+  color: var(--ink);
+  background: var(--surface);
+}
+.contextGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 1.1fr;
+  gap: 1rem;
+}
+.contextGrid article {
+  min-height: 23rem;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.contextGrid article > span {
+  align-self: flex-start;
+  margin-bottom: auto;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.contextGrid h2 {
+  margin: 1.2rem 0 0.35rem;
+  max-width: 15ch;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+.contextGrid p {
+  margin: 0 0 auto;
+  color: var(--muted);
+}
+.contextGrid button {
+  margin-top: 1.5rem;
+}
+.comparisonGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(9rem, 1fr));
+  gap: 0.75rem;
+}
+.comparisonGrid article {
+  min-height: 18rem;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+}
+.comparisonGrid article:last-child {
+  border-right: 0;
+}
+.comparisonGrid h2 {
+  margin: 1.2rem 0 0;
+  font-size: 1rem;
+}
+.comparisonGrid p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 62rem) {
+  .labHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+  .modeButtons {
+    justify-content: start;
+  }
+  .controlGrid {
+    grid-template-columns: repeat(2, minmax(10rem, 1fr));
+  }
+  .contextGrid {
+    grid-template-columns: 1fr;
+  }
+  .contextGrid article {
+    min-height: 18rem;
+  }
+  .comparisonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .comparisonGrid article {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 38rem) {
+  .lab {
+    width: min(calc(100% - 2rem), 88rem);
+    margin-top: 1.5rem;
+  }
+  .controlGrid {
+    grid-template-columns: 1fr;
+  }
+  .comparisonGrid {
+    grid-template-columns: 1fr;
+  }
+  .comparisonGrid article {
+    min-height: 13rem;
+  }
+}
