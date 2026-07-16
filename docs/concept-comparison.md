@@ -16,11 +16,11 @@ Scores use a five-point discovery rubric, where five is strongest.
 | Daily briefing fit | 5 | 3 | 2 |
 | Evidence discoverability | 5 | 4 | 4 |
 | Approval comprehension | 3 | 3 | 5 |
-| Calmness and cognitive load | 5 | 3 | 4 |
+| Calmness and cognitive load | 5 | 4 | 5 |
 | Structural scalability | 4 | 3 | 4 |
-| Responsive potential | 5 | 2 | 3 |
+| Responsive potential | 5 | 3 | 4 |
 | Distinctive Orbit identity | 4 | 5 | 4 |
-| **Total** | **36** | **26** | **30** |
+| **Total** | **36** | **28** | **32** |
 
 ## Daily Orbit
 
@@ -71,15 +71,15 @@ Does the map help users discover a relationship faster than a grouped list, and 
 
 ### Strengths
 
-- Makes the action ladder and current state explicit.
-- Clearly separates completed work, pending approval, future execution, verification, and undo.
+- Makes the action lifecycle and current decision explicit without showing every internal state.
+- Groups the flow into four understandable moments: noticed, drafted, approve, and verify.
 - Provides excellent space for exact effects, recipients, evidence, and risk explanation.
 - Supports trust repair and partial-failure states.
 
 ### Risks
 
-- Too process-heavy for a default daily home screen.
-- A persistent lifecycle rail consumes significant mobile space.
+- Still too process-specific for a default daily home screen.
+- The compact progress cue needs validation on narrow mobile screens.
 - May make low-risk interactions feel bureaucratic if applied universally.
 
 ### Validation focus
@@ -92,13 +92,14 @@ Daily Orbit should own the home and briefing hierarchy. A later implementation m
 
 ## Concept review
 
-- Exactly three independent PNG concepts exist.
+- Exactly three final PNG concepts exist; each was independently revised after visual review.
 - Each uses fictional data anchored to July 16, 2026.
 - Each has a distinct information architecture and interaction model.
 - No existing UI was available, so an audit was intentionally skipped.
 - All concepts preserve read-only or pre-approval state and avoid claiming unverified execution.
 - Visible scenario details are illustrative; implementation fixtures must use one internally consistent fictional itinerary.
 - Generated images are design targets, not accessible or production-ready interfaces. Typography, contrast, semantics, and responsive behavior require implementation-time validation.
+- The final revision removed secondary navigation and evidence density from Daily Orbit, reduced Orbit Map to one active relationship, and compressed Orbit Guide to one decision plus four grouped states.
 
 ## Hard stop
 

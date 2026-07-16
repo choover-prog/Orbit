@@ -1,18 +1,18 @@
 # Orbit Frontend Concepts
 
-These three project-bound PNGs were generated independently with the built-in image generation workflow on July 16, 2026. They use fictional data and are visual exploration artifacts, not production UI.
+These three project-bound PNGs were generated independently and then revised with the built-in image generation workflow on July 16, 2026. They use fictional data and are visual exploration artifacts, not production UI.
 
 ## Daily Orbit prompt
 
-Create a polished 1440 × 1024 desktop consumer-product UI centered on Maya Chen's Thursday, July 16 briefing. Use an editorial hierarchy: one dominant travel conflict, two quieter supporting rows, visible read-only status, source facts, Orbit reasoning, freshness, a subtle voice entry, and one “Review alternate times” action. Keep the surface calm and warm; avoid generic chat, card grids, nested cards, dashboards, and science-fiction imagery.
+Create a polished desktop consumer-product UI centered on Maya Chen's Thursday, July 16 briefing. Use a spacious editorial hierarchy: one dominant travel conflict, two quiet one-line supporting items, a compact expandable “Why this matters · 2 sources” row, visible read-only status, a small voice control, and one “Review alternate times” action. Remove sidebar navigation, ranking badges, the full-width chat bar, and dense evidence panels.
 
 ## Orbit Map prompt
 
-Create a polished 1440 × 1024 desktop context-centered workspace for Maya Chen. Place Maya at the center of five legible domain regions and highlight the cross-domain connection between fictional flight OA 218 at 3:10 PM and Project Review at 2:30 PM. Open a focused explanation workspace with facts, reasoning, freshness, read-only status, voice entry, and one “Review alternate times” action. Make the map functional and sparse; avoid tangled networks, planets, neon, and decorative rings.
+Create a polished desktop context-centered workspace for Maya Chen. Use an abstract center marker, only Calendar, Travel, and Family, one highlighted relationship between fictional flight OA 218 at 3:10 PM and Project Review at 2:30 PM, and one compact explanation surface. Keep read-only status, a small voice control, an expandable “Why this matters · 2 sources” row, and one “Review alternate times” action. Remove the portrait, extra domains, multiple paths, metrics, and decorative rings.
 
 ## Orbit Guide prompt
 
-Create a polished 1440 × 1024 desktop lifecycle workspace for the fictional Travel conflict. Show Observation and Recommendation complete, Draft ready, and Approval, Execution, Verification, and Undo as future states. Preview moving Project Review from 2:30 PM to 4:30 PM, notifying three attendees, and a fictional message. State that nothing has changed, explain why approval is required, and use “Review and approve” as the primary action. Avoid chat, feeds, maps, decorative steppers, and false success states.
+Create a polished desktop lifecycle workspace for the fictional Travel conflict. Use one compact four-state line—Noticed, Drafted, Approve, Verify—and one focused proposed change: move Project Review from 2:30 PM to 4:30 PM and notify three attendees. Collapse the message and evidence into lightweight rows, state “Nothing has changed yet,” use “Review and approve” as the sole primary action, and note that undo is checked after verification. Remove the sidebar, seven-stage rail, history column, long message, and dense explanation blocks.
 
 ## Files
 
@@ -20,4 +20,4 @@ Create a polished 1440 × 1024 desktop lifecycle workspace for the fictional Tra
 - `orbit-map.png`
 - `orbit-guide.png`
 
-Each generated file is 1487 × 1058 pixels, matching the intended desktop aspect ratio without stretching.
+The generated files are approximately 1486 × 1059 pixels, matching the intended desktop aspect ratio without stretching.
