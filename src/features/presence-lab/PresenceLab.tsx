@@ -15,17 +15,35 @@ import styles from "./PresenceLab.module.css";
 
 const label = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
+const variantLabel: Record<OrbitPresenceVariant, string> = {
+  mark: "Orbit Mark",
+  pulse: "Orbit Pulse",
+  trail: "Orbit Trail",
+  constellation: "Orbit Constellation",
+  hybrid: "Hybrid Presence",
+  ribbon: "Orbit Ribbon",
+  mercury: "Mercury Loop",
+  elastic: "Elastic Halo",
+  morph: "Morph Core",
+};
+
 const variantPersonality: Record<OrbitPresenceVariant, string> = {
-  mark: "Graphic and composed — the original Orbit signature, gently awake.",
-  pulse: "Warm and receptive — a soft presence that breathes with you.",
+  mark: "Graphic and composed - the original Orbit signature, gently awake.",
+  pulse: "Warm and receptive - a soft presence that breathes with you.",
   trail:
-    "Conversational and expressive — a thought carried along a living path.",
+    "Conversational and expressive - a thought carried along a living path.",
   constellation:
-    "Relational and thoughtful — a few signals gathering with purpose.",
+    "Relational and thoughtful - a few signals gathering with purpose.",
   hybrid:
-    "Calm, warm, and articulate — breath, orbit, and voice in one identity.",
+    "Calm, warm, and articulate - breath, orbit, and voice in one identity.",
   ribbon:
-    "Fluid and intuitive — a living gesture that unfolds without becoming a ring.",
+    "Fluid and intuitive - a living gesture that unfolds without becoming a ring.",
+  mercury:
+    "Polished and tactile - a liquid-metal loop that carries attention through color.",
+  elastic:
+    "Playful and premium - an elastic halo that stretches with voice energy.",
+  morph:
+    "Most expressive - a flubber-like liquid core that bends toward relevant notifications.",
 };
 
 const stateMeaning: Record<OrbitPresenceState, string> = {
@@ -97,7 +115,7 @@ export function PresenceLab() {
         aria-labelledby="live-presence-title"
       >
         <div className={styles.heroCopy}>
-          <p>{label(variant)} presence</p>
+          <p>{variantLabel[variant]} presence</p>
           <h2 id="live-presence-title">{label(state)}</h2>
           <p>{variantPersonality[variant]}</p>
         </div>
@@ -121,7 +139,7 @@ export function PresenceLab() {
             onClick={replaySequence}
             disabled={sequenceRunning}
           >
-            {sequenceRunning ? "Playing…" : "Replay sequence"}
+            {sequenceRunning ? "Playing..." : "Replay sequence"}
           </button>
         </div>
 
@@ -153,7 +171,7 @@ export function PresenceLab() {
                   aria-pressed={variant === value}
                   onClick={() => setVariant(value)}
                 >
-                  {label(value)}
+                  {variantLabel[value]}
                 </button>
               ))}
             </div>
@@ -187,7 +205,7 @@ export function PresenceLab() {
               />
             </label>
             <label>
-              Speed <output>{speed.toFixed(1)}×</output>
+              Speed <output>{speed.toFixed(1)}x</output>
               <input
                 type="range"
                 min="0.5"
@@ -275,7 +293,7 @@ export function PresenceLab() {
                   size="large"
                   {...motionProps}
                 />
-                <h3>{label(value)}</h3>
+                <h3>{variantLabel[value]}</h3>
                 <p>{variantPersonality[value]}</p>
               </article>
             ))}

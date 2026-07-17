@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { axe } from "jest-axe";
+import { presenceVariants } from "@/components/orbit-presence";
 import { PresenceLab } from "./PresenceLab";
 
 describe("PresenceLab", () => {
@@ -25,10 +26,12 @@ describe("PresenceLab", () => {
     const comparison = screen.getByRole("region", {
       name: "Compare personality",
     });
-    expect(comparison.querySelectorAll("article")).toHaveLength(6);
+    expect(comparison.querySelectorAll("article")).toHaveLength(
+      presenceVariants.length,
+    );
     expect(
       screen.getAllByRole("status", { name: "Orbit is speaking" }),
-    ).toHaveLength(7);
+    ).toHaveLength(presenceVariants.length + 1);
   });
 
   it("keeps the studio controls accessible", async () => {

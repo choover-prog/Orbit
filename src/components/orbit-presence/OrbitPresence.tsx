@@ -6,8 +6,11 @@ import type { OrbitPresenceProps } from "./OrbitPresence.types";
 import { presenceLabels } from "./OrbitPresence.types";
 import { useReducedMotion } from "./motion/useReducedMotion";
 import { OrbitConstellation } from "./variants/OrbitConstellation";
+import { OrbitElastic } from "./variants/OrbitElastic";
 import { OrbitHybrid } from "./variants/OrbitHybrid";
 import { OrbitMark } from "./variants/OrbitMark";
+import { OrbitMercury } from "./variants/OrbitMercury";
+import { OrbitMorph } from "./variants/OrbitMorph";
 import { OrbitPulse } from "./variants/OrbitPulse";
 import { OrbitRibbon } from "./variants/OrbitRibbon";
 import { OrbitTrail } from "./variants/OrbitTrail";
@@ -19,6 +22,9 @@ const variants = {
   constellation: OrbitConstellation,
   hybrid: OrbitHybrid,
   ribbon: OrbitRibbon,
+  mercury: OrbitMercury,
+  elastic: OrbitElastic,
+  morph: OrbitMorph,
 };
 
 interface PresenceStyle extends CSSProperties {

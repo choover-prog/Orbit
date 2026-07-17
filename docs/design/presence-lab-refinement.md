@@ -12,7 +12,15 @@ Variant, state, intensity, speed, simulated audio, size, theme, animation, and r
 
 ## Comparison mode
 
-All six variants appear at the same large scale and in the same selected state. Desktop uses one equal row; narrower screens move to two columns and then one. Each preview includes a short personality description rather than only a loader-like label.
+All nine variants appear at the same large scale and in the same selected state. The grid auto-fits available width instead of forcing every variant into one cramped row. Each preview includes a short personality description rather than only a loader-like label.
+
+## Liquid concept import
+
+The liked concept directions have been moved into the live lab as:
+
+- `Mercury Loop`, based on the open liquid-metal ring concept.
+- `Elastic Halo`, based on the translucent ribbon halo concept.
+- `Morph Core`, based on the liquid flubber concept with a center pulse and content notification bead.
 
 ## Context mode
 

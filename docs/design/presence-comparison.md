@@ -2,18 +2,18 @@
 
 Scores are provisional design-lab expectations on a five-point scale. Live review should update them before a production default is selected.
 
-| Criterion             | Mark | Pulse | Trail | Constellation | Hybrid | Ribbon |
-| --------------------- | ---: | ----: | ----: | ------------: | -----: | -----: |
-| Warmth                |    3 |     5 |     4 |             4 |      5 |      4 |
-| Recognizability       |    5 |     3 |     5 |             3 |      5 |      4 |
-| Low distraction       |    5 |     4 |     4 |             3 |      4 |      4 |
-| Speaking clarity      |    2 |     4 |     5 |             4 |      5 |      5 |
-| Listening clarity     |    2 |     5 |     3 |             4 |      5 |      4 |
-| Scalability           |    5 |     5 |     4 |             3 |      4 |      4 |
-| Accessibility         |    5 |     4 |     4 |             3 |      4 |      4 |
-| Performance           |    5 |     5 |     5 |             4 |      5 |      5 |
-| Brand distinctiveness |    5 |     3 |     5 |             4 |      5 |      5 |
-| Minimalist fit        |    5 |     5 |     4 |             3 |      5 |      5 |
+| Criterion             | Mark | Pulse | Trail | Constellation | Hybrid | Ribbon | Mercury | Elastic | Morph |
+| --------------------- | ---: | ----: | ----: | ------------: | -----: | -----: | ------: | ------: | ----: |
+| Warmth                |    3 |     5 |     4 |             4 |      5 |      4 |       4 |       4 |     4 |
+| Recognizability       |    5 |     3 |     5 |             3 |      5 |      4 |       5 |       4 |     5 |
+| Low distraction       |    5 |     4 |     4 |             3 |      4 |      4 |       3 |       3 |     3 |
+| Speaking clarity      |    2 |     4 |     5 |             4 |      5 |      5 |       5 |       5 |     5 |
+| Listening clarity     |    2 |     5 |     3 |             4 |      5 |      4 |       5 |       4 |     5 |
+| Scalability           |    5 |     5 |     4 |             3 |      4 |      4 |       3 |       3 |     3 |
+| Accessibility         |    5 |     4 |     4 |             3 |      4 |      4 |       4 |       4 |     4 |
+| Performance           |    5 |     5 |     5 |             4 |      5 |      5 |       4 |       4 |     4 |
+| Brand distinctiveness |    5 |     3 |     5 |             4 |      5 |      5 |       5 |       5 |     5 |
+| Minimalist fit        |    5 |     5 |     4 |             3 |      5 |      5 |       4 |       3 |     4 |
 
 ## Strengths and weaknesses
 
@@ -23,10 +23,13 @@ Scores are provisional design-lab expectations on a five-point scale. Live revie
 - **Constellation:** communicates relationships; carries the highest distraction and small-size risks.
 - **Hybrid:** combines the clearest listening and speaking signals; must avoid excess motion.
 - **Ribbon:** most clearly avoids assistant-orb conventions and speaks expressively; needs live comprehension testing because it is less obviously connected to the Orbit mark.
+- **Mercury:** closest to the liked liquid-ring concepts; tactile and premium, but must stay open enough to avoid reading as an eye or generic assistant orb.
+- **Elastic:** strongest playful material quality; risks feeling less calm if magenta/lime treatment is overused.
+- **Morph:** best candidate for a memorable voice-first identity; highest implementation complexity and needs careful motion restraint.
 
 ## Provisional recommendation
 
-Hybrid is the provisional shell default for the experiment because it communicates both listening and speaking while retaining one satellite. This is not a permanent product selection. Mark remains the strongest fallback for small, static, or high-reduction contexts.
+Hybrid remains the conservative shell default for the experiment because it communicates both listening and speaking while retaining one satellite. Morph is the strongest high-impact candidate if Orbit chooses a more tactile, animated voice identity. This is not a permanent product selection. Mark remains the strongest fallback for small, static, or high-reduction contexts.
 
 ## Recommendation criteria
 

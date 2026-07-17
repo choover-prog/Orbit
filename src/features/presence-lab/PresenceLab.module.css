@@ -253,13 +253,14 @@
 .comparisonGrid {
   padding: clamp(1rem, 2.5vw, 2rem);
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--line);
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  gap: 0;
+  background: var(--surface);
 }
 .comparisonGrid article {
   min-height: 25rem;
   padding: 1.5rem 1rem;
+  border: 1px solid var(--line);
   background: var(--surface);
   display: grid;
   place-items: center;

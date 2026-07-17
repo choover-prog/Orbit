@@ -1,15 +1,14 @@
-# Orbit Presence Visual-Style Revision Design QA
+# Orbit Presence Liquid Concept Design QA
 
 ## Review scope
 
-- Source visual: `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-f815166d-d52f-4daa-8dc0-76f51d190f5e.png`
-- Before capture: `design/audit/style-revision-before/presence-lab.png`
-- Final captures: `design/review/style-revision/04-ribbon-hero.png`, `07-six-way-listening.png`, `08-six-way-thinking.png`, and `10-final-six-way-speaking.png`
-- Desktop review viewport: 1281 by 720 CSS pixels
-- Compact diagnostic viewport: 391 by 844 CSS pixels; measured document width remained within the viewport with no horizontal overflow
-- States reviewed: idle, listening, thinking, speaking, comparison, motion off, and reduced motion
+- Source visuals: `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-87c61675-a81b-42bd-a7d6-05614fe75477.png`, `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-fed04337-6679-44ba-b338-92d17694ff3a.png`, `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-68b6934a-437e-4906-9469-cef23203e482.png`, and `design/concepts/presence/notification-morph.png`.
+- Implementation screenshots: `design/review/presence-liquid/01-comparison-speaking.png`, `design/review/presence-liquid/02-morph-attention.png`, and `design/review/presence-liquid/03-morph-mobile.png`.
+- Route: `http://127.0.0.1:3000/design-lab/presence`.
+- Viewports: 1440 by 1000 desktop, 390 by 844 mobile.
+- States reviewed: speaking comparison, Morph Core attention, Morph Core mobile, local variant switching, and persisted variant selection.
 
-The supplied source and the final six-way implementation capture were opened together at readable resolution. The source itself uses several concentric dark-center forms; this revision intentionally departs from that detail to honor the user's request that Orbit not resemble an eye. Orbit Presence remains code-native because the product specification explicitly requires semantic inline SVG primitives and live CSS motion rather than a static raster asset.
+The Product Design browser binding was unavailable in this session, so rendered evidence was captured with the repository's local Playwright dependency. The route was verified over HTTP 200, and the dev server was rebound to `127.0.0.1` after the first launch only hydrated reliably on `localhost`.
 
 ## Comparison history
 
@@ -17,40 +16,35 @@ The supplied source and the final six-way implementation capture were opened tog
 
 | Severity | Finding | Resolution |
 | --- | --- | --- |
-| P1 | Several existing variants used concentric rings and dominant center dots that could read as an iris and pupil. | Removed dominant central cores, opened circular geometry, shifted focal points off-center, and introduced asymmetry across Pulse, Trail, Constellation, and Hybrid. |
-| P1 | Motion states lacked the source's visual confidence and were difficult to distinguish at a glance. | Added restrained luminous accents, clearer state-specific trails, glints, node relationships, and stronger speaking treatments without adding rainbow color or excessive glow. |
-| P2 | The comparison offered only the five specified orbital variants and no independent stylistic counterpoint. | Added Ribbon as a sixth exploratory variant within the same component and state API. |
-
-### Pass 2
-
-| Severity | Finding | Resolution |
-| --- | --- | --- |
-| P2 | The first Ribbon draft bent toward a closed loop and introduced another eye-like silhouette. | Rebuilt it as an open, calligraphic S-curve with separated endpoints and no enclosed center. |
-| P2 | Speaking emphasis on Trail and Hybrid appeared at the wrong end of the path. | Reversed the animated path direction and strengthened the highlight nearest the satellite. |
-| P2 | Six variants could wrap unevenly and weaken direct comparison. | Updated comparison mode to six equal desktop columns with clean responsive collapse. |
+| P1 | The liked liquid concept directions were not available as live Presence Lab variants. | Added `mercury`, `elastic`, and `morph` to the shared variant type, registry, selector, comparison mode, and shell preference path. |
+| P1 | The Morph direction did not yet express content-reactive notification behavior. | Added a notification bead and tether to Morph, with `noticing` and `attention` motion that bends the liquid form toward the relevant item. |
+| P2 | The comparison test used a hard-coded six-variant count. | Updated the test to derive expectations from `presenceVariants.length`. |
+| P2 | Nine variants left an unfinished-looking grey area in comparison mode. | Changed comparison cards to carry their own borders and use the surface background. |
+| P2 | The liquid concepts were visually undersized inside the existing SVG box. | Scaled liquid variant SVGs within their fixed layout box without changing surrounding dimensions. |
 
 ## Mandatory surface review
 
-- Typography: responsive system sans, confident but reduced focal scale, readable measures, no intentional clipped copy.
-- Spacing and layout: one centered relationship on `/`; large identity-first studio on the lab; no dashboard grid in the daily experience.
-- Color and states: warm neutral canvas, dark ink, restrained blue accent, and semantic copy for attention, completion, and error.
-- Identity and assets: six visibly distinct abstract Presence variants; no pupil geometry, literal planet, rainbow, generic waveform, or decorative node network.
-- Copy: fictional Maya scenario only; evidence, permission, verification, audit, and undo remain explicit.
-- Interaction: utility menu, progressive conversation, approval, undo, variant/state controls, comparison mode, sequence mode, and local persistence are functional.
-- Accessibility: semantic regions, keyboard controls, visible focus, live state labels, reduced-motion representations, and motion-off controls are covered by implementation and tests.
-- Responsive behavior: desktop and compact compositions preserve one focal concern; mobile controls stay reachable and grid children cannot force horizontal overflow.
-- Console: the live review found no application console errors before the final CSS-only containment pass.
+- Typography: existing Orbit typography and hierarchy are preserved; lab copy remains readable on desktop and mobile.
+- Spacing and layout: the primary app remains sparse; the lab comparison grid now handles nine variants without horizontal overflow.
+- Colors and tokens: Mercury uses copper/teal, Elastic uses magenta/lime, and Morph uses tangerine/teal while keeping the surrounding shell neutral.
+- Image and asset fidelity: the three liked concept directions are translated into live SVG/CSS primitives rather than static images, matching the lab's requirement for real motion testing.
+- Copy and content: Morph now clearly describes notification-reactive behavior; no private data or real provider content was introduced.
+- Interaction: variant toggles, state toggles, comparison mode, context mode, and mobile controls respond after hydration on `127.0.0.1`.
+- Accessibility: semantic status labels, keyboard-accessible controls, and reduced-motion support remain covered by tests.
+- Console: final Playwright capture reported no application console messages. React DevTools and HMR connected messages were excluded as development-only noise.
 
 ## Validation notes
 
-- Source and final implementation screenshots were compared together after the last visual revision.
-- Live listening, thinking, speaking, comparison, motion-off, and reduced-motion behavior were reviewed in the Presence Lab.
-- Automated coverage iterates every Presence variant through every shared state and includes reduced motion, semantic status, lab comparison, action verification, and undo.
-- Formatting, lint, type checking, all 15 unit/component tests, production build, dependency audit, console inspection, and final Git checks passed before handoff.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm test -- --reporter=verbose --pool=forks --maxWorkers=1` passed: 6 files, 15 tests.
+- `npm run build` passed.
+- `git diff --check` passed with only expected Windows CRLF warnings.
+- `http://127.0.0.1:3000/design-lab/presence` returned HTTP 200.
 
 ## Remaining findings
 
-No actionable P0, P1, or P2 implementation finding remains. Ribbon is intentionally exploratory, and a permanent Presence winner plus real assistive-technology sessions remain deferred.
+No actionable P0, P1, or P2 implementation findings remain. The liquid concepts are still experimental; Morph is the strongest high-impact direction, but a final production default should wait for live user review across voice states.
 
 ## Final result
 

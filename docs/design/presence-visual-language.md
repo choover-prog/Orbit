@@ -39,6 +39,18 @@ Combines Pulse warmth, Trail identity, a single satellite, listening breath, thi
 
 An independent direction outside the orbital-ring vocabulary. Two calligraphic paths move through a loose S-curve between a quiet origin and a bright destination. It feels gestural and conversational, cannot be mistaken for an eye, and is intentionally exploratory rather than a new default.
 
+### Mercury
+
+A polished open loop inspired by liquid metal. It keeps Orbit's center open, uses warm copper and deep green highlights sparingly, and works best as a large hero-scale voice presence.
+
+### Elastic
+
+A translucent, elastic halo inspired by the liked ribbon concept. Fine mesh strokes and a lime accent create the sense of voice-responsive tension without becoming a waveform.
+
+### Morph
+
+A flubber-like liquid core with a soft filled pulse and a small notification bead. It is the most content-reactive direction: in noticing and attention states the shape subtly stretches toward the bead, implying that Orbit has found one thing worth the user's awareness.
+
 ## Scale and proximity
 
 - Small: compact navigation or secondary status use.
