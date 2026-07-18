@@ -3,7 +3,7 @@
 ## Review scope
 
 - Source visuals: `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-87c61675-a81b-42bd-a7d6-05614fe75477.png`, `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-fed04337-6679-44ba-b338-92d17694ff3a.png`, `C:/Users/COREY~1.HOO/AppData/Local/Temp/codex-clipboard-68b6934a-437e-4906-9469-cef23203e482.png`, and `design/concepts/presence/notification-morph.png`.
-- Implementation screenshots: `design/review/presence-liquid/01-comparison-speaking.png`, `design/review/presence-liquid/02-morph-attention.png`, and `design/review/presence-liquid/03-morph-mobile.png`.
+- Implementation screenshots: `design/review/presence-liquid/01-comparison-speaking.png`, `design/review/presence-liquid/02-morph-attention.png`, `design/review/presence-liquid/03-morph-mobile.png`, `design/review/presence-liquid/13-morph-fidelity-hero.png`, and `design/review/presence-liquid/14-morph-source-vs-implementation.png`.
 - Route: `http://127.0.0.1:3000/design-lab/presence`.
 - Viewports: 1440 by 1000 desktop, 390 by 844 mobile.
 - States reviewed: speaking comparison, Morph Core attention, Morph Core mobile, local variant switching, and persisted variant selection.
@@ -21,6 +21,23 @@ The Product Design browser binding was unavailable in this session, so rendered 
 | P2 | The comparison test used a hard-coded six-variant count. | Updated the test to derive expectations from `presenceVariants.length`. |
 | P2 | Nine variants left an unfinished-looking grey area in comparison mode. | Changed comparison cards to carry their own borders and use the surface background. |
 | P2 | The liquid concepts were visually undersized inside the existing SVG box. | Scaled liquid variant SVGs within their fixed layout box without changing surrounding dimensions. |
+
+
+### Pass 2 - Morph fidelity upgrade
+
+| Severity | Finding | Resolution |
+| --- | --- | --- |
+| P1 | The live Morph Core looked too flat compared with the liquid-metal notification concept. | Rebuilt the Morph SVG with a larger open membrane silhouette, layered metallic gradients, darker reflection bands, stronger cyan/orange signal lines, and a subtle SVG turbulence/specular material filter. |
+| P1 | The Morph output did not clearly show the content notification it was reacting to. | Added a visual notification signal card in the Presence Lab hero for Morph and wired active states to pull the form toward the card. |
+| P2 | The center pulse risked reading as an eyeball. | Reduced pulse opacity, softened the center void, and kept the pulse irregular/subtle rather than a hard circular iris. |
+| P2 | Morph had less visual impact than the concept in the sparse white lab shell. | Increased Morph's lab scale while keeping the surrounding layout and other variants unchanged. |
+
+Evidence captured after the upgrade:
+
+- `design/review/presence-liquid/13-morph-fidelity-hero.png`
+- `design/review/presence-liquid/14-morph-source-vs-implementation.png`
+
+The live implementation is still a vector/CSS interpretation rather than a raster match. It now carries the core concept attributes needed for live review: metallic material, morphing membrane, internal signal color, center pulse, notification target, and content-reactive attention state.
 
 ## Mandatory surface review
 
@@ -44,7 +61,7 @@ The Product Design browser binding was unavailable in this session, so rendered 
 
 ## Remaining findings
 
-No actionable P0, P1, or P2 implementation findings remain. The liquid concepts are still experimental; Morph is the strongest high-impact direction, but a final production default should wait for live user review across voice states.
+No actionable P0, P1, or P2 implementation findings remain for this fidelity pass. Morph is now suitable for live comparison, but it remains experimental: the final production identity should still be selected after user review across listening, speaking, attention, reduced-motion, and mobile states.
 
 ## Final result
 

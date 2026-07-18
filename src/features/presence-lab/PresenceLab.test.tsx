@@ -34,6 +34,21 @@ describe("PresenceLab", () => {
     ).toHaveLength(presenceVariants.length + 1);
   });
 
+  it("shows the Morph Core notification context in active states", async () => {
+    const user = userEvent.setup();
+    render(<PresenceLab />);
+
+    await user.click(screen.getByRole("button", { name: "Morph Core" }));
+
+    const signal = screen.getByText("Project Review").closest("div");
+    expect(screen.getByText("Starts in 10 min")).toBeInTheDocument();
+    expect(signal).toHaveAttribute("data-active", "false");
+
+    await user.click(screen.getByRole("button", { name: "Attention" }));
+
+    expect(signal).toHaveAttribute("data-active", "true");
+  });
+
   it("keeps the studio controls accessible", async () => {
     const { container } = render(<PresenceLab />);
     expect((await axe(container)).violations).toHaveLength(0);

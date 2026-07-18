@@ -14,9 +14,11 @@
   overflow: visible;
 }
 .presence[data-variant="mercury"] svg,
-.presence[data-variant="elastic"] svg,
-.presence[data-variant="morph"] svg {
+.presence[data-variant="elastic"] svg {
   transform: scale(1.14);
+}
+.presence[data-variant="morph"] svg {
+  transform: scale(1.52);
 }
 
 .small {
@@ -159,10 +161,10 @@
   --liquid-edge: #fff8f7;
 }
 .presence[data-variant="morph"] {
-  --liquid-signal-a: #ff5b16;
-  --liquid-signal-b: #11c9d7;
-  --liquid-metal: color-mix(in srgb, #f7f5ee 70%, #111 30%);
-  --liquid-edge: #f9fbfb;
+  --liquid-signal-a: #ff5533;
+  --liquid-signal-b: #22d7ca;
+  --liquid-metal: color-mix(in srgb, #f9f3e9 66%, #111 34%);
+  --liquid-edge: #fff7eb;
 }
 
 .presence :global(.liquid-shape) {
@@ -177,11 +179,27 @@
 .presence :global(.liquid-bead) {
   stroke: color-mix(in srgb, var(--presence-ink) 36%, white);
   stroke-width: 0.7;
-  filter: drop-shadow(0 2px 6px rgb(28 25 20 / 0.12));
   vector-effect: non-scaling-stroke;
+}
+.presence:not([data-variant="morph"]) :global(.liquid-body),
+.presence :global(.liquid-bead) {
+  filter: drop-shadow(0 2px 6px rgb(28 25 20 / 0.12));
 }
 .presence :global(.liquid-body) {
   opacity: 0.94;
+}
+.presence[data-variant="morph"] :global(.liquid-body) {
+  stroke: rgb(37 31 25 / 0.42);
+  stroke-width: 0.55;
+}
+.presence :global(.liquid-morph-underbelly) {
+  opacity: 0.72;
+  pointer-events: none;
+}
+.presence :global(.liquid-center-void) {
+  fill: color-mix(in srgb, var(--surface, #fbfaf7) 64%, white);
+  opacity: 0.58;
+  pointer-events: none;
 }
 .presence :global(.liquid-shadow) {
   fill: rgb(30 28 24 / 0.12);
@@ -193,7 +211,10 @@
 .presence :global(.liquid-glint),
 .presence :global(.liquid-signal),
 .presence :global(.liquid-bead-signal),
-.presence :global(.liquid-tether) {
+.presence :global(.liquid-tether),
+.presence :global(.liquid-tendril-body),
+.presence :global(.liquid-reflection),
+.presence :global(.liquid-pulse-ring) {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -230,6 +251,38 @@
 .presence :global(.liquid-rim-bright) {
   stroke-width: 1.3;
   opacity: 0.82;
+}
+.presence :global(.liquid-tendril-body) {
+  stroke-width: 8.8;
+  opacity: 0.24;
+  filter: drop-shadow(0 4px 6px rgb(27 21 18 / 0.12));
+}
+.presence[data-state="noticing"] :global(.liquid-tendril-body) {
+  opacity: 0.52;
+}
+.presence[data-state="attention"] :global(.liquid-tendril-body) {
+  opacity: 0.82;
+}
+.presence[data-state="speaking"] :global(.liquid-tendril-body) {
+  opacity: 0.58;
+}
+.presence :global(.liquid-reflection) {
+  vector-effect: non-scaling-stroke;
+}
+.presence :global(.liquid-reflection-dark) {
+  stroke: rgb(24 22 20 / 0.48);
+  stroke-width: 3.9;
+  opacity: 0.6;
+}
+.presence :global(.liquid-reflection-light) {
+  stroke: rgb(255 255 255 / 0.68);
+  stroke-width: 2.2;
+  opacity: 0.7;
+}
+.presence :global(.liquid-reflection-foil) {
+  stroke: color-mix(in srgb, var(--liquid-signal-a, #ff6a2a) 34%, white);
+  stroke-width: 1.35;
+  opacity: 0.48;
 }
 .presence :global(.liquid-glint) {
   stroke: color-mix(in srgb, white 82%, var(--liquid-signal-a, #ff6a2a));
@@ -271,12 +324,42 @@
   fill: color-mix(in srgb, var(--liquid-signal-a, #ff6a2a) 16%, white);
   opacity: 0.26;
 }
+.presence[data-variant="morph"] :global(.liquid-signal) {
+  stroke-width: 3.25;
+  stroke-dasharray: 54 38;
+  opacity: 0.9;
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--liquid-signal-a) 44%, transparent)
+  );
+}
+.presence[data-variant="morph"] :global(.liquid-pulse) {
+  opacity: 0.26;
+}
+.presence[data-variant="morph"] :global(.liquid-pulse-inner) {
+  opacity: 0.34;
+}
+.presence :global(.liquid-pulse-ring) {
+  stroke: color-mix(in srgb, var(--liquid-signal-b, #19c9c2) 40%, white);
+  stroke-width: 0.72;
+  opacity: 0.26;
+}
+.presence :global(.liquid-pulse-ring-two) {
+  stroke: color-mix(in srgb, var(--liquid-signal-a, #ff6a2a) 38%, white);
+  opacity: 0.22;
+}
 .presence :global(.liquid-pulse-field) {
   transform-box: fill-box;
   transform-origin: center;
 }
 .presence :global(.liquid-bead) {
   fill: color-mix(in srgb, var(--liquid-metal, #d8d3ca) 58%, white);
+}
+.presence :global(.liquid-bead-core) {
+  fill: var(--liquid-signal-a, #ff6a2a);
+  opacity: 0.92;
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--liquid-signal-a, #ff6a2a) 52%, transparent)
+  );
 }
 .presence :global(.liquid-notification),
 .presence :global(.liquid-bead) {
@@ -332,7 +415,9 @@
   :global(.liquid-pulse-inner) {
   animation: liquid-notice 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
-.presence[data-motion="on"][data-state="noticing"] :global(.liquid-tether) {
+.presence[data-motion="on"][data-state="noticing"] :global(.liquid-tether),
+.presence[data-motion="on"][data-state="noticing"]
+  :global(.liquid-tendril-body) {
   animation: liquid-tether-arrive 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .presence[data-state="noticing"] :global(.presence-path) {
@@ -369,11 +454,20 @@
 .presence[data-motion="on"][data-state="listening"] :global(.liquid-body),
 .presence[data-motion="on"][data-state="listening"] :global(.liquid-bead),
 .presence[data-motion="on"][data-state="listening"] :global(.liquid-stream),
-.presence[data-motion="on"][data-state="listening"] :global(.liquid-skin) {
+.presence[data-motion="on"][data-state="listening"] :global(.liquid-skin),
+.presence[data-motion="on"][data-state="listening"]
+  :global(.liquid-morph-underbelly),
+.presence[data-motion="on"][data-state="listening"]
+  :global(.liquid-center-void),
+.presence[data-motion="on"][data-state="listening"] :global(.liquid-reflection),
+.presence[data-motion="on"][data-state="listening"]
+  :global(.liquid-tendril-body) {
   animation: liquid-listen var(--presence-breathe)
     cubic-bezier(0.37, 0, 0.63, 1) infinite;
 }
-.presence[data-motion="on"][data-state="listening"] :global(.liquid-pulse) {
+.presence[data-motion="on"][data-state="listening"] :global(.liquid-pulse),
+.presence[data-motion="on"][data-state="listening"]
+  :global(.liquid-pulse-ring) {
   animation: liquid-pulse var(--presence-breathe) cubic-bezier(0.37, 0, 0.63, 1)
     infinite;
 }
@@ -479,7 +573,13 @@
 .presence[data-motion="on"][data-state="speaking"] :global(.liquid-body),
 .presence[data-motion="on"][data-state="speaking"] :global(.liquid-bead),
 .presence[data-motion="on"][data-state="speaking"] :global(.liquid-stream),
-.presence[data-motion="on"][data-state="speaking"] :global(.liquid-skin) {
+.presence[data-motion="on"][data-state="speaking"] :global(.liquid-skin),
+.presence[data-motion="on"][data-state="speaking"]
+  :global(.liquid-morph-underbelly),
+.presence[data-motion="on"][data-state="speaking"] :global(.liquid-center-void),
+.presence[data-motion="on"][data-state="speaking"] :global(.liquid-reflection),
+.presence[data-motion="on"][data-state="speaking"]
+  :global(.liquid-tendril-body) {
   animation: liquid-speak var(--presence-speaking-tail)
     cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
@@ -489,7 +589,8 @@
   animation: liquid-signal-flow var(--presence-speaking-tail)
     cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
-.presence[data-motion="on"][data-state="speaking"] :global(.liquid-pulse) {
+.presence[data-motion="on"][data-state="speaking"] :global(.liquid-pulse),
+.presence[data-motion="on"][data-state="speaking"] :global(.liquid-pulse-ring) {
   animation: liquid-pulse var(--presence-breathe) cubic-bezier(0.37, 0, 0.63, 1)
     infinite;
 }
@@ -501,13 +602,21 @@
   animation: presence-attend 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .presence[data-motion="on"][data-state="attention"] :global(.liquid-pulse),
+.presence[data-motion="on"][data-state="attention"] :global(.liquid-pulse-ring),
 .presence[data-motion="on"][data-state="attention"] :global(.liquid-signal),
 .presence[data-motion="on"][data-state="attention"] :global(.liquid-tether) {
   animation: liquid-attend 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .presence[data-motion="on"][data-state="attention"] :global(.liquid-body),
 .presence[data-motion="on"][data-state="attention"] :global(.liquid-stream),
-.presence[data-motion="on"][data-state="attention"] :global(.liquid-skin) {
+.presence[data-motion="on"][data-state="attention"] :global(.liquid-skin),
+.presence[data-motion="on"][data-state="attention"]
+  :global(.liquid-morph-underbelly),
+.presence[data-motion="on"][data-state="attention"]
+  :global(.liquid-center-void),
+.presence[data-motion="on"][data-state="attention"] :global(.liquid-reflection),
+.presence[data-motion="on"][data-state="attention"]
+  :global(.liquid-tendril-body) {
   animation: liquid-attention-morph 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .presence[data-motion="on"][data-state="attention"]

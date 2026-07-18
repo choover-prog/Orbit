@@ -95,6 +95,9 @@ export function PresenceLab() {
     motionEnabled,
     reducedMotion,
   };
+  const morphSignalActive =
+    variant === "morph" &&
+    (state === "noticing" || state === "attention" || state === "speaking");
 
   return (
     <main id="main-content" className={styles.lab}>
@@ -120,7 +123,21 @@ export function PresenceLab() {
           <p>{variantPersonality[variant]}</p>
         </div>
 
-        <div className={styles.heroPresenceWrap}>
+        <div
+          className={styles.heroPresenceWrap}
+          data-variant={variant}
+          data-state={state}
+        >
+          {variant === "morph" ? (
+            <div
+              className={styles.morphSignalCard}
+              data-active={morphSignalActive ? "true" : "false"}
+              aria-hidden="true"
+            >
+              <span>Project Review</span>
+              <strong>Starts in 10 min</strong>
+            </div>
+          ) : null}
           <OrbitPresence
             variant={variant}
             state={state}

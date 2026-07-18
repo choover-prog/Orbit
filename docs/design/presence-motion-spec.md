@@ -23,7 +23,7 @@ Transitions remain long enough to be perceived without implying indefinite loadi
 
 ## Performance
 
-Motion is implemented with transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, expensive blur loop, or per-frame JavaScript is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount.
+Motion is implemented with transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, expensive blur loop, or per-frame JavaScript is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount. Morph uses one bounded SVG turbulence/specular material filter for static texture; before promoting Morph to the default product identity, review paint cost on low-power mobile hardware and keep the reduced-motion representation static.
 
 Ribbon uses the same timing contract as the other variants: the front stroke breathes while listening, dash rhythm travels while thinking, the flare becomes most expressive while speaking, and the two paths resolve into a continuous gesture on completion.
 
