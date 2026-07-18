@@ -25,11 +25,11 @@ Scores are provisional design-lab expectations on a five-point scale. Live revie
 - **Ribbon:** most clearly avoids assistant-orb conventions and speaks expressively; needs live comprehension testing because it is less obviously connected to the Orbit mark.
 - **Mercury:** closest to the liked liquid-ring concepts; tactile and premium, but must stay open enough to avoid reading as an eye or generic assistant orb.
 - **Elastic:** strongest playful material quality; risks feeling less calm if magenta/lime treatment is overused.
-- **Morph:** best candidate for a memorable voice-first identity; highest implementation complexity and needs careful motion restraint. It now uses source-derived raster stills plus WebP frame loops rather than SVG/procedural drawing, which materially improves metallic fidelity and makes the core voice interface feel alive. It still requires asset-weight, responsive-scaling, frame coverage, and animation-pipeline review before production default selection.
+- **Morph:** best candidate for a memorable voice-first identity; highest implementation complexity and needs careful motion restraint. It now uses source-derived raster stills plus distinct WebP frame loops for all eight states rather than SVG/procedural drawing, which materially improves metallic fidelity and makes the core voice interface feel alive. Desktop, tablet, phone, comparison mode, sequence mode, and reduced motion now work in the Lab. The remaining production question is delivery efficiency: the generated state loops are about 19 MB and the complete public Morph asset family is about 22 MB, so Morph should not become the default until inactive-state loading, decoding memory, and a smaller authored animation pipeline are proven without flattening the material.
 
 ## Provisional recommendation
 
-Hybrid remains the conservative shell default for the experiment because it communicates both listening and speaking while retaining one satellite. Morph is the strongest high-impact candidate if Orbit chooses a more tactile, animated voice identity. This is not a permanent product selection. Mark remains the strongest fallback for small, static, or high-reduction contexts.
+Hybrid remains the conservative shell default for the experiment because it communicates both listening and speaking while retaining one satellite. Morph is now the strongest high-impact candidate if Orbit chooses a tactile, animated voice identity; the live pass is visually strong enough for user evaluation, but its asset budget is not yet the production default. This is not a permanent product selection. Mark remains the strongest fallback for small, static, or high-reduction contexts.
 
 ## Recommendation criteria
 

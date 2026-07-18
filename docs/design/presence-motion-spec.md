@@ -25,18 +25,33 @@ Transitions remain long enough to be perceived without implying indefinite loadi
 
 Most variants use transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, or expensive blur loop is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount.
 
-Morph is the exception by design. The SVG and procedural canvas/WebGL implementations were removed because they could not reach the desired melted-metal fidelity. Morph now uses high-fidelity PNG stills for reduced motion and WebP frame loops for live motion. The attention still is extracted from the approved notification-morph concept rather than redrawn, and the frame loops are source-derived mesh deformations of the raster material. A small client-side frame scheduler advances the visible image source; no Rive, Spline, Lottie, GIF, video, or WebGL dependency is added in this pass. The Lab gives Morph a wide stage so the pulled notification shape is not constrained by the generic square Presence slot. Before promoting Morph to the default product identity, review asset weight, image decoding cost, frame cadence, responsive scaling, and whether hand-authored frames or shader/video motion are warranted. Reduced-motion mode keeps the active PNG still static.
+Morph is the exception by design. The SVG and procedural canvas/WebGL implementations were removed because they could not reach the desired melted-metal fidelity. Morph now uses source-derived WebP stills and alpha WebP frame loops for live motion. A small client-side scheduler crossfades state frames, while a decoded still remains underneath to prevent a blank first paint. No Rive, Spline, Lottie, GIF, video, or WebGL runtime is added in this pass. The Lab gives Morph a wide stage so the pulled notification shape is not constrained by the generic square Presence slot.
+
+Every Morph state has an explicit sequence and static fallback:
+
+| State | Frames | Baseline duration | Material behavior |
+| --- | ---: | ---: | --- |
+| Idle | 14 | 6.4 s | Nearly still breathing and a slow specular drift |
+| Noticing | 18 | 3.0 s | The source-derived body leans toward the content tether |
+| Listening | 20 | 3.4 s | Receptive mesh expansion and a stronger center pressure field |
+| Thinking | 22 | 3.0 s | Deliberate internal tension and a measured light sweep |
+| Speaking | 24 | 2.4 s | The widest elastic silhouette and fastest material response |
+| Attention | 20 | 3.2 s | Notification-pulled shape with restrained warm emphasis |
+| Completed | 16 | 1.8 s once | One resolving pass into the stable compact form |
+| Error | 14 | 5.2 s | Calm low-energy deformation with a restrained warm state tint |
+
+The generated state-frame library is about 19 MB, while all public Morph assets—including source material, stills, the notification icon, and frame loops—total about 22 MB. Any one active state uses about 1.7–3.0 MB of frames plus a roughly 120–180 KB still. That is acceptable for the isolated Lab and local experiment, but it is intentionally a promotion gate: a production default must lazy-load inactive states, validate decoding memory on low-end phones, and either reduce the frame budget or move to an authored animation format without lowering visible fidelity. Reduced-motion mode mounts only the relevant static WebP.
 
 Ribbon uses the same timing contract as the other variants: the front stroke breathes while listening, dash rhythm travels while thinking, the flare becomes most expressive while speaking, and the two paths resolve into a continuous gesture on completion.
 
 The liquid-metal variants use the same state contract with different primitives:
 
-- Listening breathes the liquid body and center pulse with simulated audio amplitude.
-- Thinking gently tensions the liquid form while internal signal strokes travel.
-- Speaking uses the strongest elastic deformation plus faster signal flow.
-- Attention switches to the source-derived notification-pulled Morph asset and adds restrained breathing without alarm behavior.
-- Completed briefly resolves the morph back to a stable silhouette.
-- Error switches the signal paths to the error color and reduces material confidence without shaking.
+- Listening breathes the liquid body and center pressure field with simulated audio amplitude.
+- Thinking gently tensions the material while the specular path travels.
+- Speaking uses the strongest elastic deformation and fastest frame cadence.
+- Attention uses the source-derived notification-pulled shape without alarm behavior.
+- Completed plays once and resolves to a stable silhouette.
+- Error uses a warmer, lower-confidence material treatment without shaking.
 
 The middle pulse should remain translucent and pressure-like. It is a state field, not a solid center object, pupil, planet, or logo. The Morph variant also exposes a notification bead and tether during `noticing` and `attention`, making the presence appear to bend toward one relevant content item.
 

@@ -8,7 +8,7 @@
 
 Orbit needs a TypeScript-first frontend that can begin as a fully mocked, local application while preserving a credible path to authenticated routes, OAuth callbacks, connector APIs, and installable-app behavior. The repository has no existing application framework or package conventions.
 
-The foundation must support five routes, a stateful mocked scheduling flow, responsive and accessible interaction, semantic SVG/CSS Presence animation, component tests, and browser-level end-to-end tests. It must not introduce a production backend or provider credentials.
+The foundation must support five routes, a stateful mocked scheduling flow, responsive and accessible interaction, semantic SVG/CSS Presence animation, an isolated high-fidelity raster Presence experiment, component tests, and browser-level end-to-end tests. It must not introduce a production backend or provider credentials.
 
 ## Decision
 
@@ -29,7 +29,7 @@ Initial dependency versions are pinned by `package-lock.json`. The implementatio
 - A client-only mocked experience can ship now without inventing a backend.
 - Route Handlers provide a later boundary for OAuth callbacks, connector webhooks, and authenticated APIs without changing the presentation framework.
 - Next.js supports SPA and installable-app patterns, leaving deployment topology open.
-- React, CSS, and inline SVG are sufficient for Presence; no animation dependency is required.
+- React, CSS, and inline SVG are sufficient for the core Presence family; the experimental Morph variant may use state-specific alpha WebP sequences when that is necessary to preserve approved material fidelity. No animation runtime dependency is required, and the larger raster budget is a lab-only promotion constraint rather than a production-default commitment.
 - Vitest and Playwright cover deterministic state logic, components, routes, and full journeys with familiar open-source tooling.
 
 ## Alternatives considered

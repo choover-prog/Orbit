@@ -44,7 +44,9 @@ describe("OrbitPresence", () => {
       presence.querySelector('[data-renderer="raster-liquid-metal"]'),
     ).toBeInTheDocument();
     expect(
-      presence.querySelector('img[src="/presence/morph/attention.png"]'),
+      presence.querySelector(
+        'img[src="/presence/morph/stills/attention.webp"]',
+      ),
     ).toHaveAttribute("data-active", "true");
   });
 
@@ -57,12 +59,31 @@ describe("OrbitPresence", () => {
       '[data-renderer="raster-liquid-metal"]',
     );
     expect(asset).toHaveAttribute("data-sequence", "attention");
-    expect(asset).toHaveAttribute("data-frame-count", "10");
+    expect(asset).toHaveAttribute("data-frame-count", "20");
     expect(
       presence.querySelector(
         'img[src^="/presence/morph/frame-loops/attention/attention-"]',
       ),
     ).toHaveAttribute("data-animated", "true");
+  });
+
+  it("provides a distinct source-derived Morph sequence for every state", () => {
+    for (const state of presenceStates) {
+      const { unmount } = render(
+        <OrbitPresence variant="morph" state={state} />,
+      );
+      const presence = screen.getByRole("status");
+      const asset = presence.querySelector(
+        '[data-renderer="raster-liquid-metal"]',
+      );
+      expect(asset).toHaveAttribute("data-sequence", state);
+      expect(
+        presence.querySelector(
+          `img[src^="/presence/morph/frame-loops/${state}/${state}-"]`,
+        ),
+      ).toBeInTheDocument();
+      unmount();
+    }
   });
 
   it("has no detectable accessibility violations", async () => {

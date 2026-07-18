@@ -38,13 +38,14 @@ These concepts intentionally push beyond the original minimal SVG family. They a
 
 The Morph Core direction includes the notification-morph thought experiment: in `noticing` and `attention`, the liquid surface bends toward a single relevant content notification. The visual reference is saved at `design/concepts/presence/notification-morph.png`. The live implementation now uses source-derived/state-backed raster assets in `public/presence/morph/`:
 
-- `idle.png`, `attention.png`, and `speaking.png` as reduced-motion still frames.
-- `frame-loops/idle/*.webp` for quiet breathing.
-- `frame-loops/attention/*.webp` for the notification-pulled flubber motion.
-- `frame-loops/speaking/*.webp` for conversational material movement.
+- `idle.png`, `attention.png`, and `speaking.png` as the high-resolution material sources.
+- `stills/{state}.webp` as a distinct no-motion representation for every semantic state.
+- `frame-loops/{state}/*.webp` as distinct motion loops for all eight states.
 - `project-review-bell.png` for the live notification card icon.
 
-The frame loops are generated from the high-fidelity raster material rather than redrawn in code. This gives the voice interface visible liquid movement without adding Rive, Spline, Lottie, video, or a WebGL shader runtime yet. The Presence Lab gives Morph a dedicated wide stage because the notification-pulled material form should not be squeezed into the generic square icon slot. The previous SVG and procedural canvas/WebGL Morph implementations were removed because they could not convincingly represent melted metal at the required fidelity. Morph remains an experiment. It should be judged as the high-impact voice interface direction, not as the baseline minimal mark. A future pass may add hand-authored keyframes, video-with-alpha, or a serious shader over these assets, but the material source should remain asset-led unless a shader can demonstrably match the reference quality.
+The loops are reproducible with `python scripts/generate-morph-frames.py`. The design-build utility trims empty source padding, applies continuous mesh deformation, moves a restrained specular sweep through the material, modulates the warm/teal pressure field, and exports high-quality alpha WebP frames. The component keeps the state still beneath the active loop so there is no blank first paint while animated frames decode.
+
+The frame loops are generated from the high-fidelity raster material rather than redrawn in code. This gives the voice interface visible liquid movement without adding Rive, Spline, Lottie, video, or a WebGL shader runtime yet. The Presence Lab gives Morph a dedicated wide stage because the notification-pulled material form should not be squeezed into the generic square icon slot. The notification card is present only for `noticing` and `attention`, when the material silhouette includes the matching tether. The previous SVG and procedural canvas/WebGL Morph implementations were removed because they could not convincingly represent melted metal at the required fidelity. Morph remains an experiment. It should be judged as the high-impact voice interface direction, not as the baseline minimal mark. A future production pass may replace the frame pipeline with professionally authored Rive, alpha-video, or a serious shader, but only if the replacement demonstrably preserves the current material quality, state clarity, accessibility, and responsive behavior.
 
 ## Open the lab
 

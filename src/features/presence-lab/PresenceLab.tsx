@@ -144,8 +144,7 @@ export function PresenceLab() {
     reducedMotion,
   };
   const morphSignalActive =
-    variant === "morph" &&
-    (state === "noticing" || state === "attention" || state === "speaking");
+    variant === "morph" && (state === "noticing" || state === "attention");
 
   return (
     <main id="main-content" className={styles.lab} data-variant={variant}>
@@ -181,7 +180,7 @@ export function PresenceLab() {
             <div
               className={styles.morphSignalCard}
               data-active={morphSignalActive ? "true" : "false"}
-              aria-hidden="true"
+              aria-hidden={!morphSignalActive}
             >
               <img
                 className={styles.morphSignalIcon}

@@ -53,20 +53,20 @@ test("Presence Lab compares every variant, sequences states, and persists select
   page,
 }) => {
   await page.goto("/design-lab/presence");
-  await page.getByRole("button", { name: "Trail", exact: true }).click();
+  await page.getByRole("button", { name: "Orbit Trail", exact: true }).click();
   await page.getByRole("button", { name: "Speaking", exact: true }).click();
   await page.getByRole("button", { name: "Compare all" }).click();
   await expect(
     page
       .getByRole("region", { name: "Compare personality" })
       .locator("article"),
-  ).toHaveCount(5);
+  ).toHaveCount(9);
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Trail", exact: true }),
+    page.getByRole("button", { name: "Orbit Trail", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Replay sequence" }).click();
-  await expect(page.getByRole("button", { name: "Playing…" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Playing..." })).toBeDisabled();
 });
 
 test("phone layout keeps the focal concern and input in view", async ({

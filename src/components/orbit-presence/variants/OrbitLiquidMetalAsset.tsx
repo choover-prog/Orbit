@@ -14,81 +14,84 @@ interface OrbitLiquidMetalAssetProps {
   motionEnabled: boolean;
 }
 
+type MorphShape = "attention" | "idle" | "speaking";
+
 interface LiquidAssetStyle extends CSSProperties {
   "--liquid-asset-intensity": number;
   "--liquid-asset-audio": number;
   "--liquid-asset-speed": string;
+  "--liquid-frame-fade": string;
 }
 
-const morphFrameByState: Record<
-  OrbitPresenceState,
-  "attention" | "idle" | "speaking"
-> = {
-  idle: "idle",
-  noticing: "attention",
-  listening: "idle",
-  thinking: "idle",
-  speaking: "speaking",
-  attention: "attention",
-  completed: "idle",
-  error: "idle",
+interface MorphSequence {
+  count: number;
+  durationMs: number;
+  loop: boolean;
+  shape: MorphShape;
+}
+
+const morphSequences: Record<OrbitPresenceState, MorphSequence> = {
+  idle: { count: 14, durationMs: 6400, loop: true, shape: "idle" },
+  noticing: {
+    count: 18,
+    durationMs: 3000,
+    loop: true,
+    shape: "attention",
+  },
+  listening: { count: 20, durationMs: 3400, loop: true, shape: "idle" },
+  thinking: { count: 22, durationMs: 3000, loop: true, shape: "idle" },
+  speaking: {
+    count: 24,
+    durationMs: 2400,
+    loop: true,
+    shape: "speaking",
+  },
+  attention: {
+    count: 20,
+    durationMs: 3200,
+    loop: true,
+    shape: "attention",
+  },
+  completed: { count: 16, durationMs: 1800, loop: false, shape: "idle" },
+  error: { count: 14, durationMs: 5200, loop: true, shape: "idle" },
 };
 
-const sequenceFrames = (id: "attention" | "idle" | "speaking", count: number) =>
+const sequenceFrames = (state: OrbitPresenceState, count: number) =>
   Array.from(
     { length: count },
     (_, index) =>
-      `/presence/morph/frame-loops/${id}/${id}-${String(index).padStart(2, "0")}.webp`,
+      `/presence/morph/frame-loops/${state}/${state}-${String(index).padStart(2, "0")}.webp`,
   );
 
-const morphSequences: Record<
-  "attention" | "idle" | "speaking",
-  {
-    durationMs: number;
-    frames: string[];
-    still: string;
-  }
-> = {
-  idle: {
-    durationMs: 5600,
-    frames: sequenceFrames("idle", 8),
-    still: "/presence/morph/idle.png",
-  },
-  attention: {
-    durationMs: 3200,
-    frames: sequenceFrames("attention", 10),
-    still: "/presence/morph/attention.png",
-  },
-  speaking: {
-    durationMs: 2400,
-    frames: sequenceFrames("speaking", 10),
-    still: "/presence/morph/speaking.png",
-  },
-};
-
 function useMorphFrameIndex(
-  frameCount: number,
-  durationMs: number,
+  state: OrbitPresenceState,
+  sequence: MorphSequence,
   speed: number,
   motionEnabled: boolean,
 ) {
-  const [frameIndex, setFrameIndex] = useState(0);
+  const [playback, setPlayback] = useState({ state, frameIndex: 0 });
 
   useEffect(() => {
-    if (!motionEnabled || frameCount <= 1) return;
+    if (!motionEnabled || sequence.count <= 1) return;
 
     const frameMs = Math.max(
-      80,
-      durationMs / Math.max(0.35, speed) / frameCount,
+      76,
+      sequence.durationMs / Math.max(0.35, speed) / sequence.count,
     );
     const interval = window.setInterval(() => {
-      setFrameIndex((current) => (current + 1) % frameCount);
+      setPlayback((current) => {
+        const currentFrame = current.state === state ? current.frameIndex : 0;
+        const frameIndex = sequence.loop
+          ? (currentFrame + 1) % sequence.count
+          : Math.min(sequence.count - 1, currentFrame + 1);
+        return { state, frameIndex };
+      });
     }, frameMs);
 
     return () => window.clearInterval(interval);
-  }, [durationMs, frameCount, motionEnabled, speed]);
+  }, [motionEnabled, sequence, speed, state]);
 
-  return frameIndex % Math.max(1, frameCount);
+  return playback.state === state ? playback.frameIndex : 0;
 }
 
 export function OrbitLiquidMetalAsset({
@@ -99,55 +102,77 @@ export function OrbitLiquidMetalAsset({
   motionEnabled,
 }: OrbitLiquidMetalAssetProps) {
   const safeSpeed = Math.max(0.35, speed);
+  const activeSequence = morphSequences[state];
+  const frames = sequenceFrames(state, activeSequence.count);
+  const frameIndex = useMorphFrameIndex(
+    state,
+    activeSequence,
+    safeSpeed,
+    motionEnabled,
+  );
+  const frameMs = activeSequence.durationMs / safeSpeed / activeSequence.count;
   const style: LiquidAssetStyle = {
     "--liquid-asset-intensity": Math.max(0, Math.min(1, intensity)),
     "--liquid-asset-audio": Math.max(0, Math.min(1, audioLevel)),
     "--liquid-asset-speed": `${safeSpeed}`,
+    "--liquid-frame-fade": `${Math.round(Math.min(210, Math.max(68, frameMs * 0.78)))}ms`,
   };
-  const activeFrame = morphFrameByState[state];
-  const activeSequence = morphSequences[activeFrame];
-  const frameIndex = useMorphFrameIndex(
-    activeSequence.frames.length,
-    activeSequence.durationMs,
-    safeSpeed,
-    motionEnabled,
-  );
-  const currentSrc = motionEnabled
-    ? activeSequence.frames[frameIndex]
-    : activeSequence.still;
-
-  useEffect(() => {
-    if (!motionEnabled) return;
-
-    activeSequence.frames.forEach((src) => {
-      const image = new Image();
-      image.decoding = "async";
-      image.src = src;
-    });
-  }, [activeSequence.frames, motionEnabled]);
 
   return (
     <span
       className="liquid-metal-asset"
       data-renderer="raster-liquid-metal"
+      data-material="source-derived-mesh"
       data-state={state}
-      data-sequence={activeFrame}
-      data-frame-count={activeSequence.frames.length}
+      data-sequence={state}
+      data-frame-count={activeSequence.count}
       data-frame-index={motionEnabled ? frameIndex : "static"}
       data-motion={motionEnabled ? "on" : "off"}
       style={style}
       aria-hidden="true"
     >
-      <img
-        src={currentSrc}
-        alt=""
-        data-frame={activeFrame}
-        data-active="true"
-        data-animated={motionEnabled ? "true" : "false"}
-        draggable={false}
-        decoding="async"
-        fetchPriority="high"
-      />
+      <span className="liquid-metal-stack" data-shape={activeSequence.shape}>
+        {motionEnabled ? (
+          <>
+            <img
+              src={`/presence/morph/stills/${state}.webp`}
+              alt=""
+              data-frame={state}
+              data-fallback="true"
+              data-active="false"
+              data-animated="false"
+              draggable={false}
+              decoding="sync"
+              fetchPriority="high"
+            />
+            {frames.map((src, index) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                data-frame={state}
+                data-active={index === frameIndex ? "true" : "false"}
+                data-animated="true"
+                draggable={false}
+                decoding="async"
+                loading={index < 3 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+              />
+            ))}
+          </>
+        ) : (
+          <img
+            src={`/presence/morph/stills/${state}.webp`}
+            alt=""
+            data-frame={state}
+            data-active="true"
+            data-animated="false"
+            draggable={false}
+            decoding="async"
+            fetchPriority="high"
+          />
+        )}
+      </span>
     </span>
   );
 }

@@ -32,7 +32,7 @@ Future OAuth callbacks, connector webhooks, and authenticated APIs may use route
 
 ## Styling and motion
 
-Global tokens define canvas, ink, accent, semantic state, focus, radii, and content widths. CSS Modules keep scene and Presence behavior colocated. Presence uses inline SVG because its paths are semantic state primitives specified by the product; motion is limited to transform, opacity, and stroke properties.
+Global tokens define canvas, ink, accent, semantic state, focus, radii, and content widths. CSS Modules keep scene and Presence behavior colocated. Most Presence variants use semantic inline SVG with motion limited to transform, opacity, and stroke properties. The experimental Morph variant is a deliberate exception: it uses source-derived alpha WebP stills and state-specific frame loops to preserve liquid-metal material fidelity that SVG and lightweight procedural rendering could not reach. Morph remains isolated to the design experiment and is not the production default.
 
 ## Persistence
 
