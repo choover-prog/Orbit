@@ -32,6 +32,22 @@ describe("OrbitPresence", () => {
     ).toHaveAttribute("data-motion", "off");
   });
 
+  it("renders Morph as a raster liquid-metal asset instead of SVG", () => {
+    render(
+      <OrbitPresence variant="morph" state="attention" motionEnabled={false} />,
+    );
+    const presence = screen.getByRole("status", {
+      name: "Orbit needs your attention",
+    });
+    expect(presence.querySelector("svg")).not.toBeInTheDocument();
+    expect(
+      presence.querySelector('[data-renderer="raster-liquid-metal"]'),
+    ).toBeInTheDocument();
+    expect(
+      presence.querySelector('img[src="/presence/morph/attention.png"]'),
+    ).toHaveAttribute("data-active", "true");
+  });
+
   it("has no detectable accessibility violations", async () => {
     const { container } = render(
       <OrbitPresence variant="hybrid" state="listening" />,

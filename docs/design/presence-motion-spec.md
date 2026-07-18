@@ -23,7 +23,9 @@ Transitions remain long enough to be perceived without implying indefinite loadi
 
 ## Performance
 
-Motion is implemented with transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, expensive blur loop, or per-frame JavaScript is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount. Morph uses one bounded SVG turbulence/specular material filter for static texture; before promoting Morph to the default product identity, review paint cost on low-power mobile hardware and keep the reduced-motion representation static.
+Most variants use transforms, opacity, and stroke dash properties. Layout dimensions remain stable during animation. No animation dependency, GIF, or expensive blur loop is used. Timed sequence orchestration uses bounded browser timers and clears them on unmount.
+
+Morph is the exception by design. The SVG and procedural canvas/WebGL implementations were removed because they could not reach the desired melted-metal fidelity. Morph now renders a small set of high-fidelity raster PNG assets and crossfades between state frames. The attention frame is extracted from the approved notification-morph concept rather than redrawn. CSS handles restrained motion through transforms, opacity, and small filter changes on the active frame; the Lab gives Morph a wide stage so the pulled notification shape is not constrained by the generic square Presence slot. Before promoting Morph to the default product identity, review asset weight, image decoding cost, responsive scaling, whether WebP should replace PNG, and whether additional state/keyframe assets are needed. Reduced-motion mode keeps the active frame static.
 
 Ribbon uses the same timing contract as the other variants: the front stroke breathes while listening, dash rhythm travels while thinking, the flare becomes most expressive while speaking, and the two paths resolve into a continuous gesture on completion.
 
@@ -32,7 +34,7 @@ The liquid-metal variants use the same state contract with different primitives:
 - Listening breathes the liquid body and center pulse with simulated audio amplitude.
 - Thinking gently tensions the liquid form while internal signal strokes travel.
 - Speaking uses the strongest elastic deformation plus faster signal flow.
-- Attention brightens the center pulse and embedded signal paths without adding alarm behavior.
+- Attention switches to the source-derived notification-pulled Morph asset and adds restrained breathing without alarm behavior.
 - Completed briefly resolves the morph back to a stable silhouette.
 - Error switches the signal paths to the error color and reduces material confidence without shaking.
 

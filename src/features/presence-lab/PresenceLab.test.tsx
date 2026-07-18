@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { axe } from "jest-axe";
@@ -42,6 +42,11 @@ describe("PresenceLab", () => {
 
     const signal = screen.getByText("Project Review").closest("div");
     expect(screen.getByText("Starts in 10 min")).toBeInTheDocument();
+
+    await waitFor(() => expect(signal).toHaveAttribute("data-active", "true"));
+
+    await user.click(screen.getByRole("button", { name: "Idle" }));
+
     expect(signal).toHaveAttribute("data-active", "false");
 
     await user.click(screen.getByRole("button", { name: "Attention" }));

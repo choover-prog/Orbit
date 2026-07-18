@@ -7,6 +7,9 @@
   margin: 0 auto 1.5rem;
   text-align: center;
 }
+.lab[data-variant="morph"] .labHeader {
+  margin-bottom: 0.85rem;
+}
 .labHeader > *,
 .heroStudio > * {
   min-width: 0;
@@ -16,6 +19,9 @@
   font-size: clamp(2.4rem, 5.5vw, 4.8rem);
   line-height: 0.98;
   letter-spacing: -0.06em;
+}
+.lab[data-variant="morph"] .labHeader h1 {
+  font-size: clamp(2.35rem, 4vw, 3.65rem);
 }
 .labHeader p:last-child {
   margin: 0 auto;
@@ -43,6 +49,22 @@
   align-items: center;
   gap: 2rem;
   overflow: hidden;
+}
+.heroStudio[data-variant="morph"] {
+  min-height: min(52rem, calc(100svh - 3rem));
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(23rem, 1fr) auto auto;
+  gap: clamp(0.75rem, 1.8vw, 1.25rem);
+  padding: clamp(1.4rem, 3.4vw, 2.8rem);
+  background:
+    radial-gradient(
+      circle at 48% 44%,
+      rgb(255 255 255 / 94%),
+      transparent 30rem
+    ),
+    radial-gradient(circle at 62% 37%, rgb(38 217 205 / 7%), transparent 18rem),
+    radial-gradient(circle at 61% 43%, rgb(255 111 38 / 8%), transparent 20rem),
+    var(--surface);
 }
 .heroStudio[data-theme="dark"],
 .contextStack[data-theme="dark"],
@@ -86,16 +108,34 @@
   position: relative;
   isolation: isolate;
 }
+.heroStudio[data-variant="morph"] .heroCopy {
+  max-width: 44rem;
+  justify-self: center;
+  text-align: center;
+}
+.heroStudio[data-variant="morph"] .heroCopy h2 {
+  font-size: clamp(2.4rem, 4.6vw, 4rem);
+}
+.heroStudio[data-variant="morph"] .heroCopy > p:last-child {
+  max-width: 37rem;
+  margin: 0.7rem auto 0;
+}
+.heroStudio[data-variant="morph"] .heroPresenceWrap {
+  width: min(70rem, 100%);
+  min-height: clamp(20rem, 37vw, 29rem);
+  justify-self: center;
+  overflow: visible;
+}
 .heroPresenceWrap[data-variant="morph"]::before {
   content: "";
   position: absolute;
-  inset: 16% 7% 15%;
+  inset: 24% 10% 9%;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 72% 38%, rgb(255 85 51 / 18%), transparent 26%),
-    radial-gradient(circle at 44% 55%, rgb(34 215 202 / 16%), transparent 34%);
-  filter: blur(16px);
-  opacity: 0.52;
+    radial-gradient(circle at 69% 40%, rgb(255 101 29 / 14%), transparent 24%),
+    radial-gradient(circle at 44% 55%, rgb(34 215 202 / 12%), transparent 33%);
+  filter: blur(22px);
+  opacity: 0.42;
   pointer-events: none;
   transform: rotate(-8deg);
   z-index: -1;
@@ -107,67 +147,83 @@
   z-index: 1;
 }
 .heroPresenceWrap[data-variant="morph"] .heroPresence {
-  width: min(27rem, 48vw);
-  height: min(27rem, 48vw);
-  filter: drop-shadow(0 24px 44px rgb(30 24 17 / 12%));
+  width: min(51rem, 82vw);
+  height: clamp(18rem, 31vw, 27rem);
+  filter: drop-shadow(0 24px 44px rgb(30 24 17 / 10%));
 }
 .morphSignalCard {
   position: absolute;
-  top: 17%;
-  right: clamp(-3.5rem, -3vw, -1.6rem);
+  top: clamp(6.4rem, 34%, 11rem);
+  right: clamp(3rem, 10vw, 9rem);
   z-index: 2;
-  width: min(13.5rem, 32vw);
-  padding: 0.9rem 1rem 0.95rem 1.15rem;
-  border: 1px solid color-mix(in srgb, var(--line) 68%, white);
-  border-radius: 1.25rem;
+  width: min(15.5rem, 34vw);
+  min-height: 4.35rem;
+  padding: 0.86rem 1.15rem 0.9rem 4rem;
+  border: 1px solid rgb(31 29 26 / 0.12);
+  border-radius: 1.35rem;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(255 249 240 / 68%)),
+    linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(255 250 242 / 76%)),
     var(--surface);
   box-shadow:
-    0 18px 36px rgb(30 24 18 / 0.1),
-    inset 0 1px 0 rgb(255 255 255 / 0.84);
+    0 18px 38px rgb(30 24 18 / 0.1),
+    0 2px 10px rgb(30 24 18 / 0.04),
+    inset 0 1px 0 rgb(255 255 255 / 0.92);
   color: var(--ink);
-  opacity: 0.38;
-  transform: translate3d(0.35rem, 0.25rem, 0) scale(0.96);
+  opacity: 0;
+  transform: translate3d(-0.35rem, 0.15rem, 0) scale(0.98);
   transition:
     opacity 220ms ease,
     transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 220ms ease;
 }
-.morphSignalCard::before {
+.morphSignalIcon {
+  position: absolute;
+  width: 2.45rem;
+  height: 2.45rem;
+  left: 0.95rem;
+  top: 0.9rem;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+.morphSignalCard::after {
   content: "";
   position: absolute;
-  width: 0.58rem;
-  height: 0.58rem;
-  left: -0.22rem;
-  top: 1.15rem;
+  width: 0.46rem;
+  height: 0.46rem;
+  left: -0.26rem;
+  top: 1.58rem;
   border-radius: 999px;
-  background: #ff5533;
+  background: #ff5b1f;
   box-shadow:
-    0 0 0 0.35rem rgb(255 85 51 / 0.1),
-    0 0 1.15rem rgb(255 85 51 / 0.34);
+    0 0 0 0.28rem rgb(255 91 31 / 0.1),
+    0 0 1rem rgb(255 91 31 / 0.32);
 }
 .morphSignalCard[data-active="true"] {
   opacity: 1;
-  border-color: color-mix(in srgb, #ff5533 32%, var(--line));
-  transform: translate3d(-0.45rem, -0.15rem, 0) scale(1);
+  border-color: rgb(255 91 31 / 0.24);
+  transform: translate3d(0, 0, 0) scale(1);
 }
 .morphSignalCard span,
 .morphSignalCard strong {
   display: block;
 }
 .morphSignalCard span {
-  color: var(--muted);
-  font-size: 0.72rem;
+  color: rgb(88 84 78 / 0.82);
+  font-size: 0.74rem;
   font-weight: 720;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .morphSignalCard strong {
   margin-top: 0.18rem;
-  font-size: clamp(0.98rem, 1.4vw, 1.18rem);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
   line-height: 1.1;
   letter-spacing: -0.025em;
+}
+.heroStudio[data-variant="morph"] .heroState {
+  max-width: 32rem;
+  text-align: center;
 }
 .heroState {
   justify-self: center;
@@ -363,6 +419,9 @@
     min-height: auto;
     grid-template-columns: 1fr 1.3fr;
   }
+  .heroStudio[data-variant="morph"] {
+    grid-template-columns: 1fr;
+  }
   .heroState {
     grid-column: 1 / -1;
     justify-self: center;
@@ -402,18 +461,34 @@
   .heroPresenceWrap {
     min-height: 14rem;
   }
+  .heroStudio[data-variant="morph"] .heroPresenceWrap {
+    min-height: clamp(19rem, 70vw, 27rem);
+  }
   .heroPresenceWrap[data-variant="morph"] .heroPresence {
-    width: min(20rem, 82vw);
-    height: min(20rem, 82vw);
+    width: min(36rem, 104vw);
+    height: clamp(18rem, 62vw, 25rem);
   }
   .morphSignalCard {
-    top: 0;
-    right: 50%;
-    width: min(13rem, 70vw);
-    transform: translate3d(50%, -0.4rem, 0) scale(0.92);
+    top: clamp(8.6rem, 39vw, 14rem);
+    right: clamp(0.4rem, 4vw, 2rem);
+    width: min(13rem, 48vw);
+    min-height: 3.75rem;
+    padding: 0.72rem 0.82rem 0.74rem 3.25rem;
+    border-radius: 1.1rem;
+    text-align: left;
+    transform: translate3d(0.15rem, 0, 0) scale(0.94);
   }
   .morphSignalCard[data-active="true"] {
-    transform: translate3d(50%, -0.85rem, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  .morphSignalIcon {
+    width: 1.95rem;
+    height: 1.95rem;
+    left: 0.78rem;
+    top: 0.86rem;
+  }
+  .morphSignalCard::after {
+    top: 1.38rem;
   }
   .heroState {
     grid-column: auto;

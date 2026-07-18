@@ -8,9 +8,9 @@ import { useReducedMotion } from "./motion/useReducedMotion";
 import { OrbitConstellation } from "./variants/OrbitConstellation";
 import { OrbitElastic } from "./variants/OrbitElastic";
 import { OrbitHybrid } from "./variants/OrbitHybrid";
+import { OrbitLiquidMetalAsset } from "./variants/OrbitLiquidMetalAsset";
 import { OrbitMark } from "./variants/OrbitMark";
 import { OrbitMercury } from "./variants/OrbitMercury";
-import { OrbitMorph } from "./variants/OrbitMorph";
 import { OrbitPulse } from "./variants/OrbitPulse";
 import { OrbitRibbon } from "./variants/OrbitRibbon";
 import { OrbitTrail } from "./variants/OrbitTrail";
@@ -24,7 +24,6 @@ const variants = {
   ribbon: OrbitRibbon,
   mercury: OrbitMercury,
   elastic: OrbitElastic,
-  morph: OrbitMorph,
 };
 
 interface PresenceStyle extends CSSProperties {
@@ -52,7 +51,7 @@ export function OrbitPresence({
 }: OrbitPresenceProps) {
   const prefersReducedMotion = useReducedMotion(reducedMotion);
   const motion = motionEnabled && !prefersReducedMotion;
-  const Variant = variants[variant];
+  const Variant = variant === "morph" ? null : variants[variant];
   const speedScale = Math.max(0.35, speed);
   const style: PresenceStyle = {
     "--presence-intensity": Math.max(0, Math.min(1, intensity)),
@@ -77,9 +76,19 @@ export function OrbitPresence({
       aria-label={presenceLabels[state]}
       style={style}
     >
-      <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-        <Variant />
-      </svg>
+      {Variant ? (
+        <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <Variant />
+        </svg>
+      ) : (
+        <OrbitLiquidMetalAsset
+          state={state}
+          intensity={style["--presence-intensity"]}
+          audioLevel={style["--presence-audio"]}
+          speed={speedScale}
+          motionEnabled={motion}
+        />
+      )}
     </span>
   );
 }

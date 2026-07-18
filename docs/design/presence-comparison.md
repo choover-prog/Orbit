@@ -11,7 +11,7 @@ Scores are provisional design-lab expectations on a five-point scale. Live revie
 | Listening clarity     |    2 |     5 |     3 |             4 |      5 |      4 |       5 |       4 |     5 |
 | Scalability           |    5 |     5 |     4 |             3 |      4 |      4 |       3 |       3 |     3 |
 | Accessibility         |    5 |     4 |     4 |             3 |      4 |      4 |       4 |       4 |     4 |
-| Performance           |    5 |     5 |     5 |             4 |      5 |      5 |       4 |       4 |     4 |
+| Performance           |    5 |     5 |     5 |             4 |      5 |      5 |       4 |       4 |     3 |
 | Brand distinctiveness |    5 |     3 |     5 |             4 |      5 |      5 |       5 |       5 |     5 |
 | Minimalist fit        |    5 |     5 |     4 |             3 |      5 |      5 |       4 |       3 |     4 |
 
@@ -25,7 +25,7 @@ Scores are provisional design-lab expectations on a five-point scale. Live revie
 - **Ribbon:** most clearly avoids assistant-orb conventions and speaks expressively; needs live comprehension testing because it is less obviously connected to the Orbit mark.
 - **Mercury:** closest to the liked liquid-ring concepts; tactile and premium, but must stay open enough to avoid reading as an eye or generic assistant orb.
 - **Elastic:** strongest playful material quality; risks feeling less calm if magenta/lime treatment is overused.
-- **Morph:** best candidate for a memorable voice-first identity; highest implementation complexity and needs careful motion restraint.
+- **Morph:** best candidate for a memorable voice-first identity; highest implementation complexity and needs careful motion restraint. It now uses source-derived/state-backed raster assets rather than SVG/procedural drawing, which materially improves metallic fidelity but requires asset-weight, responsive-scaling, frame coverage, and animation-pipeline review before production default selection.
 
 ## Provisional recommendation
 

@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useRef, useState } from "react";
 import {
   OrbitPresence,
@@ -70,8 +72,54 @@ export function PresenceLab() {
   const [comparison, setComparison] = useState(false);
   const [sequenceRunning, setSequenceRunning] = useState(false);
   const timers = useRef<number[]>([]);
+  const previousVariant = useRef<OrbitPresenceVariant>(variant);
+  const syncedInitialState = useRef(false);
 
   useEffect(() => () => timers.current.forEach(window.clearTimeout), []);
+
+  useEffect(() => {
+    if (syncedInitialState.current) return;
+
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const queryState = params.get("state");
+      if (presenceStates.includes(queryState as OrbitPresenceState)) {
+        setState(queryState as OrbitPresenceState);
+        syncedInitialState.current = true;
+        return;
+      }
+
+      if (variant === "morph") {
+        setState("attention");
+        syncedInitialState.current = true;
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [variant]);
+
+  useEffect(() => {
+    const shouldMoveToAttention =
+      variant === "morph" &&
+      previousVariant.current !== "morph" &&
+      state === "idle";
+
+    previousVariant.current = variant;
+
+    if (
+      !shouldMoveToAttention ||
+      presenceStates.includes(
+        new URLSearchParams(window.location.search).get(
+          "state",
+        ) as OrbitPresenceState,
+      )
+    ) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setState("attention"), 0);
+    return () => window.clearTimeout(timer);
+  }, [state, variant]);
 
   const replaySequence = () => {
     timers.current.forEach(window.clearTimeout);
@@ -100,7 +148,7 @@ export function PresenceLab() {
     (state === "noticing" || state === "attention" || state === "speaking");
 
   return (
-    <main id="main-content" className={styles.lab}>
+    <main id="main-content" className={styles.lab} data-variant={variant}>
       <header className={styles.labHeader}>
         <div>
           <p className="admin-kicker">Development-only presence studio</p>
@@ -115,6 +163,7 @@ export function PresenceLab() {
       <section
         className={styles.heroStudio}
         data-theme={theme}
+        data-variant={variant}
         aria-labelledby="live-presence-title"
       >
         <div className={styles.heroCopy}>
@@ -134,6 +183,12 @@ export function PresenceLab() {
               data-active={morphSignalActive ? "true" : "false"}
               aria-hidden="true"
             >
+              <img
+                className={styles.morphSignalIcon}
+                src="/presence/morph/project-review-bell.png"
+                alt=""
+                draggable={false}
+              />
               <span>Project Review</span>
               <strong>Starts in 10 min</strong>
             </div>
