@@ -48,6 +48,23 @@ describe("OrbitPresence", () => {
     ).toHaveAttribute("data-active", "true");
   });
 
+  it("plays Morph from frame-loop assets when motion is enabled", () => {
+    render(<OrbitPresence variant="morph" state="attention" />);
+    const presence = screen.getByRole("status", {
+      name: "Orbit needs your attention",
+    });
+    const asset = presence.querySelector(
+      '[data-renderer="raster-liquid-metal"]',
+    );
+    expect(asset).toHaveAttribute("data-sequence", "attention");
+    expect(asset).toHaveAttribute("data-frame-count", "10");
+    expect(
+      presence.querySelector(
+        'img[src^="/presence/morph/frame-loops/attention/attention-"]',
+      ),
+    ).toHaveAttribute("data-animated", "true");
+  });
+
   it("has no detectable accessibility violations", async () => {
     const { container } = render(
       <OrbitPresence variant="hybrid" state="listening" />,

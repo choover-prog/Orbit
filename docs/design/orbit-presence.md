@@ -36,14 +36,15 @@ The current lab includes three higher-impact voice-presence concepts derived fro
 
 These concepts intentionally push beyond the original minimal SVG family. They are for live evaluation of whether Orbit's core voice interface should become more tactile, memorable, and animated while the surrounding application remains sparse and glanceable.
 
-The Morph Core direction includes the notification-morph thought experiment: in `noticing` and `attention`, the liquid surface bends toward a single relevant content notification. The visual reference is saved at `design/concepts/presence/notification-morph.png`. The live implementation now uses source-derived/state-backed PNG assets in `public/presence/morph/`:
+The Morph Core direction includes the notification-morph thought experiment: in `noticing` and `attention`, the liquid surface bends toward a single relevant content notification. The visual reference is saved at `design/concepts/presence/notification-morph.png`. The live implementation now uses source-derived/state-backed raster assets in `public/presence/morph/`:
 
-- `idle.png` for idle, listening, thinking, completed, and error base states.
-- `attention.png` for noticing and attention, extracted from the approved notification-morph concept so the melted-metal rim, translucent body, and internal teal/tangerine light paths retain high fidelity.
-- `speaking.png` for speaking.
+- `idle.png`, `attention.png`, and `speaking.png` as reduced-motion still frames.
+- `frame-loops/idle/*.webp` for quiet breathing.
+- `frame-loops/attention/*.webp` for the notification-pulled flubber motion.
+- `frame-loops/speaking/*.webp` for conversational material movement.
 - `project-review-bell.png` for the live notification card icon.
 
-The Presence Lab gives Morph a dedicated wide stage because the notification-pulled material form should not be squeezed into the generic square icon slot. The previous SVG and procedural canvas/WebGL Morph implementations were removed because they could not convincingly represent melted metal at the required fidelity. Morph remains an experiment. It should be judged as the high-impact voice interface direction, not as the baseline minimal mark. A future pass may add WebGL displacement, frame interpolation, video-with-alpha, or authored motion over these assets, but the material source should remain asset-led unless a shader can demonstrably match the reference quality.
+The frame loops are generated from the high-fidelity raster material rather than redrawn in code. This gives the voice interface visible liquid movement without adding Rive, Spline, Lottie, video, or a WebGL shader runtime yet. The Presence Lab gives Morph a dedicated wide stage because the notification-pulled material form should not be squeezed into the generic square icon slot. The previous SVG and procedural canvas/WebGL Morph implementations were removed because they could not convincingly represent melted metal at the required fidelity. Morph remains an experiment. It should be judged as the high-impact voice interface direction, not as the baseline minimal mark. A future pass may add hand-authored keyframes, video-with-alpha, or a serious shader over these assets, but the material source should remain asset-led unless a shader can demonstrably match the reference quality.
 
 ## Open the lab
 
