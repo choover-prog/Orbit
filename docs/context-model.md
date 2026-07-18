@@ -6,25 +6,25 @@ The context model gives Orbit a consistent vocabulary without flattening provena
 
 ## Core entities
 
-| Entity | Purpose | Required properties |
-|---|---|---|
-| `Person` | A user or relevant individual | `id`, `displayName`, `relationshipScope` |
-| `Household` | Explicit shared context boundary | `id`, `memberIds`, `policyRef` |
-| `Relationship` | Directional relationship with visibility rules | `fromPersonId`, `toPersonId`, `type`, `visibility` |
-| `SourceRecord` | Immutable provider provenance pointer | `id`, `provider`, `externalId`, `observedAt`, `contentHash` |
-| `ContextEvent` | Normalized fact or change | `id`, `domain`, `kind`, `occurredAt`, `sourceRecordIds`, `payload` |
-| `Evidence` | Support for an observation | `id`, `sourceRecordIds`, `summary`, `freshness`, `accessScope` |
-| `Observation` | Validated claim about context | `id`, `statement`, `evidenceIds`, `confidence`, `status` |
-| `Recommendation` | Suggested response to an observation | `id`, `observationIds`, `rationale`, `capabilityRef`, `status` |
-| `Intent` | Structured user goal | `id`, `actorId`, `goal`, `constraints`, `createdAt` |
-| `Capability` | Provider-neutral operation | `id`, `verb`, `resourceType`, `riskClass`, `adapterRequirements` |
-| `Permission` | User-granted authority ceiling | `subjectId`, `capabilityId`, `scope`, `mode`, `expiresAt` |
-| `ApprovalRequest` | Reviewable proposed consequence | `id`, `planHash`, `summary`, `riskClass`, `expiresAt` |
-| `ActionPlan` | Immutable executable plan | `id`, `intentId`, `steps`, `expectedEffects`, `planHash` |
-| `ActionResult` | Transport and provider response | `id`, `planId`, `state`, `providerReceipt`, `completedAt` |
-| `VerificationResult` | Readback comparison | `id`, `actionResultId`, `expected`, `observed`, `status` |
-| `UndoPlan` | Qualified compensating action | `id`, `actionResultId`, `steps`, `expiresAt`, `limitations` |
-| `AuditEvent` | Redacted lifecycle event | `id`, `actor`, `eventType`, `objectRef`, `occurredAt`, `metadata` |
+| Entity               | Purpose                                        | Required properties                                                |
+| -------------------- | ---------------------------------------------- | ------------------------------------------------------------------ |
+| `Person`             | A user or relevant individual                  | `id`, `displayName`, `relationshipScope`                           |
+| `Household`          | Explicit shared context boundary               | `id`, `memberIds`, `policyRef`                                     |
+| `Relationship`       | Directional relationship with visibility rules | `fromPersonId`, `toPersonId`, `type`, `visibility`                 |
+| `SourceRecord`       | Immutable provider provenance pointer          | `id`, `provider`, `externalId`, `observedAt`, `contentHash`        |
+| `ContextEvent`       | Normalized fact or change                      | `id`, `domain`, `kind`, `occurredAt`, `sourceRecordIds`, `payload` |
+| `Evidence`           | Support for an observation                     | `id`, `sourceRecordIds`, `summary`, `freshness`, `accessScope`     |
+| `Observation`        | Validated claim about context                  | `id`, `statement`, `evidenceIds`, `confidence`, `status`           |
+| `Recommendation`     | Suggested response to an observation           | `id`, `observationIds`, `rationale`, `capabilityRef`, `status`     |
+| `Intent`             | Structured user goal                           | `id`, `actorId`, `goal`, `constraints`, `createdAt`                |
+| `Capability`         | Provider-neutral operation                     | `id`, `verb`, `resourceType`, `riskClass`, `adapterRequirements`   |
+| `Permission`         | User-granted authority ceiling                 | `subjectId`, `capabilityId`, `scope`, `mode`, `expiresAt`          |
+| `ApprovalRequest`    | Reviewable proposed consequence                | `id`, `planHash`, `summary`, `riskClass`, `expiresAt`              |
+| `ActionPlan`         | Immutable executable plan                      | `id`, `intentId`, `steps`, `expectedEffects`, `planHash`           |
+| `ActionResult`       | Transport and provider response                | `id`, `planId`, `state`, `providerReceipt`, `completedAt`          |
+| `VerificationResult` | Readback comparison                            | `id`, `actionResultId`, `expected`, `observed`, `status`           |
+| `UndoPlan`           | Qualified compensating action                  | `id`, `actionResultId`, `steps`, `expiresAt`, `limitations`        |
+| `AuditEvent`         | Redacted lifecycle event                       | `id`, `actor`, `eventType`, `objectRef`, `occurredAt`, `metadata`  |
 
 ## Confidence and epistemic status
 
@@ -45,7 +45,10 @@ Confidence does not replace epistemic status. The interface should say “Orbit 
   "epistemicStatus": "derived",
   "evidenceIds": ["ev_flight_arrival", "ev_calendar_review"],
   "confidence": 0.99,
-  "freshness": { "asOf": "2026-07-16T08:15:00-04:00", "staleAfter": "2026-07-16T12:15:00-04:00" },
+  "freshness": {
+    "asOf": "2026-07-16T08:15:00-04:00",
+    "staleAfter": "2026-07-16T12:15:00-04:00"
+  },
   "status": "active"
 }
 ```

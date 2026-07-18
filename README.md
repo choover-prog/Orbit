@@ -28,9 +28,27 @@ Orbit reuses mature integrations rather than recreating every connector. The app
 
 ## Project status
 
-Orbit has completed its initial product-discovery and frontend-concept phase. Quiet Orbit, the centered-person attention pattern, and Focus-style progressive disclosure are approved for the frontend foundation. Start with the [product requirements](docs/product-requirements.md), [design principles](docs/design-principles.md), [interaction model](docs/interaction-model.md), [architecture](docs/architecture.md), and [concept comparison](docs/concept-comparison.md).
+Orbit has completed its initial product-discovery and frontend-concept phase. Quiet Orbit, the centered-person attention pattern, and Focus-style progressive disclosure are implemented as a mocked frontend foundation. Start with the [product requirements](docs/product-requirements.md), [frontend architecture](docs/frontend/frontend-architecture.md), [interaction model](docs/interaction-model.md), [architecture](docs/architecture.md), and [roadmap](docs/roadmap.md).
 
-The planned assistant-motion experiment is documented as the [Orbit Presence Lab goal](docs/codex/04-presence-lab-goal.md). It should be executed only after a frontend shell exists and must remain an isolated, development-only comparison surface.
+The assistant-motion experiment is documented as the [Orbit Presence Lab goal](docs/codex/04-presence-lab-goal.md) and implemented as an isolated, development-only comparison surface. No permanent Presence winner has been selected.
+
+## Local development
+
+Requires Node.js 20.9 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`. The development-only Presence Lab is available at `http://localhost:3000/design-lab/presence`.
+
+Run the full local validation bundle with:
+
+```bash
+npm run check
+npm run test:e2e
+```
 
 ## Contributing and security
 

@@ -80,13 +80,13 @@ No existing source file needs deletion.
 
 ## Risk estimate
 
-| Area | Risk | Reason |
-|---|---|---|
-| Current source code | Low | No frontend exists to regress |
-| Product semantics | Medium | Existing “three things” wording appears in requirements and journeys |
-| Trust architecture | Low | The focused action model already aligns with the revised direction |
-| Visual direction | Medium | Calmness can become vague or conceal evidence without strong disclosure rules |
-| Future framework choice | Medium | Premature file architecture would create unnecessary migration work |
+| Area                    | Risk   | Reason                                                                        |
+| ----------------------- | ------ | ----------------------------------------------------------------------------- |
+| Current source code     | Low    | No frontend exists to regress                                                 |
+| Product semantics       | Medium | Existing “three things” wording appears in requirements and journeys          |
+| Trust architecture      | Low    | The focused action model already aligns with the revised direction            |
+| Visual direction        | Medium | Calmness can become vague or conceal evidence without strong disclosure rules |
+| Future framework choice | Medium | Premature file architecture would create unnecessary migration work           |
 
 ## Approval gate — satisfied
 

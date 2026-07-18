@@ -39,16 +39,16 @@ The concrete implementation language and transport are intentionally undecided d
 
 ## First-phase providers
 
-| Domain | Discovery behavior | Production decision |
-|---|---|---|
-| Calendar | Mock events and one reversible reschedule action | Select after provider comparison |
-| Email | Mock metadata, thread summaries, and draft-only response | No send action in first slice |
-| Contacts | Mock identity resolution | Read-only initially |
-| Tasks | Mock task context | Candidate early reversible action |
-| Weather | Mock or public non-personal forecast | Low-risk read integration candidate |
-| Home Assistant | Optional status mock | Reuse platform; no broad device control |
-| Health | Optional summary mock | Platform-specific read-only research required |
-| Model provider | Structured mock fixtures, then replaceable adapter | Evaluate privacy, schema reliability, and cost |
+| Domain         | Discovery behavior                                       | Production decision                            |
+| -------------- | -------------------------------------------------------- | ---------------------------------------------- |
+| Calendar       | Mock events and one reversible reschedule action         | Select after provider comparison               |
+| Email          | Mock metadata, thread summaries, and draft-only response | No send action in first slice                  |
+| Contacts       | Mock identity resolution                                 | Read-only initially                            |
+| Tasks          | Mock task context                                        | Candidate early reversible action              |
+| Weather        | Mock or public non-personal forecast                     | Low-risk read integration candidate            |
+| Home Assistant | Optional status mock                                     | Reuse platform; no broad device control        |
+| Health         | Optional summary mock                                    | Platform-specific read-only research required  |
+| Model provider | Structured mock fixtures, then replaceable adapter       | Evaluate privacy, schema reliability, and cost |
 
 ## Selection criteria
 
