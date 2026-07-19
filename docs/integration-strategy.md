@@ -35,7 +35,15 @@ adapter.prepareUndo(result) -> undo eligibility and plan
 adapter.revoke() -> revocation result
 ```
 
-The concrete implementation language and transport are intentionally undecided during discovery.
+The broader contract remains a roadmap model. Stage 2a implements only the read side as a TypeScript `ContextConnector` selected by a server registry. It produces normalized `SourceRecord` values and a sync cursor; it does not authorize, prepare, execute, verify, undo, or revoke a provider capability.
+
+## Implemented weather sandbox
+
+Open-Meteo is the only live provider in Stage 2a. Fixture mode is the safe default. Live mode is an explicit server setting and calls a fixed HTTPS endpoint for one fixed fictional coarse location. No client input selects the endpoint or coordinates.
+
+The adapter validates the provider payload and maps it into provider-neutral weather records with provenance and a bounded freshness deadline. The snapshot builder aggregates normalized records, derives connection health, and may add at most one deterministic weather attention bundle. A validated cached record may be shown as stale after a provider failure, but stale weather is suppressed from attention. The normalized result is consumed by the home and Connections routes and is available through `GET /api/orbit/snapshot` with no-store caching.
+
+Weather is observe-only. It does not enter the action ladder beyond observation, and no provider data is sent to a model.
 
 ## First-phase providers
 
@@ -45,10 +53,10 @@ The concrete implementation language and transport are intentionally undecided d
 | Email          | Mock metadata, thread summaries, and draft-only response | No send action in first slice                  |
 | Contacts       | Mock identity resolution                                 | Read-only initially                            |
 | Tasks          | Mock task context                                        | Candidate early reversible action              |
-| Weather        | Mock or public non-personal forecast                     | Low-risk read integration candidate            |
+| Weather        | Fixture-default or live Open-Meteo test forecast          | Stage 2a sandbox implemented; production review deferred |
 | Home Assistant | Optional status mock                                     | Reuse platform; no broad device control        |
 | Health         | Optional summary mock                                    | Platform-specific read-only research required  |
-| Model provider | Structured mock fixtures, then replaceable adapter       | Evaluate privacy, schema reliability, and cost |
+| Model provider | Structured mock behavior only                             | No live model call; evaluate privacy, schema reliability, and cost later |
 
 ## Selection criteria
 
@@ -63,11 +71,11 @@ The concrete implementation language and transport are intentionally undecided d
 
 ## Secrets and data
 
-No production credentials belong in the repository. `.env.example` documents names only. Real integrations require encrypted secret storage, rotation, revocation, scope inventory, and logs that redact tokens and private payloads.
+No production credentials belong in the repository. `.env.example` exposes only the weather mode switch; Open-Meteo's evaluation endpoint needs no key for this sandbox. Real personal integrations require encrypted secret storage, rotation, revocation, scope inventory, authenticated isolation, and logs that redact tokens and private payloads.
 
 ## Failure handling
 
-Adapters translate provider failures into typed states: authentication required, permission lost, rate limited, unavailable, conflict, rejected, unknown result, or verification mismatch. Orbit must surface degraded context and never silently reuse stale evidence for consequential actions.
+The weather adapter translates configuration, timeout, rate-limit, provider-unavailable, and invalid-response failures into typed Orbit states. A validated in-memory result may be returned as explicitly stale, but it cannot create a new attention item or support an action. Future personal adapters must additionally handle authentication required, permission lost, conflict, rejected, unknown result, and verification mismatch.
 
 ## Anti-goals
 
@@ -75,3 +83,5 @@ Adapters translate provider failures into typed states: authentication required,
 - No provider-specific fields distributed through Orbit Core.
 - No broad connector catalog in the first vertical slice.
 - No execution merely because a provider supports an API.
+- No Codex CLI process or custom agent runtime as Orbit's product backend.
+- No Google Calendar, OAuth, token storage, background sync, authentication, or live write capability in Stage 2a.

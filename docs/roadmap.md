@@ -14,15 +14,27 @@
 - Responsive, keyboard, screen-reader, and reduced-motion behavior
 - Automated unit, component, route, accessibility-smoke, and end-to-end test coverage, with live in-app browser validation
 
-This is not a production system. Data, execution, history, and preferences are mocked or browser-local.
+This is not a production system. Stage 1 scheduling data and execution remain mocked, and history and preferences are browser-local. The optional public weather sandbox is documented separately in Stage 2a below.
 
 ## Stage 2 — Connector-Backed Read-Only Context
 
-**Prepared through contracts; deferred until a separate goal.**
+**Stage 2a weather sandbox implemented; personal connectors remain deferred.**
 
-Start with weather and one calendar provider, then evaluate Gmail, contacts, Home Assistant, and GitHub read-only adapters. Implement provider-hosted OAuth, encrypted token storage, incremental synchronization, normalization, freshness, revocation, and connector-health reporting only after a threat model and deployment posture are approved.
+Stage 2a proves the smallest server-side context path:
 
-Loop: connect → synchronize → normalize → detect one attention candidate → explain with evidence.
+- fixture-default and live-opt-in Open-Meteo weather modes;
+- a fixed fictional coarse test location with no browser geolocation or credential;
+- provider response validation and normalization into a versioned `OrbitSnapshot`;
+- provenance, 15-minute freshness, connection health, and stale fallback;
+- deterministic weather attention with stale evidence suppressed;
+- `GET /api/orbit/snapshot` plus Quiet Orbit and Connections integration;
+- provider attribution and explicit evaluation-only limitations.
+
+The fictional flight-versus-meeting scenario and calendar execution remain mocked. Stage 2a adds no OAuth, authentication, secret storage, background synchronization, model call, production database, or write capability.
+
+Stage 2b is a later, separately approved goal: select one calendar provider, threat-model and implement least-privilege OAuth, encrypted connection storage, revocation, user-scoped synchronization, and authenticated isolation. Gmail, contacts, Home Assistant, GitHub, and other read-only adapters follow only after the calendar slice validates the boundary.
+
+Target loop for personal connectors: connect -> synchronize -> normalize -> detect one attention candidate -> explain with evidence.
 
 ## Stage 3 — Draft and Approval Actions
 

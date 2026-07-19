@@ -24,11 +24,11 @@ People already have the information needed for a useful assistant, but it is fra
 
 The first phase focuses on onboarding, calendar, email, contacts, tasks, weather, optional Home Assistant and health context, a calm attention surface, conversational follow-up, and permission-aware action review.
 
-Orbit reuses mature integrations rather than recreating every connector. The approved first implementation phase builds a production-quality mocked frontend; production integrations remain deferred.
+Orbit reuses mature integrations rather than recreating every connector. The frontend foundation keeps its scheduling journey mocked. Stage 2a adds one narrowly scoped exception: an optional, read-only Open-Meteo weather sandbox behind Orbit's provider-neutral server boundary. Personal connectors and production integrations remain deferred.
 
 ## Project status
 
-Orbit has completed its initial product-discovery and frontend-concept phase. Quiet Orbit, the centered-person attention pattern, and Focus-style progressive disclosure are implemented as a mocked frontend foundation. Start with the [product requirements](docs/product-requirements.md), [frontend architecture](docs/frontend/frontend-architecture.md), [interaction model](docs/interaction-model.md), [architecture](docs/architecture.md), and [roadmap](docs/roadmap.md).
+Orbit has completed its initial product-discovery and frontend-concept phase. Quiet Orbit, the centered-person attention pattern, and Focus-style progressive disclosure are implemented as a frontend foundation. Fixture-default weather context now exercises normalization, provenance, freshness, connection health, and stale suppression; live mode uses only a fixed fictional coarse location and requires no credential. Start with the [product requirements](docs/product-requirements.md), [frontend architecture](docs/frontend/frontend-architecture.md), [interaction model](docs/interaction-model.md), [architecture](docs/architecture.md), and [roadmap](docs/roadmap.md).
 
 The assistant-motion experiment is documented as the [Orbit Presence Lab goal](docs/codex/04-presence-lab-goal.md) and implemented as an isolated, development-only comparison surface. No permanent Presence winner has been selected.
 
@@ -43,6 +43,21 @@ npm run dev
 ```
 
 Open `http://localhost:3000`. The development-only Presence Lab is available at `http://localhost:3000/design-lab/presence`.
+
+Weather uses deterministic fixtures by default and performs no network request. To evaluate the read-only Open-Meteo sandbox, opt in when starting the development server:
+
+```bash
+ORBIT_WEATHER_MODE=live npm run dev
+```
+
+In PowerShell:
+
+```powershell
+$env:ORBIT_WEATHER_MODE = "live"
+npm run dev
+```
+
+Open `http://localhost:3000/?context=weather` to focus the weather example, or inspect the normalized no-store response at `http://localhost:3000/api/orbit/snapshot?context=weather`. Live mode uses the fixed fictional `Harbor City test area`, displays [Open-Meteo](https://open-meteo.com/) attribution with transformed results, and is for local evaluation only. It is not a safety-alert service and the free endpoint has no production service-level agreement. See the [weather sandbox](docs/connectors/weather.md) and [live-context threat model](docs/security/live-context-threat-model.md).
 
 Run the full local validation bundle with:
 

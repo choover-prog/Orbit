@@ -1,34 +1,79 @@
-# Next Codex Goal: Read-Only Connector-Backed MVP
+# Connector-Backed MVP Checkpoint
 
-`/goal`
+- Original goal: Weather plus Google Calendar read-only context
+- Status: Partially superseded on 2026-07-18
+- Completed scope: Stage 2a weather sandbox
+- Remaining scope: Personal calendar connector and production trust boundary
 
-GOAL: Build Orbit's first connector-backed, read-only context slice using weather and Google Calendar while preserving the approved Quiet Orbit experience and deterministic trust boundaries.
+## Why this goal changed
 
-## Outcome
+The original goal combined a public weather feed with OAuth, token storage, revocation, user isolation, synchronization, and real calendar records. Orbit split that work so the server normalization and freshness boundary could be validated without accepting credentials or personal data.
 
-Replace the Stage 1 weather and calendar fixtures with provider adapters that can synchronize authorized read-only data, normalize it into Orbit Core contracts, detect the existing travel-versus-meeting attention candidate, explain it with source evidence, and display one focal item in Quiet Orbit. Keep every action path mocked and disabled for real execution.
+Stage 2a is therefore complete for weather only. The original combined definition of done is not complete and must not be used to imply that Google Calendar or account connection exists.
 
-## Required decisions and gates
+## Implemented in Stage 2a
 
-1. Threat-model OAuth callbacks, token storage, refresh, revocation, log redaction, and local development before accepting credentials.
-2. Record ADRs for the server boundary, encrypted secret storage, sync ownership, and provider error policy.
-3. Use least-privilege Google Calendar read-only scopes and a weather provider that does not require exposing a secret to the browser.
-4. Keep provider response objects inside adapters; product components consume only the provider-neutral contracts already defined.
-5. Preserve explicit fixture mode so contributors and CI can run without credentials.
-6. Do not add Gmail, Contacts, Home Assistant, GitHub, authentication, write scopes, background hosting, or production deployment in this goal.
+- server-only, provider-neutral connector contracts and registry;
+- deterministic fixture weather as the default with zero network access;
+- live-opt-in Open-Meteo weather for one fixed fictional coarse test location;
+- strict response validation, normalized source records, provenance, and typed failures;
+- 15-minute in-memory freshness cache with explicitly stale fallback;
+- deterministic read-only weather attention with stale evidence suppressed;
+- versioned `OrbitSnapshot` consumed by Quiet Orbit and `/connections`;
+- no-store `GET /api/orbit/snapshot` inspection route;
+- Open-Meteo attribution and transformed-data disclosure;
+- adapter, cache, attention, snapshot, route, component, accessibility, and end-to-end tests;
+- connector boundary ADR, weather operating notes, and live-context threat model.
 
-## Implementation slice
+The existing fictional flight-versus-meeting scenario remains the default focal concern. Its scheduling proposal, approval, execution, verification, audit, and undo are still mocks.
 
-- Add server-only connector interfaces and configuration validation.
-- Implement weather and Google Calendar read-only adapters.
-- Implement bounded synchronization, normalization, freshness, provenance, and health states.
-- Map synchronized records into the existing attention-candidate interface.
-- Show connected, syncing, stale, unavailable, revoked, and permission-insufficient states in `/connections` without turning `/` into a dashboard.
-- Preserve the current mocked scheduling proposal and clearly label it as unavailable for live execution.
-- Add redacted audit events for authorization, sync, normalization, and read operations.
-- Add contract, fixture, adapter, failure, security, route, accessibility, and end-to-end tests.
-- Update architecture, connection, privacy, security, and roadmap documentation.
+## Explicitly not implemented
 
-## Definition of done
+- Google Calendar or any other personal connector;
+- OAuth callbacks, authorization scopes, refresh, or revocation;
+- credentials, encrypted token storage, or production secrets;
+- authentication, accounts, household isolation, or multi-tenancy;
+- durable storage or background synchronization;
+- Gmail, Contacts, Home Assistant, GitHub, health, or location history;
+- provider data in model prompts or live reasoning calls;
+- live drafts, writes, action execution, or deployment.
 
-The goal is complete when a developer can run fixture mode without secrets, optionally connect authorized test accounts through the approved server boundary, synchronize weather and calendar read-only data, see one evidence-backed focal concern in Quiet Orbit, inspect provenance and freshness, revoke access, and pass security, accessibility, test, type, lint, build, and review gates. No real action execution or write permission is present.
+## Remaining connector work
+
+A later approved Stage 2b goal should implement one calendar provider as a separate read-only vertical slice. Before accepting any account credential, it must:
+
+1. select the provider and document exact least-privilege read-only scopes;
+2. record decisions for OAuth callback validation, encrypted secret storage, sync ownership, revocation, retention, and provider errors;
+3. introduce authenticated user ownership and user-scoped isolation;
+4. implement bounded initial and incremental synchronization behind the existing connector interface;
+5. normalize provider records without exposing provider SDK objects to Orbit Core or React;
+6. preserve provenance, freshness, permission-insufficient, revoked, stale, and unavailable states;
+7. combine calendar with separately authorized context through deterministic attention policy;
+8. keep every external action disabled and retain fixture mode for contributors and CI;
+9. validate callback security, redaction, isolation, accessibility, failure behavior, and offline tests;
+10. update the threat model and roadmap before any hosted or friends-and-family trial.
+
+Gmail and broader connector coverage should wait until the calendar slice validates authorization, synchronization, and revocation. Model-assisted reasoning and write capabilities remain later stages.
+
+## Current run mode
+
+Fixture weather is automatic:
+
+```bash
+npm run dev
+```
+
+Live local evaluation is explicit:
+
+```bash
+ORBIT_WEATHER_MODE=live npm run dev
+```
+
+The Open-Meteo free endpoint is an evaluation dependency without a production service-level agreement. It uses no API key, receives only the fixed fictional coarse test point, and must be attributed where transformed weather evidence is shown.
+
+## Governing documents
+
+- [ADR: Connector Server Boundary](../adr/ADR-connector-server-boundary.md)
+- [Weather connector sandbox](../connectors/weather.md)
+- [Live-context threat model](../security/live-context-threat-model.md)
+- [Delivery roadmap](../roadmap.md)

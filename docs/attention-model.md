@@ -32,6 +32,19 @@ Before model-assisted ranking, deterministic rules remove candidates that are:
 
 Eligible candidates are compared using urgency, consequence, user commitments, reversibility, confidence, interruption preference, and recent corrections. The model may help summarize and compare candidates, but deterministic policy owns eligibility and interruption limits.
 
+## Implemented weather gate
+
+Stage 2a evaluates normalized fixture or Open-Meteo weather without a model call. Fresh weather may produce at most one read-only candidate, using this deterministic order:
+
+1. apparent temperature at least 100°F;
+2. apparent temperature at most 15°F;
+3. wind gusts at least 40 mph;
+4. precipitation probability at least 70% within the next six hours.
+
+The policy reports the modeled threshold and source evidence. It does not infer a personal plan, health effect, emergency, or action from weather alone. A record is stale when `now >= staleAfter`; stale weather remains inspectable but is excluded before candidate creation.
+
+The fictional travel conflict remains the default focal item so the mocked scheduling journey is stable. `?context=weather` selects the weather bundle only when a fresh weather candidate exists. If live conditions cross no threshold, Orbit stays quiet instead of inventing relevance.
+
 ## Display budget
 
 - One concern may be visually expanded.

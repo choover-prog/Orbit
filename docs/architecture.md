@@ -47,9 +47,32 @@ flowchart LR
 - status, verification, history, and undo presentation
 - voice input/output and configurable wake-word preferences
 
-## First vertical slice
+## Implemented Stage 2a server boundary
 
-The first slice uses fictional adapter data. A calendar change and related email create an observation that a meeting conflicts with travel. Orbit recommends rescheduling, drafts a calendar update plus message, requests approval, executes through a mock adapter, verifies the event state, records the audit trail, and offers undo.
+The weather sandbox is the first live context path. Next.js server code selects a fixture or live connector, validates the untrusted provider response, normalizes it, applies freshness and deterministic attention policy, and assembles one serializable `OrbitSnapshot`. Product components never import Open-Meteo response types.
+
+```mermaid
+flowchart LR
+    B["Browser route"] --> S["Orbit snapshot builder"]
+    S --> R["Server connector registry"]
+    R --> F["Fixture weather"]
+    R --> W["Open-Meteo adapter"]
+    F --> N["Normalized SourceRecord contract"]
+    W --> V["Validate and normalize"]
+    V --> N
+    N --> T["Provenance, freshness, and health"]
+    T --> A["Deterministic attention gate"]
+    A --> O["Provider-neutral OrbitSnapshot"]
+    O --> B
+```
+
+The home route consumes this boundary directly on the server. `GET /api/orbit/snapshot` exposes the same normalized snapshot with `cache-control: no-store` for local inspection and future trusted consumers. Fixture mode is the default and performs no network request. Live mode calls only Open-Meteo for one fixed fictional coarse test point.
+
+This slice has no reasoning-provider call, OAuth, credential store, authentication, background sync, or write path. A stale weather record remains inspectable but cannot create an attention item.
+
+## First action vertical slice
+
+The action demonstration continues to use fictional adapter data. A calendar change and related email create an observation that a meeting conflicts with travel. Orbit recommends rescheduling, drafts a calendar update plus message, requests approval, executes through a mock adapter, verifies the event state, records the audit trail, and offers undo. The Open-Meteo sandbox does not participate in this action path.
 
 ```mermaid
 sequenceDiagram
@@ -93,6 +116,8 @@ sequenceDiagram
 8. **Action coordinator:** enforces immutable plans, idempotency, state transitions, retries, and partial-failure handling.
 9. **Verification service:** reads authoritative state from the provider and compares it with the approved expected effect.
 10. **Audit service:** records redacted lifecycle events and undo metadata.
+11. **Connector registry:** selects the configured server-only context adapter and fails closed on unsupported mode.
+12. **Snapshot builder:** combines normalized context, evidence, connection health, and attention bundles into the versioned `OrbitSnapshot` consumed by routes.
 
 ## State and trust rules
 
@@ -106,4 +131,4 @@ sequenceDiagram
 
 ## Deployment posture
 
-No production topology is selected in discovery. Early implementation should be single-user, local-first where practical, with mocked adapters and a provider-neutral core. Secrets, encryption, retention, and isolation require explicit threat modeling before real integrations.
+No production topology is selected. Stage 2a remains a local evaluation sandbox: its only live source is a public Open-Meteo forecast for a fixed fictional location, its cache is process memory, and it has no personal data or credential. Authentication, OAuth, encrypted token storage, durable background synchronization, retention, user isolation, provider service levels, and deployment require explicit decisions before a personal connector is enabled.

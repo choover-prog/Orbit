@@ -11,7 +11,7 @@ The context model gives Orbit a consistent vocabulary without flattening provena
 | `Person`             | A user or relevant individual                  | `id`, `displayName`, `relationshipScope`                           |
 | `Household`          | Explicit shared context boundary               | `id`, `memberIds`, `policyRef`                                     |
 | `Relationship`       | Directional relationship with visibility rules | `fromPersonId`, `toPersonId`, `type`, `visibility`                 |
-| `SourceRecord`       | Immutable provider provenance pointer          | `id`, `provider`, `externalId`, `observedAt`, `contentHash`        |
+| `SourceRecord`       | Versioned normalized provider record            | `id`, `connectorId`, `externalReference`, `observedAt`, `retrievedAt`, `staleAfter`, `payload` |
 | `ContextEvent`       | Normalized fact or change                      | `id`, `domain`, `kind`, `occurredAt`, `sourceRecordIds`, `payload` |
 | `Evidence`           | Support for an observation                     | `id`, `sourceRecordIds`, `summary`, `freshness`, `accessScope`     |
 | `Observation`        | Validated claim about context                  | `id`, `statement`, `evidenceIds`, `confidence`, `status`           |
@@ -25,6 +25,25 @@ The context model gives Orbit a consistent vocabulary without flattening provena
 | `VerificationResult` | Readback comparison                            | `id`, `actionResultId`, `expected`, `observed`, `status`           |
 | `UndoPlan`           | Qualified compensating action                  | `id`, `actionResultId`, `steps`, `expiresAt`, `limitations`        |
 | `AuditEvent`         | Redacted lifecycle event                       | `id`, `actor`, `eventType`, `objectRef`, `occurredAt`, `metadata`  |
+
+## Implemented snapshot contract
+
+Stage 2a introduces a serializable, provider-neutral `OrbitSnapshot` as the route boundary. It contains:
+
+- one schema version and generation time;
+- the fictional person reference used by the current experience;
+- normalized attention bundles and the selected attention ID;
+- context records, evidence, and normalized source records;
+- connection mode, health, and last-read status;
+- a weather snapshot with `fresh`, `stale`, `unavailable`, or `misconfigured` status.
+
+`AttentionBundle` groups the exact `AttentionItem`, `ContextRecord`, `SourceEvidence`, optional recommendation, and optional action proposal needed by one focal experience. Its actionability is explicit: the travel conflict has a mocked action, while weather is read-only.
+
+The current Open-Meteo adapter is confined to server code. Raw provider response objects do not enter `OrbitSnapshot`; only validated `WeatherReading` fields cross the normalization boundary. `GET /api/orbit/snapshot` returns this same contract with no-store response caching.
+
+### Freshness and attribution
+
+Every weather `SourceRecord` includes `observedAt`, `retrievedAt`, and `staleAfter`. A record is fresh only while `now < staleAfter`; equality is stale. `SourceEvidence` carries the resulting freshness state and, in live mode, Open-Meteo attribution and the fact that values were transformed. A stale record may remain visible as evidence after a failed refresh, but it cannot create an attention bundle.
 
 ## Confidence and epistemic status
 
@@ -78,11 +97,13 @@ stateDiagram-v2
 ## Data minimization
 
 - Normalize only fields required for declared product purposes.
+- Keep the Stage 2a weather location fixed, coarse, and fictional; do not collect browser or account location.
 - Store provider payloads by reference when practical instead of duplicating them.
 - Send the reasoning provider the smallest relevant context window.
 - Redact sensitive payloads from audit metadata.
 - Respect domain-specific retention and deletion rather than one global forever-memory setting.
 - Do not infer household visibility merely because a source account is connected.
+- Do not send Stage 2a provider data to a reasoning model.
 
 ## Versioning
 
