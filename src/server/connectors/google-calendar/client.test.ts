@@ -151,6 +151,29 @@ describe("Google Calendar bounded client", () => {
     expect(JSON.stringify(result)).not.toContain("person@example.test");
   });
 
+  it("omits zero-duration point events without inventing scheduling time", async () => {
+    const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(
+      jsonResponse({
+        items: [
+          providerEvent("point", {
+            end: { dateTime: "2026-07-20T14:00:00-04:00" },
+          }),
+          providerEvent("interval"),
+        ],
+      }),
+    );
+
+    const result = await syncGoogleCalendar(
+      { now: NOW, accessToken: "token" },
+      { fetchImpl },
+    );
+
+    expect(result).toMatchObject({ ok: true });
+    if (!result.ok) throw new Error("Expected a successful sync");
+    expect(result.batch.records).toHaveLength(1);
+    expect(result.batch.records[0]?.payload.title).toBe("Event interval");
+  });
+
   it("removes line, control, and bidi spoofing characters from titles", async () => {
     const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(
       jsonResponse({

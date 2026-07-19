@@ -6,6 +6,7 @@ const NOW = new Date("2026-07-19T16:00:00.000Z");
 const LIVE_ENVIRONMENT = {
   ORBIT_GOOGLE_CALENDAR_MODE: "live",
   ORBIT_GOOGLE_CALENDAR_CLIENT_ID: "fake-client.apps.googleusercontent.com",
+  ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET: "fake-publisher-secret",
   ORBIT_GOOGLE_CALENDAR_REDIRECT_URI: "http://127.0.0.1:3000",
 };
 

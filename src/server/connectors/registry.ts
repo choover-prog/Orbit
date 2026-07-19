@@ -58,6 +58,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
     configuredMode,
     calendarMode,
     process.env.ORBIT_GOOGLE_CALENDAR_CLIENT_ID,
+    process.env.ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET,
     process.env.ORBIT_GOOGLE_CALENDAR_REDIRECT_URI,
     process.env.LOCALAPPDATA,
   ]);

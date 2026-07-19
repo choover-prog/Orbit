@@ -23,6 +23,7 @@ identity are absent.
 | --- | --- | --- |
 | PowerShell DPAPI helpers did not load `System.Security` in a fresh `-NoProfile` process. | High | Both fixed scripts load the assembly; a real Windows `CurrentUser` protect/unprotect test now runs in addition to mocked runner tests. |
 | The Desktop client used a callback path although Google documents the loopback redirect at the host root. | High | The provider redirect is exact root `http://127.0.0.1:<port>`; the root forwards only bounded protocol fields to the internal handler. |
+| The live Desktop client accepted consent but Google rejected token exchange without its generated client secret. | High | Orbit now requires publisher-provisioned Desktop client metadata server-side, sends the secret only in HTTPS token bodies, redacts provider diagnostics, and keeps it out of browser payloads, URLs, logs, and source control. PKCE remains required because a distributed app cannot rely on this value as confidential proof. |
 | An arbitrary Host could reach the unauthenticated loopback app through DNS rebinding. | High | The Next.js request proxy rejects every dynamic page, API, and RSC request unless raw Host is exact `127.0.0.1:<bounded-port>`. |
 | A failed first read could still display a successful connection/read notice. | High | Connect and callback notices claim success only when the returned gateway state is `fresh`; URL notices are also checked against current state. |
 | Authentication failures could be presented as stale connected data. | High | Authentication/scope failures suppress cached batches, delete invalid grants, and expose `reauthorization_required`. |
@@ -76,12 +77,13 @@ Final repository evidence on Node 24:
 
 Automated validation uses fictional credentials and responses. A maintainer
 must create a local Google Cloud Desktop OAuth client, enable Calendar API, add
-their evaluating account as a consent-screen test user, provision the public
-client ID into the private qualification build, and complete one unrecorded
-end-user consent/sync/disconnect run. The evaluator only uses Orbit's Connect
-control and Google's login and consent surfaces; they never edit configuration.
-This checkpoint must not capture or commit codes, tokens, event values, or the
-DPAPI blob.
+their evaluating account as a consent-screen test user, provision the
+publisher-owned Desktop client ID and generated client secret into the private
+qualification build, and complete one unrecorded end-user
+consent/sync/disconnect run. The evaluator only uses Orbit's Connect control
+and Google's login and consent surfaces; they never edit configuration. This
+checkpoint must not capture or commit publisher credentials, codes, tokens,
+event values, or the DPAPI blob.
 
 ## Accepted local-only residual risk
 

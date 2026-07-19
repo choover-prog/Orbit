@@ -74,6 +74,7 @@ function readConfiguration() {
   const values = parseEnvFile(readFileSync(envPath, "utf8"));
   const mode = values.get("ORBIT_GOOGLE_CALENDAR_MODE");
   const clientId = values.get("ORBIT_GOOGLE_CALENDAR_CLIENT_ID") ?? "";
+  const clientSecret = values.get("ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET") ?? "";
   const redirectUri = values.get("ORBIT_GOOGLE_CALENDAR_REDIRECT_URI");
 
   if (mode !== "live") {
@@ -87,6 +88,11 @@ function readConfiguration() {
     pass(
       "Orbit's publisher Google sign-in identity is configured (value hidden).",
     );
+  }
+  if (!clientSecret || clientSecret.length > 2_048) {
+    fail("The publisher-provisioned Google token identity is unavailable.");
+  } else {
+    pass("Orbit's publisher token identity is configured (value hidden).");
   }
   if (redirectUri !== origin) {
     fail(`The Calendar redirect URI must be exactly ${origin}.`);

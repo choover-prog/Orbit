@@ -56,19 +56,20 @@ This is release and maintainer work, not onboarding:
 3. Configure the OAuth consent/branding screen and add the evaluating account
    as a test user.
 4. Create an OAuth client of type **Desktop app**.
-5. Provision the public Desktop client ID into the Orbit runtime. Local
-   maintainers use ignored `.env.local`; a future packaged release must inject
-   it during build or installation.
+5. Provision the Desktop client ID and generated client secret into the Orbit
+   server runtime. Local maintainers use ignored `.env.local`; a future
+   packaged release must inject them during build or installation.
 6. Set `ORBIT_GOOGLE_CALENDAR_MODE=live` for the qualified build.
 7. Keep the callback at the documented loopback URI unless the local port is
    deliberately changed.
 8. Start Orbit on `127.0.0.1`, open `/connections`, read the disclosure, and
    choose **Connect Google Calendar**.
 
-No token, authorization code, or personal event belongs in source control. The
-Desktop client ID is a public installed-app identifier, but local development
-keeps it outside the repository to avoid binding contributors to one
-maintainer's Cloud project. Orbit never uses a Desktop client secret.
+No token, authorization code, publisher credential, or personal event belongs
+in source control. The Desktop client ID is a public installed-app identifier;
+Google's generated Desktop client secret is required by the token endpoint but
+cannot be treated as a durable confidential control in distributed software.
+Both remain publisher-owned, server-only, redacted, and outside the repository.
 
 Fixture mode is the default. It performs no Google request and exercises the
 same connection, synchronization, normalization, attention, and disconnect

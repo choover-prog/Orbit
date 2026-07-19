@@ -64,10 +64,22 @@ export interface GoogleCalendarOAuthDependencies {
 
 interface TokenEndpointResponse {
   access_token?: unknown;
+  error_description?: unknown;
   expires_in?: unknown;
   refresh_token?: unknown;
   scope?: unknown;
   token_type?: unknown;
+}
+
+function classifyProviderRejection(value: unknown): string {
+  if (typeof value !== "string") return "unclassified";
+  const normalized = value.toLowerCase();
+  if (normalized.includes("client_secret")) return "client_secret";
+  if (normalized.includes("code_verifier")) return "code_verifier";
+  if (normalized.includes("redirect_uri")) return "redirect_uri";
+  if (normalized.includes("client_id")) return "client_id";
+  if (normalized.includes("grant_type")) return "grant_type";
+  return "unclassified";
 }
 
 async function readBoundedOAuthText(response: Response): Promise<string> {
@@ -243,6 +255,25 @@ async function requestOAuthJson(
     }
 
     if (!response.ok) {
+      const providerError =
+        parsedResponse &&
+        typeof parsedResponse === "object" &&
+        "error" in parsedResponse &&
+        typeof parsedResponse.error === "string" &&
+        /^[a-z_]{1,64}$/.test(parsedResponse.error)
+          ? parsedResponse.error
+          : "unclassified";
+      console.error("Google Calendar OAuth token request was rejected.", {
+        providerError,
+        providerReason: classifyProviderRejection(
+          parsedResponse &&
+            typeof parsedResponse === "object" &&
+            "error_description" in parsedResponse
+            ? parsedResponse.error_description
+            : undefined,
+        ),
+        httpStatus: response.status,
+      });
       if (
         parsedResponse &&
         typeof parsedResponse === "object" &&
@@ -315,6 +346,7 @@ async function exchangeAuthorizationCode(
 ): Promise<GoogleCalendarInitialAccessToken> {
   const body = new URLSearchParams({
     client_id: config.clientId,
+    client_secret: config.clientSecret,
     code: requireAuthorizationCode(code),
     code_verifier: codeVerifier,
     grant_type: "authorization_code",
@@ -383,6 +415,7 @@ export async function refreshGoogleCalendarAccessToken(
 
   const body = new URLSearchParams({
     client_id: config.clientId,
+    client_secret: config.clientSecret,
     grant_type: "refresh_token",
     refresh_token: credential.refreshToken,
   });

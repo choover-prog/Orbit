@@ -190,6 +190,48 @@ function parseEvent(
   };
 }
 
+function classifyEventValidationFailure(value: unknown): string {
+  if (!isRecord(value) || typeof value.id !== "string") return "shape_or_id";
+  const providerId = value.id.trim();
+  if (providerId.length === 0 || providerId.length > 1_024) return "id";
+  if (
+    value.status !== "confirmed" &&
+    value.status !== "tentative" &&
+    value.status !== "cancelled"
+  ) {
+    return "status";
+  }
+
+  const start = parseBoundary(value.start);
+  const end = parseBoundary(value.end);
+  if (!start) return "start";
+  if (!end) return "end";
+  if (start.allDay !== end.allDay) return "boundary_kind";
+  if (normalizeDateTime(value.updated) === null) return "updated";
+  if (Date.parse(end.at) <= Date.parse(start.at)) return "duration";
+  if (
+    value.transparency !== undefined &&
+    value.transparency !== "opaque" &&
+    value.transparency !== "transparent"
+  ) {
+    return "transparency";
+  }
+  if (normalizeTitle(value.summary ?? "") === null) return "title";
+  return "unclassified";
+}
+
+function isZeroDurationEvent(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  const start = parseBoundary(value.start);
+  const end = parseBoundary(value.end);
+  return Boolean(
+    start &&
+    end &&
+    start.allDay === end.allDay &&
+    Date.parse(start.at) === Date.parse(end.at),
+  );
+}
+
 function parsePage(value: unknown): ParsedPage | null {
   if (!isRecord(value)) return null;
   const items = value.items ?? [];
@@ -200,7 +242,16 @@ function parsePage(value: unknown): ParsedPage | null {
   const events: ParsedPage["events"] = [];
   for (const item of items) {
     const parsed = parseEvent(item);
-    if (!parsed) return null;
+    if (!parsed) {
+      // Google permits point-in-time events. They occupy no interval and cannot
+      // participate in Orbit's overlap rule, so omitting them is deterministic
+      // and safer than inventing a duration.
+      if (isZeroDurationEvent(item)) continue;
+      console.error("Google Calendar event validation failed.", {
+        reason: classifyEventValidationFailure(item),
+      });
+      return null;
+    }
     events.push(parsed);
   }
 

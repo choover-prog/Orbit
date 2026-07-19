@@ -1,6 +1,6 @@
 # Google Calendar private live qualification
 
-- Status: Pending publisher provisioning and interactive end-user consent
+- Status: Passed
 - Scope: One Windows user, owned primary-calendar events, local-only
 - Evidence policy: Record health and counts only; never record account identity,
   event content, OAuth values, tokens, network bodies, or vault ciphertext
@@ -33,11 +33,14 @@ are not part of the end-user experience.
    ```dotenv
    ORBIT_GOOGLE_CALENDAR_MODE=live
    ORBIT_GOOGLE_CALENDAR_CLIENT_ID=<local Desktop client ID>
+   ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET=<local Desktop client secret>
    ORBIT_GOOGLE_CALENDAR_REDIRECT_URI=http://127.0.0.1:3000
    ```
 
-5. Do not configure a Desktop client secret. Installed applications are public
-   OAuth clients and Orbit uses PKCE instead.
+5. Keep the Desktop client metadata publisher-owned, server-only, ignored by
+   Git, and absent from screenshots and logs. PKCE is still required because a
+   distributed installed app cannot rely on its generated client secret as the
+   authorization-code proof.
 
 ## End-user qualification preparation
 
@@ -86,14 +89,14 @@ Do not mark this record complete from fixtures or automated provider mocks.
 
 | Check | Result |
 | --- | --- |
-| Publisher configuration preflight | Pending |
-| Interactive least-privilege consent | Pending |
-| Fresh, complete bounded read | Pending |
-| Provider-neutral record normalization | Pending |
-| Deterministic read-only attention | Pending |
-| DPAPI vault created without plaintext inspection | Pending |
-| Disconnect cleared cache and attention | Pending |
-| DPAPI vault deleted | Pending |
+| Publisher configuration preflight | Passed |
+| Interactive least-privilege consent | Passed |
+| Fresh, complete bounded read | Passed |
+| Provider-neutral record normalization | Passed |
+| Deterministic read-only attention | Passed |
+| DPAPI vault created without plaintext inspection | Passed |
+| Disconnect cleared cache and attention | Passed |
+| DPAPI vault deleted | Passed |
 
 After all rows pass, record only the qualification date, Orbit commit, and the
 word `Passed`. Do not record the account, project, client ID, event titles,

@@ -28,12 +28,14 @@ clients:
 http://127.0.0.1:3000
 ```
 
-The Desktop client ID is Orbit publisher configuration, not consumer
-configuration. A released Orbit build is provisioned with its public installed
-app identity before distribution. End users never create a Cloud project,
-download credentials, paste an identifier, or edit an environment file. Since
-a Desktop client is a public OAuth client, Orbit does not accept or transmit a
-client secret.
+The Desktop client metadata is Orbit publisher configuration, not consumer
+configuration. A released Orbit build is provisioned with its installed-app
+identity before distribution. End users never create a Cloud project,
+download credentials, paste identifiers, or edit an environment file. Google
+currently requires the generated Desktop `client_secret` in this client's
+token exchange even though an installed application cannot rely on that value
+remaining confidential. Orbit keeps it server-side, outside source control,
+browser payloads, URLs, and logs; PKCE remains the authorization-code binding.
 
 The configured callback must use `http`, the exact `127.0.0.1` host, a bounded
 local port, no credentials, and the root path. The root page immediately

@@ -21,6 +21,7 @@ import {
 const NOW = Date.parse("2026-07-19T12:00:00.000Z");
 const config: GoogleCalendarOAuthConfig = {
   clientId: "local-client.apps.googleusercontent.com",
+  clientSecret: "publisher-desktop-client-secret",
   redirectUri: GOOGLE_CALENDAR_DEFAULT_REDIRECT_URI,
 };
 
@@ -52,17 +53,20 @@ describe("Google Calendar OAuth configuration", () => {
     expect(
       resolveGoogleCalendarOAuthConfig({
         ORBIT_GOOGLE_CALENDAR_CLIENT_ID: "client-id",
+        ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET: "client-secret",
       }),
     ).toEqual({
       ok: true,
       config: {
         clientId: "client-id",
+        clientSecret: "client-secret",
         redirectUri: GOOGLE_CALENDAR_DEFAULT_REDIRECT_URI,
       },
     });
     expect(
       resolveGoogleCalendarOAuthConfig({
         ORBIT_GOOGLE_CALENDAR_CLIENT_ID: "client-id",
+        ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET: "client-secret",
         ORBIT_GOOGLE_CALENDAR_REDIRECT_URI:
           "https://calendar-token-collector.example/callback",
       }),
@@ -70,12 +74,14 @@ describe("Google Calendar OAuth configuration", () => {
     expect(
       resolveGoogleCalendarOAuthConfig({
         ORBIT_GOOGLE_CALENDAR_CLIENT_ID: "client-id",
+        ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET: "client-secret",
         ORBIT_GOOGLE_CALENDAR_REDIRECT_URI: "http://127.0.0.1:3000/",
       }),
     ).toMatchObject({ ok: true });
     expect(
       resolveGoogleCalendarOAuthConfig({
         ORBIT_GOOGLE_CALENDAR_CLIENT_ID: "client-id",
+        ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET: "client-secret",
         ORBIT_GOOGLE_CALENDAR_REDIRECT_URI:
           "http://127.0.0.1:3000/api/connectors/google-calendar/callback",
       }),
@@ -145,7 +151,7 @@ describe("Google Calendar authorization", () => {
     expect(body.get("grant_type")).toBe("authorization_code");
     expect(body.get("code")).toBe("authorization-code");
     expect(body.get("code_verifier")).toHaveLength(86);
-    expect(body.has("client_secret")).toBe(false);
+    expect(body.get("client_secret")).toBe(config.clientSecret);
     expect(String(endpoint)).not.toContain("authorization-code");
   });
 
@@ -264,7 +270,7 @@ describe("Google Calendar token lifecycle", () => {
     await expect(credentials.load()).resolves.toBeNull();
   });
 
-  it("supports a Desktop client without putting a client secret in the exchange", async () => {
+  it("keeps Desktop publisher credentials in the server-side token exchange", async () => {
     const credentials = new MemoryGoogleCalendarCredentialStore();
     await credentials.save({
       version: 1,
@@ -276,15 +282,14 @@ describe("Google Calendar token lifecycle", () => {
       tokenResponse({ refresh_token: undefined, scope: undefined }),
     );
 
-    await refreshGoogleCalendarAccessToken(
-      { clientId: config.clientId, redirectUri: config.redirectUri },
-      credentials,
-      { fetch: fetchMock, now: () => NOW },
-    );
+    await refreshGoogleCalendarAccessToken(config, credentials, {
+      fetch: fetchMock,
+      now: () => NOW,
+    });
 
     const [, request] = fetchMock.mock.calls[0] ?? [];
     const body = new URLSearchParams(String(request?.body));
-    expect(body.has("client_secret")).toBe(false);
+    expect(body.get("client_secret")).toBe(config.clientSecret);
   });
 
   it("revokes the grant and always deletes the local credential", async () => {
