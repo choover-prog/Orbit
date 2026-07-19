@@ -66,7 +66,7 @@ const fixtureNoticeCopy: Record<CalendarConnectionNotice, string> = {
 
 function statusLabel(status: CalendarContextStatus) {
   const labels: Record<CalendarContextStatus, string> = {
-    configuration_required: "Setup required",
+    configuration_required: "Unavailable",
     disconnected: "Not connected",
     connected: "Connected",
     reauthorization_required: "Reconnect required",
@@ -136,7 +136,6 @@ export function CalendarConnectionPanel({
   const connected = isConnectedState(connection.status);
   const canClearLocalData =
     connected ||
-    connection.status === "configuration_required" ||
     connection.status === "storage_unavailable" ||
     connection.status === "reauthorization_required";
   const lastSync = timeLabel(connection.lastSyncedAt);
@@ -287,8 +286,8 @@ export function CalendarConnectionPanel({
       <div className="calendar-connection__actions">
         {connection.status === "configuration_required" ? (
           <p className="connection-detail">
-            Add the local Google Desktop OAuth client ID to the ignored
-            <code> .env.local </code>file before connecting.
+            Google Calendar is not available in this Orbit build. Nothing is
+            required from your Google account or this device.
           </p>
         ) : null}
 

@@ -76,10 +76,12 @@ Final repository evidence on Node 24:
 
 Automated validation uses fictional credentials and responses. A maintainer
 must create a local Google Cloud Desktop OAuth client, enable Calendar API, add
-their evaluating account as a consent-screen test user, place only the client
-ID in ignored `.env.local`, and complete one unrecorded consent/sync/disconnect
-run. This checkpoint must not capture or commit codes, tokens, event values, or
-the DPAPI blob.
+their evaluating account as a consent-screen test user, provision the public
+client ID into the private qualification build, and complete one unrecorded
+end-user consent/sync/disconnect run. The evaluator only uses Orbit's Connect
+control and Google's login and consent surfaces; they never edit configuration.
+This checkpoint must not capture or commit codes, tokens, event values, or the
+DPAPI blob.
 
 ## Accepted local-only residual risk
 

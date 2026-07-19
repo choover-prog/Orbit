@@ -34,23 +34,41 @@ objects. Normalized records are cached only in the running process. The refresh
 token is the only durable personal credential and is encrypted with Windows
 DPAPI for the current user.
 
-## Local setup
+## End-user connection
+
+In a publisher-provisioned Orbit build, the person:
+
+1. Opens **Connections**.
+2. Reads what Calendar data Orbit can and cannot access.
+3. Chooses **Connect Google Calendar**.
+4. Signs in on Google's page and approves or cancels the read-only request.
+5. Returns to Orbit, which reports connection health and freshness.
+
+The person never creates a Google Cloud project, supplies an OAuth client ID,
+downloads a credential file, or edits Orbit configuration.
+
+## Publisher provisioning
+
+This is release and maintainer work, not onboarding:
 
 1. Create or select a Google Cloud project.
 2. Enable Google Calendar API.
 3. Configure the OAuth consent/branding screen and add the evaluating account
    as a test user.
 4. Create an OAuth client of type **Desktop app**.
-5. Copy `.env.example` to the ignored `.env.local` file.
-6. Set `ORBIT_GOOGLE_CALENDAR_MODE=live` and the Desktop client ID.
+5. Provision the public Desktop client ID into the Orbit runtime. Local
+   maintainers use ignored `.env.local`; a future packaged release must inject
+   it during build or installation.
+6. Set `ORBIT_GOOGLE_CALENDAR_MODE=live` for the qualified build.
 7. Keep the callback at the documented loopback URI unless the local port is
    deliberately changed.
 8. Start Orbit on `127.0.0.1`, open `/connections`, read the disclosure, and
    choose **Connect Google Calendar**.
 
-No client ID, token, authorization code, or personal event belongs in source
-control. The client ID is configuration rather than a bearer secret, but it is
-kept local to avoid binding contributors to one maintainer's Cloud project.
+No token, authorization code, or personal event belongs in source control. The
+Desktop client ID is a public installed-app identifier, but local development
+keeps it outside the repository to avoid binding contributors to one
+maintainer's Cloud project. Orbit never uses a Desktop client secret.
 
 Fixture mode is the default. It performs no Google request and exercises the
 same connection, synchronization, normalization, attention, and disconnect

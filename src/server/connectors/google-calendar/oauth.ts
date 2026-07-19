@@ -320,7 +320,6 @@ async function exchangeAuthorizationCode(
     grant_type: "authorization_code",
     redirect_uri: config.redirectUri,
   });
-  if (config.clientSecret) body.set("client_secret", config.clientSecret);
 
   const response = await requestOAuthJson(
     GOOGLE_OAUTH_TOKEN_ENDPOINT,
@@ -387,7 +386,6 @@ export async function refreshGoogleCalendarAccessToken(
     grant_type: "refresh_token",
     refresh_token: credential.refreshToken,
   });
-  if (config.clientSecret) body.set("client_secret", config.clientSecret);
 
   let response: unknown;
   try {

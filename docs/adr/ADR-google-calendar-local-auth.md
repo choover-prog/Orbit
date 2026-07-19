@@ -28,6 +28,13 @@ clients:
 http://127.0.0.1:3000
 ```
 
+The Desktop client ID is Orbit publisher configuration, not consumer
+configuration. A released Orbit build is provisioned with its public installed
+app identity before distribution. End users never create a Cloud project,
+download credentials, paste an identifier, or edit an environment file. Since
+a Desktop client is a public OAuth client, Orbit does not accept or transmit a
+client secret.
+
 The configured callback must use `http`, the exact `127.0.0.1` host, a bounded
 local port, no credentials, and the root path. The root page immediately
 forwards only bounded `code`, `state`, or `error` protocol values to an internal

@@ -37,8 +37,9 @@ Orbit has completed its initial product-discovery and frontend-concept phase.
 Quiet Orbit, the centered-person attention pattern, and Focus-style progressive
 disclosure are implemented as a frontend foundation. Fixture-default weather
 and Calendar connectors exercise normalization, provenance, freshness, health,
-and stale suppression offline. Google Calendar can be enabled for one local
-Windows user with that user's own OAuth client; it remains read-only. Start with
+and stale suppression offline. A publisher-provisioned build can connect one
+local Windows user to Google Calendar through familiar Google sign-in; it
+remains read-only. Start with
 the [product requirements](docs/product-requirements.md), [frontend architecture](docs/frontend/frontend-architecture.md), [interaction model](docs/interaction-model.md), [architecture](docs/architecture.md), and [roadmap](docs/roadmap.md).
 
 The assistant-motion experiment is documented as the [Orbit Presence Lab goal](docs/codex/04-presence-lab-goal.md) and implemented as an isolated, development-only comparison surface. No permanent Presence winner has been selected.
@@ -71,24 +72,20 @@ npm run dev
 Open `http://127.0.0.1:3000/?context=weather` to focus the weather example, or inspect the normalized no-store response at `http://127.0.0.1:3000/api/orbit/snapshot?context=weather`. Live mode uses the fixed fictional `Harbor City test area`, displays [Open-Meteo](https://open-meteo.com/) attribution with transformed results, and is for local evaluation only. It is not a safety-alert service and the free endpoint has no production service-level agreement. See the [weather sandbox](docs/connectors/weather.md) and [live-context threat model](docs/security/live-context-threat-model.md).
 
 Google Calendar is disconnected fixture data by default and makes no Google
-request. The offline lifecycle can be exercised from `/connections`. For one
-local live evaluation, create a Google Desktop OAuth client, enable Calendar
-API, copy `.env.example` to ignored `.env.local`, then set:
+request. The offline lifecycle can be exercised from `/connections`. In a
+publisher-provisioned live build, the end user opens `/connections`, chooses
+**Connect Google Calendar**, signs in to Google, and approves or cancels the
+read-only request. They never configure OAuth or edit an environment file.
 
-```dotenv
-ORBIT_GOOGLE_CALENDAR_MODE=live
-ORBIT_GOOGLE_CALENDAR_CLIENT_ID=your-local-desktop-client-id
-ORBIT_GOOGLE_CALENDAR_REDIRECT_URI=http://127.0.0.1:3000
-```
-
-Start Orbit, open `http://127.0.0.1:3000/connections`, and read the disclosure
-before connecting. Orbit requests only owned primary-calendar event read access,
+Orbit requests only owned primary-calendar event read access,
 stores the refresh token with Windows DPAPI, and never requests Calendar write
 access. Only consent completion and an explicit **Refresh now** contact Google;
 ordinary pages use the local cache. The app rejects non-`127.0.0.1` Host headers
 to protect the unauthenticated local service from browser DNS rebinding. See the [connector guide](docs/connectors/google-calendar.md),
 [authorization ADR](docs/adr/ADR-google-calendar-local-auth.md), and
-[threat model](docs/security/google-calendar-threat-model.md).
+[threat model](docs/security/google-calendar-threat-model.md). Maintainer-only
+publisher provisioning and private qualification are documented separately in
+[the live qualification guide](docs/connectors/google-calendar-live-qualification.md).
 
 Run the full local validation bundle with:
 

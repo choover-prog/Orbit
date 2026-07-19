@@ -135,14 +135,14 @@ describe("CalendarConnectionPanel", () => {
     ).toHaveFocus();
   });
 
-  it("does not render a dead connect control when configuration is missing", () => {
+  it("does not make the user configure a missing publisher identity", () => {
     render(
       <CalendarConnectionPanel
         connection={{
           ...disconnected,
           mode: "live",
           status: "configuration_required",
-          failureMessage: "A local OAuth client ID is required.",
+          failureMessage: "Google Calendar is unavailable in this Orbit build.",
         }}
       />,
     );
@@ -151,11 +151,17 @@ describe("CalendarConnectionPanel", () => {
       screen.queryByRole("button", { name: /Connect Google Calendar/i }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent(
-      "A local OAuth client ID is required.",
+      "Google Calendar is unavailable in this Orbit build.",
     );
     expect(
-      screen.getByRole("button", { name: "Clear local Calendar data" }),
+      screen.getByText(/nothing is required from your Google account/i),
     ).toBeVisible();
+    expect(
+      screen.queryByText(/\.env\.local|client ID/i),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Clear local Calendar data" }),
+    ).not.toBeInTheDocument();
   });
 
   it.each([

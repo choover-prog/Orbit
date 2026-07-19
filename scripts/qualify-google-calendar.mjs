@@ -62,7 +62,7 @@ function isIgnoredLocalEnvironment() {
 
 function readConfiguration() {
   if (!existsSync(envPath)) {
-    fail(".env.local is missing.");
+    fail("This local Orbit build has not been publisher-provisioned.");
     return null;
   }
   if (!isIgnoredLocalEnvironment()) {
@@ -82,9 +82,11 @@ function readConfiguration() {
     pass("Calendar connector is configured for live mode.");
   }
   if (!/^[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$/u.test(clientId)) {
-    fail("A valid Google Desktop OAuth client ID is required.");
+    fail("The publisher-provisioned Google sign-in identity is unavailable.");
   } else {
-    pass("A Google Desktop OAuth client ID is configured (value hidden).");
+    pass(
+      "Orbit's publisher Google sign-in identity is configured (value hidden).",
+    );
   }
   if (redirectUri !== origin) {
     fail(`The Calendar redirect URI must be exactly ${origin}.`);

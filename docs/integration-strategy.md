@@ -93,10 +93,12 @@ Weather is observe-only. It does not enter the action ladder beyond observation,
 ## Secrets and data
 
 No production credentials belong in the repository. `.env.example` names only
-safe configuration keys. Open-Meteo needs no key. The local Calendar client ID
-lives in ignored `.env.local`; the refresh token is DPAPI encrypted outside the
-repository. A hosted personal integration still requires managed encrypted
-storage, rotation, revocation, authenticated isolation, and redacted logs.
+safe publisher/build configuration keys. Open-Meteo needs no key. A local
+Calendar qualification build receives its public Desktop client ID through
+ignored maintainer configuration; end users never provide it. The refresh token
+is DPAPI encrypted outside the repository. A hosted personal integration still
+requires managed encrypted storage, rotation, revocation, authenticated
+isolation, and redacted logs.
 
 ## Failure handling
 

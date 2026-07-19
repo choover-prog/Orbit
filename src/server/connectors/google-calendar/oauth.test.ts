@@ -21,7 +21,6 @@ import {
 const NOW = Date.parse("2026-07-19T12:00:00.000Z");
 const config: GoogleCalendarOAuthConfig = {
   clientId: "local-client.apps.googleusercontent.com",
-  clientSecret: "local-client-secret",
   redirectUri: GOOGLE_CALENDAR_DEFAULT_REDIRECT_URI,
 };
 
@@ -146,9 +145,8 @@ describe("Google Calendar authorization", () => {
     expect(body.get("grant_type")).toBe("authorization_code");
     expect(body.get("code")).toBe("authorization-code");
     expect(body.get("code_verifier")).toHaveLength(86);
-    expect(body.get("client_secret")).toBe("local-client-secret");
+    expect(body.has("client_secret")).toBe(false);
     expect(String(endpoint)).not.toContain("authorization-code");
-    expect(String(endpoint)).not.toContain("local-client-secret");
   });
 
   it("refuses broader grants and does not save them", async () => {

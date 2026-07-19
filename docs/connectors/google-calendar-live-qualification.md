@@ -1,6 +1,6 @@
 # Google Calendar private live qualification
 
-- Status: Pending local OAuth configuration and interactive consent
+- Status: Pending publisher provisioning and interactive end-user consent
 - Scope: One Windows user, owned primary-calendar events, local-only
 - Evidence policy: Record health and counts only; never record account identity,
   event content, OAuth values, tokens, network bodies, or vault ciphertext
@@ -17,14 +17,18 @@ mode, health, record count, freshness presence, attention presence, and vault
 lifecycle results. It never prints normalized records or opens the encrypted
 credential file.
 
-## Private preparation
+## Publisher preparation
+
+These steps are performed once by Orbit's publisher or a local maintainer. They
+are not part of the end-user experience.
 
 1. Enable Google Calendar API in a private Google Cloud project.
 2. Configure the Google Auth consent screen. For an external test application,
    add only the evaluating account as a test user.
 3. Create a Google OAuth client of type **Desktop app**.
-4. Put the following values in ignored `.env.local`; never paste them into an
-   issue, task, screenshot, log, or commit:
+4. Provision the following runtime values. This repository's private local
+   qualification uses ignored `.env.local`; never paste them into an issue,
+   task, screenshot, log, or commit:
 
    ```dotenv
    ORBIT_GOOGLE_CALENDAR_MODE=live
@@ -32,23 +36,30 @@ credential file.
    ORBIT_GOOGLE_CALENDAR_REDIRECT_URI=http://127.0.0.1:3000
    ```
 
-5. Create two temporary, overlapping events on the evaluating account's owned
-   primary calendar. Use neutral titles without personal information. This lets
-   the deterministic read-only attention rule be qualified without Orbit
-   writing to Calendar.
+5. Do not configure a Desktop client secret. Installed applications are public
+   OAuth clients and Orbit uses PKCE instead.
+
+## End-user qualification preparation
+
+Create two temporary, overlapping events on the evaluating account's owned
+primary calendar. Use neutral titles without personal information. This lets
+the deterministic read-only attention rule be qualified without Orbit writing
+to Calendar.
 
 ## Qualification sequence
 
-Run the preflight before starting Orbit:
+The maintainer runs the publisher preflight before starting Orbit:
 
 ```powershell
 npm run qualify:calendar -- preflight
 npm run dev -- -p 3000
 ```
 
-Open `http://127.0.0.1:3000/connections`, read the live disclosure, choose
-**Connect Google Calendar**, and approve only the owned-events read-only scope.
-After Orbit reports a fresh bounded read, run:
+The evaluator then follows only the consumer flow: open
+`http://127.0.0.1:3000/connections`, read the disclosure, choose **Connect
+Google Calendar**, sign in to Google, and approve or cancel the owned-events
+read-only scope. No Orbit configuration is shown to the evaluator. After Orbit
+reports a fresh bounded read, the maintainer runs:
 
 ```powershell
 npm run qualify:calendar -- connected
@@ -75,7 +86,7 @@ Do not mark this record complete from fixtures or automated provider mocks.
 
 | Check | Result |
 | --- | --- |
-| Private configuration preflight | Pending |
+| Publisher configuration preflight | Pending |
 | Interactive least-privilege consent | Pending |
 | Fresh, complete bounded read | Pending |
 | Provider-neutral record normalization | Pending |
