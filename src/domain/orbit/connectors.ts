@@ -121,6 +121,34 @@ export interface CalendarEvent {
   updatedAt: IsoDateTime;
 }
 
+/**
+ * Hard bounds for normalized email context. Provider adapters must enforce
+ * these limits before records cross into Orbit Core. Domain policy validates
+ * them again before email can contribute to attention.
+ */
+export const EMAIL_MESSAGE_SUMMARY_LIMITS = {
+  recordsPerSync: 25,
+  subjectCharacters: 512,
+  senderLabelCharacters: 256,
+  snippetCharacters: 1_024,
+} as const;
+
+/**
+ * Provider-neutral, deliberately minimal email context. Subject, sender, and
+ * snippet are untrusted external content and must only be rendered as text.
+ * Raw provider message bodies, addresses, and identifiers must not cross into
+ * this contract.
+ */
+export interface EmailMessageSummary {
+  subject: string;
+  senderLabel?: string;
+  receivedAt: IsoDateTime;
+  snippet: string;
+  unread: boolean;
+  inbox: boolean;
+  important: boolean;
+}
+
 interface AttentionBundleBase {
   id: string;
   label: string;
@@ -138,7 +166,7 @@ export interface MockedActionAttentionBundle extends AttentionBundleBase {
 }
 
 export interface ReadOnlyAttentionBundle extends AttentionBundleBase {
-  kind: "weather" | "calendar_conflict";
+  kind: "weather" | "calendar_conflict" | "calendar_email_preparation";
   recommendation?: Recommendation;
   actionProposal?: never;
   actionability: "read_only";
@@ -155,20 +183,24 @@ export interface WeatherContextSnapshot {
   failure?: ConnectorFailure;
 }
 
-export type CalendarAuthorizationStatus =
+export type ReadOnlyConnectorAuthorizationStatus =
   | "configuration_required"
   | "disconnected"
   | "connected"
   | "reauthorization_required"
   | "storage_unavailable";
 
-export type CalendarContextStatus =
-  | CalendarAuthorizationStatus
+export type ReadOnlyConnectorContextStatus =
+  | ReadOnlyConnectorAuthorizationStatus
   | "syncing"
   | "fresh"
   | "stale"
   | "rate_limited"
   | "unavailable";
+
+export type CalendarAuthorizationStatus = ReadOnlyConnectorAuthorizationStatus;
+
+export type CalendarContextStatus = ReadOnlyConnectorContextStatus;
 
 export interface CalendarContextSnapshot {
   status: CalendarContextStatus;
@@ -185,10 +217,29 @@ export interface CalendarContextSnapshot {
   failure?: ConnectorFailure;
 }
 
+export type EmailAuthorizationStatus = ReadOnlyConnectorAuthorizationStatus;
+
+export type EmailContextStatus = ReadOnlyConnectorContextStatus;
+
+export interface EmailContextSnapshot {
+  status: EmailContextStatus;
+  authorization: EmailAuthorizationStatus;
+  mode: ConnectorMode;
+  records: Array<SourceRecord<EmailMessageSummary>>;
+  complete: boolean;
+  messageCount: number;
+  windowStart?: IsoDateTime;
+  windowEnd?: IsoDateTime;
+  lastSyncedAt?: IsoDateTime;
+  nextSyncEligibleAt?: IsoDateTime;
+  attention?: ReadOnlyAttentionBundle;
+  failure?: ConnectorFailure;
+}
+
 export interface OrbitSnapshot {
   schemaVersion: "1";
   generatedAt: IsoDateTime;
-  requestedContext: "weather" | "calendar" | null;
+  requestedContext: "weather" | "calendar" | "email" | null;
   person: PersonReference;
   selectedAttentionId: string | null;
   attention: AttentionBundle[];
@@ -198,4 +249,5 @@ export interface OrbitSnapshot {
   connections: ConnectionStatus[];
   weather: WeatherContextSnapshot;
   calendar: CalendarContextSnapshot;
+  email: EmailContextSnapshot;
 }

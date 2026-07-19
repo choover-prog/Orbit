@@ -10,6 +10,7 @@ test-results/
 .cache/
 .turbo/
 .next/
+.next-stale-codex/
 .vercel/
 *.tmp
 *.swp

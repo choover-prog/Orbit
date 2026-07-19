@@ -1,12 +1,14 @@
 import type { ConnectorMode, OrbitSnapshot } from "@/domain/orbit/connectors";
 import { buildWeatherContextArtifacts } from "@/domain/orbit/weather-attention";
 import { buildCalendarContextArtifacts } from "@/domain/orbit/calendar-attention";
+import { buildCalendarEmailContextArtifacts } from "@/domain/orbit/calendar-email-attention";
 import {
   createClientFixtureSnapshot,
   travelAttentionBundle,
 } from "@/mocks/orbit-snapshot";
 import type { ConnectionStatus } from "@/domain/orbit/types";
 import type { GoogleCalendarGatewayState } from "@/server/connectors/google-calendar";
+import type { GmailGatewayState } from "@/server/connectors/gmail";
 import {
   getConnectorRegistry,
   type OrbitConnectorRegistry,
@@ -98,15 +100,60 @@ function calendarConnection(
   };
 }
 
+function gmailConnection(state: GmailGatewayState): ConnectionStatus {
+  const health: ConnectionStatus["health"] =
+    state.status === "fresh"
+      ? "connected"
+      : state.status === "storage_unavailable"
+        ? "configuration_required"
+        : state.status;
+  const batch = state.batch;
+  let statusDetail =
+    "Orbit reads a bounded set of recent unread Inbox subjects and snippets. It cannot change or send email.";
+
+  if (state.mode === "fixture") {
+    statusDetail =
+      "Fictional local OAuth and Gmail data; no Google request or durable credential.";
+  }
+  if (state.failure) statusDetail = state.failure.message;
+  if (batch && batch.completeness !== "complete") {
+    statusDetail =
+      "The bounded read was incomplete, so Orbit suppressed cross-source email attention.";
+  }
+
+  return {
+    id: "connection_google_gmail",
+    displayName: "Gmail",
+    category: "email",
+    mode: state.mode,
+    health,
+    capabilities: [
+      {
+        id: "google_gmail_unread_inbox_read",
+        label: "Read bounded unread Inbox subjects and snippets",
+        access: "read",
+      },
+    ],
+    lastSyncLabel: batch
+      ? `${batch.records.length} validated messages in a bounded read`
+      : state.authorization === "connected"
+        ? "No validated read available"
+        : "No personal Gmail connected",
+    ...(batch ? { lastSyncedAt: batch.retrievedAt } : {}),
+    statusDetail,
+  };
+}
+
 export async function buildOrbitSnapshot(
   options: BuildOrbitSnapshotOptions = {},
 ): Promise<OrbitSnapshot> {
   const now = options.now ?? new Date();
   const registry = options.registry ?? getConnectorRegistry();
   const base = createClientFixtureSnapshot();
-  const [weatherRead, calendarRead] = await Promise.all([
+  const [weatherRead, calendarRead, gmailRead] = await Promise.all([
     registry.weather.read(now),
     registry.calendar.peek(now),
+    registry.gmail.peek(now),
   ]);
   const weatherBaseConnection = base.connections.find(
     (connection) => connection.id === "connection_weather",
@@ -129,17 +176,35 @@ export async function buildOrbitSnapshot(
       })
     : undefined;
   const calendarAttention = calendarArtifacts?.attention;
+  const calendarEmailArtifacts =
+    calendarRead.batch && gmailRead.batch
+      ? buildCalendarEmailContextArtifacts(
+          calendarRead.batch.records,
+          gmailRead.batch.records,
+          now,
+          {
+            calendarComplete: calendarRead.batch.completeness === "complete",
+            calendarFresh: calendarRead.status === "fresh",
+            emailComplete: gmailRead.batch.completeness === "complete",
+            emailFresh: gmailRead.status === "fresh",
+          },
+        )
+      : undefined;
+  const calendarEmailAttention = calendarEmailArtifacts?.attention;
   const attention = [
     travelAttentionBundle,
     ...(weatherAttention ? [weatherAttention] : []),
     ...(calendarAttention ? [calendarAttention] : []),
+    ...(calendarEmailAttention ? [calendarEmailAttention] : []),
   ];
   const selectedAttentionId =
     options.contextPreference === "weather"
       ? (weatherAttention?.id ?? null)
       : options.contextPreference === "calendar"
         ? (calendarAttention?.id ?? null)
-        : travelAttentionBundle.id;
+        : options.contextPreference === "email"
+          ? (calendarEmailAttention?.id ?? null)
+          : travelAttentionBundle.id;
   const failure = "failure" in weatherRead ? weatherRead.failure : undefined;
   const weatherStatus = weatherRead.status;
 
@@ -148,7 +213,8 @@ export async function buildOrbitSnapshot(
     generatedAt: now.toISOString(),
     requestedContext:
       options.contextPreference === "weather" ||
-      options.contextPreference === "calendar"
+      options.contextPreference === "calendar" ||
+      options.contextPreference === "email"
         ? options.contextPreference
         : null,
     selectedAttentionId,
@@ -157,15 +223,18 @@ export async function buildOrbitSnapshot(
       ...base.contextRecords,
       ...(artifacts ? [artifacts.contextRecord] : []),
       ...(calendarArtifacts ? calendarArtifacts.contextRecords : []),
+      ...(calendarEmailArtifacts ? calendarEmailArtifacts.contextRecords : []),
     ],
     evidence: [
       ...base.evidence,
       ...(artifacts ? [artifacts.evidence] : []),
       ...(calendarArtifacts ? calendarArtifacts.evidence : []),
+      ...(calendarEmailArtifacts ? calendarEmailArtifacts.evidence : []),
     ],
     sourceRecords: [
       ...(hasRecord ? [weatherRead.record] : []),
       ...(calendarRead.batch ? calendarRead.batch.records : []),
+      ...(gmailRead.batch ? gmailRead.batch.records : []),
     ],
     connections: [
       ...base.connections.map((connection) =>
@@ -180,6 +249,7 @@ export async function buildOrbitSnapshot(
           : connection,
       ),
       calendarConnection(calendarRead),
+      gmailConnection(gmailRead),
     ],
     weather: {
       status: weatherStatus,
@@ -207,6 +277,26 @@ export async function buildOrbitSnapshot(
         : {}),
       ...(calendarAttention ? { attention: calendarAttention } : {}),
       ...(calendarRead.failure ? { failure: calendarRead.failure } : {}),
+    },
+    email: {
+      status: gmailRead.status,
+      authorization: gmailRead.authorization,
+      mode: gmailRead.mode,
+      records: gmailRead.batch?.records ?? [],
+      complete: gmailRead.batch?.completeness === "complete",
+      messageCount: gmailRead.batch?.records.length ?? 0,
+      ...(gmailRead.batch
+        ? {
+            windowStart: gmailRead.batch.window.startsAt,
+            windowEnd: gmailRead.batch.window.endsAt,
+            lastSyncedAt: gmailRead.batch.retrievedAt,
+          }
+        : {}),
+      ...(gmailRead.nextSyncEligibleAt
+        ? { nextSyncEligibleAt: gmailRead.nextSyncEligibleAt }
+        : {}),
+      ...(calendarEmailAttention ? { attention: calendarEmailAttention } : {}),
+      ...(gmailRead.failure ? { failure: gmailRead.failure } : {}),
     },
   };
 }

@@ -282,3 +282,40 @@ test("local Calendar lifecycle stays read-only from consent through deletion", a
   });
   expect(consoleErrors).toEqual([]);
 });
+
+test("local Gmail lifecycle stays bounded and clears its state", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "single local connector lane");
+  await page.goto("/connections");
+  const gmail = page.getByRole("article", { name: "Gmail" });
+  await gmail
+    .getByRole("button", { name: "Connect fictional Gmail fixture" })
+    .click();
+  await expect(gmail.getByRole("status")).toContainText(
+    "fictional Gmail fixture is active",
+  );
+  await expect(gmail.getByText("Restricted read only")).toBeVisible();
+
+  const connected = await page.request.get("/api/orbit/snapshot");
+  const connectedJson = (await connected.json()) as {
+    email: { status: string; records: unknown[]; complete: boolean };
+  };
+  expect(connectedJson.email.status).toBe("fresh");
+  expect(connectedJson.email.records.length).toBeGreaterThan(0);
+  expect(connectedJson.email.complete).toBe(true);
+
+  await gmail.getByRole("button", { name: "Disconnect" }).click();
+  await gmail.getByRole("button", { name: "Remove fictional fixture" }).click();
+  await expect(gmail.getByRole("status")).toContainText(
+    "fictional Gmail fixture was disconnected",
+  );
+  const disconnected = await page.request.get("/api/orbit/snapshot");
+  const disconnectedJson = (await disconnected.json()) as {
+    email: { status: string; records: unknown[] };
+  };
+  expect(disconnectedJson.email).toMatchObject({
+    status: "disconnected",
+    records: [],
+  });
+});

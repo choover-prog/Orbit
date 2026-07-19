@@ -52,5 +52,13 @@ export function createClientFixtureSnapshot(): OrbitSnapshot {
       complete: true,
       eventCount: 0,
     },
+    email: {
+      status: "disconnected",
+      authorization: "disconnected",
+      mode: "fixture",
+      records: [],
+      complete: true,
+      messageCount: 0,
+    },
   };
 }

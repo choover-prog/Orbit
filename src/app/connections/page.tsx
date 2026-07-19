@@ -3,13 +3,17 @@ import {
   CalendarConnectionPanel,
   type CalendarConnectionNotice,
 } from "@/features/connections/CalendarConnectionPanel";
+import {
+  GmailConnectionPanel,
+  type GmailConnectionNotice,
+} from "@/features/connections/GmailConnectionPanel";
 import { buildOrbitSnapshot } from "@/server/context/buildOrbitSnapshot";
 
 export const metadata: Metadata = { title: "Connections" };
 export const dynamic = "force-dynamic";
 
 interface ConnectionsPageProps {
-  searchParams: Promise<{ calendar?: string }>;
+  searchParams: Promise<{ calendar?: string; gmail?: string }>;
 }
 
 function parseCalendarNotice(
@@ -29,10 +33,27 @@ function parseCalendarNotice(
   return notices.find((notice) => notice === value);
 }
 
+function parseGmailNotice(
+  value: string | undefined,
+): GmailConnectionNotice | undefined {
+  const notices: GmailConnectionNotice[] = [
+    "connected",
+    "disconnected",
+    "synced",
+    "current",
+    "denied",
+    "expired",
+    "invalid_callback",
+    "failed",
+    "local_only",
+  ];
+  return notices.find((notice) => notice === value);
+}
+
 export default async function ConnectionsPage({
   searchParams,
 }: ConnectionsPageProps) {
-  const { calendar } = await searchParams;
+  const { calendar, gmail } = await searchParams;
   const snapshot = await buildOrbitSnapshot();
 
   return (
@@ -40,9 +61,10 @@ export default async function ConnectionsPage({
       <p className="admin-kicker">Connection boundaries</p>
       <h1 className="admin-title">Access should be understandable.</h1>
       <p className="admin-intro">
-        Every source begins with a narrow purpose. Google Calendar is a local,
-        read-only personal connection; the demo calendar, email, and home data
-        remain fictional. Weather may use a public read-only forecast.
+        Every source begins with a narrow purpose. Google Calendar and Gmail are
+        isolated, local, read-only personal connections. Their fixture modes and
+        the home data remain fictional. Weather may use a public read-only
+        forecast.
       </p>
       <CalendarConnectionPanel
         connection={{
@@ -62,10 +84,33 @@ export default async function ConnectionsPage({
         }}
         notice={parseCalendarNotice(calendar)}
       />
+      <GmailConnectionPanel
+        connection={{
+          status: snapshot.email.status,
+          mode: snapshot.email.mode,
+          messageCount: snapshot.email.messageCount,
+          complete: snapshot.email.complete,
+          lastSyncedAt: snapshot.email.lastSyncedAt,
+          windowStart: snapshot.email.windowStart,
+          windowEnd: snapshot.email.windowEnd,
+          nextSyncEligibleAt: snapshot.email.nextSyncEligibleAt,
+          canSync:
+            !snapshot.email.nextSyncEligibleAt ||
+            Date.parse(snapshot.email.nextSyncEligibleAt) <=
+              Date.parse(snapshot.generatedAt),
+          failureMessage: snapshot.email.failure?.message,
+        }}
+        notice={parseGmailNotice(gmail)}
+      />
       <div className="admin-list">
         {snapshot.connections
           .filter(
-            (connection) => connection.id !== "connection_google_calendar",
+            (connection) =>
+              ![
+                "connection_google_calendar",
+                "connection_google_gmail",
+                "connection_email",
+              ].includes(connection.id),
           )
           .map((connection) => (
             <article className="admin-row" key={connection.id}>

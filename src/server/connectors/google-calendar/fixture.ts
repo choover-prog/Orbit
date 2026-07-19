@@ -24,8 +24,8 @@ const EVENTS: FixtureEvent[] = [
   {
     id: "project-review",
     title: "Project Review",
-    startOffsetMinutes: 30,
-    endOffsetMinutes: 60,
+    startOffsetMinutes: 45,
+    endOffsetMinutes: 75,
   },
   {
     id: "quiet-focus",

@@ -167,4 +167,60 @@ describe("buildOrbitSnapshot", () => {
       records: [],
     });
   });
+
+  it("creates one read-only cross-source candidate only after both bounded reads", async () => {
+    const registry = createConnectorRegistry({
+      weatherMode: "fixture",
+      calendarMode: "fixture",
+      gmailMode: "fixture",
+    });
+    await registry.calendar.beginAuthorization(NOW);
+    await registry.gmail.beginAuthorization(NOW);
+
+    const snapshot = await buildOrbitSnapshot({
+      now: NOW,
+      contextPreference: "email",
+      registry,
+    });
+    const selected = snapshot.attention.find(
+      (bundle) => bundle.id === snapshot.selectedAttentionId,
+    );
+
+    expect(snapshot.email).toMatchObject({
+      status: "fresh",
+      authorization: "connected",
+      mode: "fixture",
+      complete: true,
+      messageCount: 2,
+    });
+    expect(selected).toMatchObject({
+      kind: "calendar_email_preparation",
+      actionability: "read_only",
+    });
+    expect(selected?.recommendation).toBeUndefined();
+    expect(selected?.actionProposal).toBeUndefined();
+    expect(snapshot.sourceRecords).toHaveLength(6);
+  });
+
+  it("does not silently substitute another concern when email is requested but Gmail is disconnected", async () => {
+    const registry = createConnectorRegistry({
+      weatherMode: "fixture",
+      calendarMode: "fixture",
+      gmailMode: "fixture",
+    });
+    await registry.calendar.beginAuthorization(NOW);
+
+    const snapshot = await buildOrbitSnapshot({
+      now: NOW,
+      contextPreference: "email",
+      registry,
+    });
+
+    expect(snapshot.selectedAttentionId).toBeNull();
+    expect(snapshot.email).toMatchObject({
+      status: "disconnected",
+      authorization: "disconnected",
+      records: [],
+    });
+  });
 });

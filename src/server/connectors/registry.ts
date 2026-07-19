@@ -8,6 +8,13 @@ import {
 } from "./google-calendar";
 import type { GoogleCalendarCredentialStore } from "./google-calendar/credential-store";
 import type { GoogleCalendarOAuthSessionStore } from "./google-calendar/oauth-session";
+import {
+  createGmailGateway,
+  type GmailGateway,
+  type GmailGatewayEnvironment,
+} from "./gmail";
+import type { GmailCredentialStore } from "./gmail/credential-store";
+import type { GmailOAuthSessionStore } from "./gmail/oauth-session";
 
 export interface CreateConnectorRegistryOptions {
   weatherMode?: string;
@@ -18,11 +25,17 @@ export interface CreateConnectorRegistryOptions {
   calendarCredentialStore?: GoogleCalendarCredentialStore;
   calendarSessions?: GoogleCalendarOAuthSessionStore;
   calendarEnvironment?: GoogleCalendarGatewayEnvironment;
+  gmailMode?: string;
+  gmailFetchImpl?: typeof globalThis.fetch;
+  gmailCredentialStore?: GmailCredentialStore;
+  gmailSessions?: GmailOAuthSessionStore;
+  gmailEnvironment?: GmailGatewayEnvironment;
 }
 
 export interface OrbitConnectorRegistry {
   weather: WeatherConnectorService;
   calendar: GoogleCalendarGateway;
+  gmail: GmailGateway;
 }
 
 export function createConnectorRegistry(
@@ -43,6 +56,13 @@ export function createConnectorRegistry(
       sessions: options.calendarSessions,
       environment: options.calendarEnvironment,
     }),
+    gmail: createGmailGateway({
+      mode: options.gmailMode,
+      fetchImpl: options.gmailFetchImpl,
+      credentialStore: options.gmailCredentialStore,
+      sessions: options.gmailSessions,
+      environment: options.gmailEnvironment,
+    }),
   };
 }
 
@@ -54,12 +74,17 @@ const globalForConnectorRegistry = globalThis as typeof globalThis & {
 export function getConnectorRegistry(): OrbitConnectorRegistry {
   const configuredMode = process.env.ORBIT_WEATHER_MODE;
   const calendarMode = process.env.ORBIT_GOOGLE_CALENDAR_MODE;
+  const gmailMode = process.env.ORBIT_GOOGLE_GMAIL_MODE;
   const configurationKey = JSON.stringify([
     configuredMode,
     calendarMode,
     process.env.ORBIT_GOOGLE_CALENDAR_CLIENT_ID,
     process.env.ORBIT_GOOGLE_CALENDAR_CLIENT_SECRET,
     process.env.ORBIT_GOOGLE_CALENDAR_REDIRECT_URI,
+    gmailMode,
+    process.env.ORBIT_GOOGLE_GMAIL_CLIENT_ID,
+    process.env.ORBIT_GOOGLE_GMAIL_CLIENT_SECRET,
+    process.env.ORBIT_GOOGLE_GMAIL_REDIRECT_URI,
     process.env.LOCALAPPDATA,
   ]);
   if (
@@ -73,6 +98,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
       createConnectorRegistry({
         weatherMode: configuredMode,
         calendarMode,
+        gmailMode,
       });
   }
 
@@ -81,6 +107,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
 
 export function resetConnectorRegistryForTests(): void {
   globalForConnectorRegistry.__orbitConnectorRegistry?.calendar.resetForTests();
+  globalForConnectorRegistry.__orbitConnectorRegistry?.gmail.resetForTests();
   globalForConnectorRegistry.__orbitConnectorRegistry = undefined;
   globalForConnectorRegistry.__orbitConnectorRegistryConfigurationKey =
     undefined;

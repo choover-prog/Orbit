@@ -1,4 +1,5 @@
 .next
+.next-stale-codex
 coverage
 node_modules
 playwright-report
