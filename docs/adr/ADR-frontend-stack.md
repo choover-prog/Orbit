@@ -21,7 +21,7 @@ Use the current stable Next.js App Router with React and TypeScript.
 - Playwright for route coverage, the complete mocked scheduling journey, responsive checks, and console-error inspection.
 - ESLint and Prettier for contributor-friendly static checks.
 
-Initial dependency versions are pinned by `package-lock.json`. The implementation requires Node.js 20.9 or newer.
+Initial dependency versions are pinned by `package-lock.json`. The supported runtime is Node.js 24, selected in `.nvmrc` and continuous integration.
 
 ## Why this fits Orbit
 

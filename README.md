@@ -34,7 +34,8 @@ The assistant-motion experiment is documented as the [Orbit Presence Lab goal](d
 
 ## Local development
 
-Requires Node.js 20.9 or newer.
+Requires Node.js 24. The repository includes an `.nvmrc` for selecting
+the supported runtime with a compatible Node version manager.
 
 ```bash
 npm install
