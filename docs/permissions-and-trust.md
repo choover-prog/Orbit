@@ -29,7 +29,16 @@ The Open-Meteo sandbox is an R0 Observe capability with no personal grant becaus
 
 Weather evidence includes source, modeled status, observed time, freshness, and Open-Meteo attribution when live. Stale weather cannot create an attention item. The interface exposes degraded and misconfigured states instead of presenting unavailable data as current.
 
-The calendar proposal, approval, execution, verification, audit, and undo journey remains a fictional mock. Its approval UI demonstrates the intended trust contract but grants no live calendar authority. Google Calendar, OAuth, token storage, authentication, background synchronization, and real execution require separate approval and threat modeling.
+The Calendar proposal, approval, execution, verification, audit, and undo
+journey remains a fictional mock. Its approval UI demonstrates the intended
+trust contract but grants no live authority.
+
+Stage 2b separately authorizes one R0 Observe capability: read minimal event
+timing from the owned primary Google Calendar for a bounded window. The
+connection disclosure states purpose, fields, local encrypted credential
+storage, and deletion. Stale or incomplete reads cannot produce attention.
+Disconnect deletes local credentials and context before best-effort remote
+revocation. No write scope, proposal, approval, or action route is present.
 
 ## Approval invariants
 
@@ -76,4 +85,4 @@ Undo is a new capability-checked, potentially approval-requiring action. It must
 
 ## Threats to address before real integrations
 
-The weather sandbox addresses its bounded SSRF, timeout, schema-validation, redaction, coarse-location, stale-context, and rate-limit threats in the [live-context threat model](security/live-context-threat-model.md). Prompt injection in future provider content, confused-deputy actions, cross-household disclosure, token theft, replayed approvals, partial provider failure, malicious voice commands, sensitive audit leakage, and unsafe retries require explicit controls and tests before production credentials are introduced.
+The weather sandbox addresses its risks in the [live-context threat model](security/live-context-threat-model.md). The local personal Calendar connector addresses OAuth, token-vault, provider-data, disconnect, and read-only escalation risks in the [Google Calendar threat model](security/google-calendar-threat-model.md). Hosted cross-user disclosure, broader prompt injection, replayed approvals, partial write failure, malicious voice commands, sensitive audit leakage, and unsafe execution retries still require explicit controls before production deployment or write credentials.

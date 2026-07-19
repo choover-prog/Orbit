@@ -82,7 +82,10 @@ Rejected. It would distribute provider schemas and error behavior across the app
 - The application can demonstrate a live provider while builds, tests, and contributors remain on deterministic fixtures.
 - Provider replacement does not require product-component changes as long as the Orbit contract remains stable.
 - In-memory cache state is local to one process and is intentionally not a durable synchronization system.
-- Authentication, OAuth callbacks, encrypted token storage, background synchronization, multi-user isolation, and production deployment require later decisions before personal connectors are enabled.
+- The local Google Calendar slice now adds OAuth callbacks and DPAPI token
+  storage under a separate ADR. Background synchronization, multi-user
+  isolation, hosted secret management, and production deployment remain later
+  decisions.
 
 ## Related documents
 
@@ -90,3 +93,4 @@ Rejected. It would distribute provider schemas and error behavior across the app
 - [Permissions and trust](../permissions-and-trust.md)
 - [Weather connector sandbox](../connectors/weather.md)
 - [Live-context threat model](../security/live-context-threat-model.md)
+- [Local Google Calendar authorization](ADR-google-calendar-local-auth.md)

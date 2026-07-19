@@ -1,15 +1,28 @@
 import type { WeatherFetch } from "./weather/open-meteo";
 import { createWeatherConnector } from "./weather";
 import { WeatherConnectorService } from "./weather/service";
+import {
+  createGoogleCalendarGateway,
+  type GoogleCalendarGateway,
+  type GoogleCalendarGatewayEnvironment,
+} from "./google-calendar";
+import type { GoogleCalendarCredentialStore } from "./google-calendar/credential-store";
+import type { GoogleCalendarOAuthSessionStore } from "./google-calendar/oauth-session";
 
 export interface CreateConnectorRegistryOptions {
   weatherMode?: string;
   fetchImpl?: WeatherFetch;
   weatherTimeoutMs?: number;
+  calendarMode?: string;
+  calendarFetchImpl?: typeof globalThis.fetch;
+  calendarCredentialStore?: GoogleCalendarCredentialStore;
+  calendarSessions?: GoogleCalendarOAuthSessionStore;
+  calendarEnvironment?: GoogleCalendarGatewayEnvironment;
 }
 
 export interface OrbitConnectorRegistry {
   weather: WeatherConnectorService;
+  calendar: GoogleCalendarGateway;
 }
 
 export function createConnectorRegistry(
@@ -23,18 +36,51 @@ export function createConnectorRegistry(
         timeoutMs: options.weatherTimeoutMs,
       }),
     ),
+    calendar: createGoogleCalendarGateway({
+      mode: options.calendarMode,
+      fetchImpl: options.calendarFetchImpl,
+      credentialStore: options.calendarCredentialStore,
+      sessions: options.calendarSessions,
+      environment: options.calendarEnvironment,
+    }),
   };
 }
 
-let defaultRegistry: OrbitConnectorRegistry | undefined;
-let defaultMode: string | undefined;
+const globalForConnectorRegistry = globalThis as typeof globalThis & {
+  __orbitConnectorRegistry?: OrbitConnectorRegistry;
+  __orbitConnectorRegistryConfigurationKey?: string;
+};
 
 export function getConnectorRegistry(): OrbitConnectorRegistry {
   const configuredMode = process.env.ORBIT_WEATHER_MODE;
-  if (!defaultRegistry || configuredMode !== defaultMode) {
-    defaultMode = configuredMode;
-    defaultRegistry = createConnectorRegistry({ weatherMode: configuredMode });
+  const calendarMode = process.env.ORBIT_GOOGLE_CALENDAR_MODE;
+  const configurationKey = JSON.stringify([
+    configuredMode,
+    calendarMode,
+    process.env.ORBIT_GOOGLE_CALENDAR_CLIENT_ID,
+    process.env.ORBIT_GOOGLE_CALENDAR_REDIRECT_URI,
+    process.env.LOCALAPPDATA,
+  ]);
+  if (
+    !globalForConnectorRegistry.__orbitConnectorRegistry ||
+    configurationKey !==
+      globalForConnectorRegistry.__orbitConnectorRegistryConfigurationKey
+  ) {
+    globalForConnectorRegistry.__orbitConnectorRegistryConfigurationKey =
+      configurationKey;
+    globalForConnectorRegistry.__orbitConnectorRegistry =
+      createConnectorRegistry({
+        weatherMode: configuredMode,
+        calendarMode,
+      });
   }
 
-  return defaultRegistry;
+  return globalForConnectorRegistry.__orbitConnectorRegistry;
+}
+
+export function resetConnectorRegistryForTests(): void {
+  globalForConnectorRegistry.__orbitConnectorRegistry?.calendar.resetForTests();
+  globalForConnectorRegistry.__orbitConnectorRegistry = undefined;
+  globalForConnectorRegistry.__orbitConnectorRegistryConfigurationKey =
+    undefined;
 }

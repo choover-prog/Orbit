@@ -144,6 +144,10 @@ export interface ConnectionStatus {
     | "stale"
     | "unavailable"
     | "misconfigured"
+    | "configuration_required"
+    | "disconnected"
+    | "reauthorization_required"
+    | "rate_limited"
     | "paused";
   capabilities: Array<{
     id: string;

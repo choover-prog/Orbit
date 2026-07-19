@@ -35,7 +35,28 @@ adapter.prepareUndo(result) -> undo eligibility and plan
 adapter.revoke() -> revocation result
 ```
 
-The broader contract remains a roadmap model. Stage 2a implements only the read side as a TypeScript `ContextConnector` selected by a server registry. It produces normalized `SourceRecord` values and a sync cursor; it does not authorize, prepare, execute, verify, undo, or revoke a provider capability.
+The broader contract remains a roadmap model. Stage 2a implements the public
+weather read side. Stage 2b adds authorization, bounded sync, and revocation for
+one local Google Calendar read connector. Neither implements prepare, execute,
+verify, or undo against a live provider.
+
+## Implemented Google Calendar slice
+
+The local server uses a Google Desktop OAuth client, PKCE S256, loopback
+callback, and the `calendar.events.owned.readonly` scope. It stores the refresh
+token with Windows DPAPI, keeps access tokens and normalized events in memory,
+and reads only a bounded window from the owned primary calendar. Provider
+objects and identifiers are minimized before they cross into Orbit Core.
+
+The adapter exposes authorization, health, freshness, rate-limit, completeness,
+and disconnect state. Fixture mode performs no Google request. Live Calendar
+records can support one deterministic read-only overlap explanation, never the
+fictional action adapter.
+
+The local request proxy rejects non-`127.0.0.1` Host headers before rendering
+pages, RSC, or APIs. Connect completion and explicit same-origin refresh are the
+only Calendar provider-I/O paths; ordinary reads only inspect the in-process
+cache.
 
 ## Implemented weather sandbox
 
@@ -49,7 +70,7 @@ Weather is observe-only. It does not enter the action ladder beyond observation,
 
 | Domain         | Discovery behavior                                       | Production decision                            |
 | -------------- | -------------------------------------------------------- | ---------------------------------------------- |
-| Calendar       | Mock events and one reversible reschedule action         | Select after provider comparison               |
+| Calendar       | Google primary-calendar read plus separate mock action    | Local-only slice implemented; hosted isolation and writes deferred |
 | Email          | Mock metadata, thread summaries, and draft-only response | No send action in first slice                  |
 | Contacts       | Mock identity resolution                                 | Read-only initially                            |
 | Tasks          | Mock task context                                        | Candidate early reversible action              |
@@ -71,7 +92,11 @@ Weather is observe-only. It does not enter the action ladder beyond observation,
 
 ## Secrets and data
 
-No production credentials belong in the repository. `.env.example` exposes only the weather mode switch; Open-Meteo's evaluation endpoint needs no key for this sandbox. Real personal integrations require encrypted secret storage, rotation, revocation, scope inventory, authenticated isolation, and logs that redact tokens and private payloads.
+No production credentials belong in the repository. `.env.example` names only
+safe configuration keys. Open-Meteo needs no key. The local Calendar client ID
+lives in ignored `.env.local`; the refresh token is DPAPI encrypted outside the
+repository. A hosted personal integration still requires managed encrypted
+storage, rotation, revocation, authenticated isolation, and redacted logs.
 
 ## Failure handling
 
@@ -84,4 +109,5 @@ The weather adapter translates configuration, timeout, rate-limit, provider-unav
 - No broad connector catalog in the first vertical slice.
 - No execution merely because a provider supports an API.
 - No Codex CLI process or custom agent runtime as Orbit's product backend.
-- No Google Calendar, OAuth, token storage, background sync, authentication, or live write capability in Stage 2a.
+- No Calendar write, background sync, Orbit account authentication, hosted
+  deployment, or model-driven connector behavior in Stage 2b.

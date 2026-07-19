@@ -14,6 +14,11 @@ export type ConnectorMode = "fixture" | "live";
 
 export type ConnectorErrorCode =
   | "configuration_required"
+  | "authentication_required"
+  | "authorization_denied"
+  | "insufficient_scope"
+  | "storage_unavailable"
+  | "refresh_required"
   | "timeout"
   | "rate_limited"
   | "provider_unavailable"
@@ -97,6 +102,25 @@ export interface WeatherReading {
   hourly: HourlyWeatherPoint[];
 }
 
+export type CalendarEventStatus = "confirmed" | "tentative" | "cancelled";
+export type CalendarSelfResponseStatus =
+  "accepted" | "tentative" | "declined" | "needsAction" | "unknown";
+
+/**
+ * Provider-neutral, deliberately minimal calendar context. Raw Google event
+ * bodies and provider identifiers must never cross into this contract.
+ */
+export interface CalendarEvent {
+  title: string;
+  startAt: IsoDateTime;
+  endAt: IsoDateTime;
+  allDay: boolean;
+  status: CalendarEventStatus;
+  transparency: "opaque" | "transparent";
+  selfResponseStatus: CalendarSelfResponseStatus;
+  updatedAt: IsoDateTime;
+}
+
 interface AttentionBundleBase {
   id: string;
   label: string;
@@ -114,7 +138,7 @@ export interface MockedActionAttentionBundle extends AttentionBundleBase {
 }
 
 export interface ReadOnlyAttentionBundle extends AttentionBundleBase {
-  kind: "weather";
+  kind: "weather" | "calendar_conflict";
   recommendation?: Recommendation;
   actionProposal?: never;
   actionability: "read_only";
@@ -131,15 +155,47 @@ export interface WeatherContextSnapshot {
   failure?: ConnectorFailure;
 }
 
+export type CalendarAuthorizationStatus =
+  | "configuration_required"
+  | "disconnected"
+  | "connected"
+  | "reauthorization_required"
+  | "storage_unavailable";
+
+export type CalendarContextStatus =
+  | CalendarAuthorizationStatus
+  | "syncing"
+  | "fresh"
+  | "stale"
+  | "rate_limited"
+  | "unavailable";
+
+export interface CalendarContextSnapshot {
+  status: CalendarContextStatus;
+  authorization: CalendarAuthorizationStatus;
+  mode: ConnectorMode;
+  records: Array<SourceRecord<CalendarEvent>>;
+  complete: boolean;
+  eventCount: number;
+  windowStart?: IsoDateTime;
+  windowEnd?: IsoDateTime;
+  lastSyncedAt?: IsoDateTime;
+  nextSyncEligibleAt?: IsoDateTime;
+  attention?: ReadOnlyAttentionBundle;
+  failure?: ConnectorFailure;
+}
+
 export interface OrbitSnapshot {
   schemaVersion: "1";
   generatedAt: IsoDateTime;
+  requestedContext: "weather" | "calendar" | null;
   person: PersonReference;
   selectedAttentionId: string | null;
   attention: AttentionBundle[];
   contextRecords: ContextRecord[];
   evidence: SourceEvidence[];
-  sourceRecords: Array<SourceRecord<WeatherReading>>;
+  sourceRecords: Array<SourceRecord>;
   connections: ConnectionStatus[];
   weather: WeatherContextSnapshot;
+  calendar: CalendarContextSnapshot;
 }

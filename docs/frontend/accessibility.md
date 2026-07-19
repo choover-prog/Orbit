@@ -23,10 +23,30 @@ Implemented interfaces target WCAG 2.2 AA.
 - Fixture and live modes use the same semantic evidence disclosure; live mode does not request browser geolocation or introduce a permission prompt.
 - Weather has no action control, so keyboard or voice input cannot accidentally enter the mocked calendar approval path from a weather concern.
 
+## Calendar connection and trust cues
+
+- The connection disclosure names the purpose, exact bounded fields, local
+  encrypted credential, excluded fields, and lack of write authority before the
+  Connect control.
+- Authorization, fresh, stale, rate-limited, unavailable, reconnect-required,
+  configuration, and secure-storage states use explicit text rather than color.
+- Connect, refresh, reconnect, disconnect, confirmation, and cancellation use
+  native forms and buttons with visible focus and minimum 44-pixel targets.
+- Successful lifecycle results use a polite status; actionable failures use an
+  alert. Cancelling disconnect restores focus to its trigger.
+- Calendar evidence is read-only. Action-like keyboard input cannot reveal a
+  draft, approval, execution, or undo path.
+- Disconnect confirmation states both local deletion and the fact that no
+  Google Calendar event is changed or deleted.
+
 ## Motion
 
 `prefers-reduced-motion` stops continuous movement globally. The locally persisted Presence motion setting also controls the main shell, while Presence supports explicit `motionEnabled` and `reducedMotion` props so the lab can compare static state treatments. SVG variants resolve to static geometry; Morph mounts only the relevant state-specific WebP still and no animation frames. Static error and completion remain distinguishable through the exposed status text as well as their visual treatments.
 
 ## Validation
 
-Vitest runs `jest-axe` against Presence and the resting shell and exercises attributed weather evidence without an action path. Playwright runs `axe-core` smoke checks across every route and verifies the fixture weather disclosure. Automated checks do not replace keyboard, screen-reader, zoom, contrast, and responsive manual review.
+Vitest runs `jest-axe` against Presence, the resting shell, and Calendar
+onboarding, and exercises weather and Calendar evidence without an action path.
+Playwright runs `axe-core` smoke checks across every route and completes the
+offline Calendar consent-to-deletion lifecycle. Automated checks do not replace
+keyboard, screen-reader, zoom, contrast, and responsive manual review.

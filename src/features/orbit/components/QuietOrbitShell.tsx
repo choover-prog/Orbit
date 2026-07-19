@@ -81,6 +81,36 @@ function weatherTrustMessage(snapshot: OrbitSnapshot) {
     : "No weather concern was inferred because weather context is unavailable.";
 }
 
+function quietTrustMessage(snapshot: OrbitSnapshot) {
+  if (snapshot.requestedContext !== "calendar") {
+    return weatherTrustMessage(snapshot);
+  }
+
+  switch (snapshot.calendar.status) {
+    case "disconnected":
+      return "Google Calendar is not connected, so Orbit has no personal Calendar context.";
+    case "configuration_required":
+    case "storage_unavailable":
+      return (
+        snapshot.calendar.failure?.message ?? "Calendar setup is incomplete."
+      );
+    case "reauthorization_required":
+      return "Google Calendar needs to be reconnected before Orbit can read it.";
+    case "stale":
+      return "Calendar context is stale, so Orbit suppressed it from attention.";
+    case "rate_limited":
+    case "unavailable":
+      return "Calendar context is temporarily unavailable, so Orbit stayed quiet.";
+    case "connected":
+    case "syncing":
+      return "Calendar context is not ready yet.";
+    case "fresh":
+      return snapshot.calendar.complete
+        ? "No overlapping events were found in the bounded Calendar window."
+        : "The Calendar read was incomplete, so Orbit suppressed it from attention.";
+  }
+}
+
 export function QuietOrbitShell({
   snapshot,
   initialState = "attention",
@@ -277,7 +307,7 @@ export function QuietOrbitShell({
           <h1 id="resting-title">Nothing needs your attention.</h1>
           <p>Orbit is quiet until something becomes relevant or you ask.</p>
           {!bundle ? (
-            <p className={styles.trustLine}>{weatherTrustMessage(snapshot)}</p>
+            <p className={styles.trustLine}>{quietTrustMessage(snapshot)}</p>
           ) : null}
           {bundle ? (
             <button

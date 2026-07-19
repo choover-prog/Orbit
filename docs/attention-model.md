@@ -45,6 +45,19 @@ The policy reports the modeled threshold and source evidence. It does not infer 
 
 The fictional travel conflict remains the default focal item so the mocked scheduling journey is stable. `?context=weather` selects the weather bundle only when a fresh weather candidate exists. If live conditions cross no threshold, Orbit stays quiet instead of inventing relevance.
 
+## Implemented Calendar overlap gate
+
+Stage 2b evaluates a complete, fresh, bounded set of normalized primary-calendar
+events without a model call. It ignores cancelled, all-day, transparent,
+self-declined, invalid, and already-ended events; sorts by start, end, and stable
+opaque record ID; and selects the earliest strict overlap. Adjacent events are
+not conflicts. At most one `calendar_conflict` item is emitted, with timing and
+provenance evidence and `read_only` actionability.
+
+`?context=calendar` selects that concern only when it is eligible. Otherwise
+Orbit remains quiet. Calendar context never enters the demo scheduling proposal
+or approval state.
+
 ## Display budget
 
 - One concern may be visually expanded.

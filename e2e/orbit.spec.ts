@@ -114,3 +114,171 @@ test("phone layout keeps the focal concern and input in view", async ({
     await page.evaluate(() => document.documentElement.clientWidth),
   );
 });
+
+test("local request boundary rejects DNS-rebinding hosts before rendering", async ({
+  request,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "desktop",
+    "single request-boundary lane",
+  );
+
+  for (const path of ["/", "/connections", "/api/orbit/snapshot"]) {
+    const response = await request.get(path, {
+      failOnStatusCode: false,
+      headers: {
+        host: "attacker.example:3100",
+        origin: "http://attacker.example:3100",
+      },
+    });
+    expect(response.status(), `${path} rebinding status`).toBe(403);
+    expect(await response.text()).not.toContain("Project Review");
+  }
+
+  const rscResponse = await request.get("/", {
+    failOnStatusCode: false,
+    headers: { host: "attacker.example:3100", rsc: "1" },
+  });
+  expect(rscResponse.status()).toBe(403);
+
+  const localResponse = await request.get("/api/orbit/snapshot");
+  expect(localResponse.status()).toBe(200);
+});
+
+test("phone Connections remains contained and touch-friendly", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "mobile project only");
+  await page.goto("/connections");
+  const connect = page.getByRole("button", {
+    name: "Connect fictional Calendar fixture",
+  });
+  await expect(connect).toBeVisible();
+  const box = await connect.boundingBox();
+  expect(box?.height).toBeGreaterThanOrEqual(44);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(
+    await page.evaluate(() => document.documentElement.clientWidth),
+  );
+});
+
+test("local Calendar lifecycle stays read-only from consent through deletion", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "single local connector lane");
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+
+  await page.goto("/connections");
+  await expect(
+    page.getByRole("heading", { name: "Calendar demo" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/cannot create, change, or delete events/i),
+  ).toBeVisible();
+  const connectRequestPromise = page.waitForRequest(
+    (request) =>
+      request.method() === "POST" &&
+      new URL(request.url()).pathname ===
+        "/api/connectors/google-calendar/connect",
+  );
+  const connectResponsePromise = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      new URL(response.url()).pathname ===
+        "/api/connectors/google-calendar/connect",
+  );
+  await page
+    .getByRole("button", { name: "Connect fictional Calendar fixture" })
+    .click();
+  const connectRequest = await connectRequestPromise;
+  const connectResponse = await connectResponsePromise;
+  expect(await connectRequest.headerValue("host")).toBe("127.0.0.1:3100");
+  expect(await connectRequest.headerValue("origin")).toBe(
+    "http://127.0.0.1:3100",
+  );
+  expect(await connectRequest.headerValue("sec-fetch-site")).toBe(
+    "same-origin",
+  );
+  expect({
+    status: connectResponse.status(),
+    rejection: await connectResponse.headerValue("x-orbit-local-rejection"),
+    location: await connectResponse.headerValue("location"),
+  }).toEqual({
+    status: 303,
+    rejection: null,
+    location: "http://127.0.0.1:3100/connections?calendar=connected",
+  });
+
+  await expect(page.getByRole("status")).toContainText(
+    "fictional Calendar fixture is active",
+  );
+  await expect(page.getByText("Read only")).toBeVisible();
+  await expect(page.getByText("3", { exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  const snapshotResponse = await page.request.get(
+    "/api/orbit/snapshot?context=calendar",
+  );
+  const serializedSnapshot = await snapshotResponse.text();
+  expect(serializedSnapshot).not.toContain("fixture-refresh-token");
+  expect(serializedSnapshot).not.toContain("fixture-access-token");
+  expect(serializedSnapshot).not.toContain("client_secret");
+
+  await page.goto("/?context=calendar&state=action");
+  await expect(
+    page.getByRole("heading", {
+      name: /Airport arrival buffer overlaps Project Review/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Approve mocked change" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Talk it through" }).click();
+  await page.getByRole("button", { name: "Show the evidence" }).click();
+  await expect(page.getByText(/This context is read-only/i)).toBeVisible();
+  await expect(
+    page.getByText("Fictional Google Calendar fixture").first(),
+  ).toBeVisible();
+
+  await page.getByRole("textbox", { name: "Ask Orbit" }).fill("Move it");
+  await page.getByRole("button", { name: "Ask", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Approve mocked change" }),
+  ).toHaveCount(0);
+
+  await page.goto("/connections");
+  await page.getByRole("button", { name: "Disconnect" }).click();
+  await expect(
+    page.getByText(/makes no Google request and changes no real calendar/i),
+  ).toBeVisible();
+  const removeFixture = page.getByRole("button", {
+    name: "Remove fictional fixture",
+  });
+  await expect(removeFixture).toBeFocused();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await removeFixture.click();
+  await expect(page.getByRole("status")).toContainText(
+    "fictional Calendar fixture was disconnected",
+  );
+
+  await page.goto("/?context=calendar");
+  await expect(
+    page.getByRole("heading", { name: "Nothing needs your attention." }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Google Calendar is not connected/i),
+  ).toBeVisible();
+  const disconnectedSnapshot = await page.request.get("/api/orbit/snapshot");
+  expect(disconnectedSnapshot.ok()).toBe(true);
+  const disconnectedJson = (await disconnectedSnapshot.json()) as {
+    calendar: { status: string; records: unknown[] };
+  };
+  expect(disconnectedJson.calendar).toMatchObject({
+    status: "disconnected",
+    records: [],
+  });
+  expect(consoleErrors).toEqual([]);
+});

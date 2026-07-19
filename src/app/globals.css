@@ -252,8 +252,113 @@ select {
 }
 .status-text[data-status="stale"],
 .status-text[data-status="unavailable"],
-.status-text[data-status="misconfigured"] {
+.status-text[data-status="misconfigured"],
+.status-text[data-status="configuration_required"],
+.status-text[data-status="reauthorization_required"],
+.status-text[data-status="rate_limited"],
+.status-text[data-status="storage_unavailable"] {
   color: var(--danger);
+}
+.status-text[data-status="disconnected"] {
+  color: var(--muted);
+}
+
+.calendar-connection {
+  margin-top: 3.5rem;
+  padding: 1.75rem 0 2rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.calendar-connection__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.calendar-connection__header h2,
+.calendar-connection__disconnect h3 {
+  margin: 0;
+}
+.calendar-connection__consent {
+  max-width: 46rem;
+  margin-top: 1.35rem;
+  color: var(--muted);
+}
+.calendar-connection__consent p {
+  max-width: 42rem;
+  font-size: 1.04rem;
+}
+.calendar-connection__consent ul {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+}
+.calendar-connection__consent li + li {
+  margin-top: 0.35rem;
+}
+.calendar-connection__notice,
+.calendar-connection__problem {
+  max-width: 46rem;
+  margin: 1.2rem 0 0;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--success);
+  background: var(--success-soft);
+}
+.calendar-connection__notice[data-severity="warning"] {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+.calendar-connection__notice[data-severity="error"] {
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.calendar-connection__problem {
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.calendar-connection__facts {
+  max-width: 54rem;
+  margin: 1.75rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2rem;
+}
+.calendar-connection__facts div {
+  min-width: 0;
+}
+.calendar-connection__facts dt {
+  color: var(--quiet);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.calendar-connection__facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.calendar-connection__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.calendar-connection__actions .connection-detail {
+  margin: 0;
+}
+.calendar-connection__disconnect {
+  max-width: 46rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.calendar-connection__disconnect p {
+  color: var(--muted);
 }
 
 .button-primary,
@@ -334,6 +439,9 @@ select {
   }
   .admin-row > p {
     grid-column: 1 / -1;
+  }
+  .calendar-connection__facts {
+    grid-template-columns: 1fr;
   }
 }
 

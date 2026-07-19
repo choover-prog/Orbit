@@ -1,5 +1,12 @@
 # Connector-Backed MVP Checkpoint
 
+> Historical record: this file captures the earlier weather-only checkpoint.
+> Stage 2b's local read-only Google Calendar slice was subsequently implemented
+> under [the Calendar connector guide](../connectors/google-calendar.md),
+> [authorization ADR](../adr/ADR-google-calendar-local-auth.md), and
+> [threat model](../security/google-calendar-threat-model.md). The original
+> wording below is preserved as plan history, not current capability status.
+
 - Original goal: Weather plus Google Calendar read-only context
 - Status: Partially superseded on 2026-07-18
 - Completed scope: Stage 2a weather sandbox

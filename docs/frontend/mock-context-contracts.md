@@ -55,4 +55,9 @@ The snapshot builder combines weather with the existing travel bundle. Weather i
 
 ## Remaining Stage 2 work
 
-Google Calendar and all personal connectors remain fixtures. A later goal must add authenticated user ownership, provider-hosted least-privilege OAuth, encrypted credential storage, revocation, user-scoped synchronization, and background-sync ownership before real account data is accepted. Model calls and live write actions remain deferred.
+The fictional scheduling-action contract remains a fixture. A separate Stage 2b
+Google Calendar context contract can now accept one local user's read-only
+primary-calendar events through server-owned PKCE, Windows DPAPI storage,
+bounded synchronization, and revocation. The two contracts never share action
+authority. Hosted authenticated ownership, durable background synchronization,
+model calls, and live write actions remain deferred.

@@ -33,7 +33,19 @@ React components never receive Google-, Microsoft-, Home Assistant-, or OpenAI-s
 
 The main daily shell is a client feature because the conversation and mocked action lifecycle are interactive. The `/` server page first builds an `OrbitSnapshot` and passes it into that shell. `/connections` uses the same server builder so fixture/live mode, freshness, and health are consistent across routes.
 
-`GET /api/orbit/snapshot` is the only connector-backed Route Handler. It returns the normalized snapshot with `cache-control: no-store`; it is not a provider proxy and exposes no mutation. The browser never supplies a provider URL or location. Future OAuth callbacks, authenticated APIs, webhooks, and write routes require a separate security and storage goal.
+`GET /api/orbit/snapshot` remains the normalized read boundary. Stage 2b adds
+four narrowly scoped local Google Calendar lifecycle handlers for connect,
+callback, bounded sync, and disconnect. OAuth exchange, refresh tokens, access
+tokens, raw provider responses, and fixed provider URLs remain server-only.
+The browser cannot choose a scope, calendar, callback, provider URL, or write
+capability. Webhooks, hosted authenticated APIs, and write routes remain future
+security goals.
+
+`src/proxy.ts` is the single local network gate for pages, Route Handlers, and
+RSC requests. It requires the raw Host to be the explicit IPv4 loopback plus a
+bounded port, preventing DNS-rebinding origins from reaching personal context.
+Snapshot-building reads only cached Calendar state; connector I/O occurs behind
+the consent callback and exact-origin sync POST.
 
 ## Styling and motion
 

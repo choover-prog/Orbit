@@ -27,6 +27,7 @@ export function createClientFixtureSnapshot(): OrbitSnapshot {
   return {
     schemaVersion: "1",
     generatedAt: "2026-07-18T14:00:00.000Z",
+    requestedContext: null,
     person: maya,
     selectedAttentionId: travelAttentionBundle.id,
     attention: [travelAttentionBundle],
@@ -42,6 +43,14 @@ export function createClientFixtureSnapshot(): OrbitSnapshot {
         message: "Weather is not loaded in this client-only test snapshot.",
         retryable: false,
       },
+    },
+    calendar: {
+      status: "disconnected",
+      authorization: "disconnected",
+      mode: "fixture",
+      records: [],
+      complete: true,
+      eventCount: 0,
     },
   };
 }

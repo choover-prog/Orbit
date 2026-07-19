@@ -124,8 +124,8 @@ export const moveReviewProposal: ActionProposal = {
 
 export const connections: ConnectionStatus[] = [
   {
-    id: "connection_calendar",
-    displayName: "Calendar",
+    id: "connection_demo_calendar",
+    displayName: "Demo calendar",
     category: "calendar",
     mode: "fixture",
     health: "connected",
@@ -142,7 +142,8 @@ export const connections: ConnectionStatus[] = [
       },
     ],
     lastSyncLabel: "Fixture sync · 2 minutes ago",
-    statusDetail: "Fictional local adapter; no provider account is connected.",
+    statusDetail:
+      "Fictional action adapter only; it is separate from personal Google Calendar context.",
   },
   {
     id: "connection_email",

@@ -35,15 +35,27 @@ Stage 2a introduces a serializable, provider-neutral `OrbitSnapshot` as the rout
 - normalized attention bundles and the selected attention ID;
 - context records, evidence, and normalized source records;
 - connection mode, health, and last-read status;
-- a weather snapshot with `fresh`, `stale`, `unavailable`, or `misconfigured` status.
+- a weather snapshot with `fresh`, `stale`, `unavailable`, or `misconfigured` status;
+- a Calendar snapshot with explicit authorization, completeness, health,
+  freshness, bounded-window, and retry state.
 
 `AttentionBundle` groups the exact `AttentionItem`, `ContextRecord`, `SourceEvidence`, optional recommendation, and optional action proposal needed by one focal experience. Its actionability is explicit: the travel conflict has a mocked action, while weather is read-only.
 
-The current Open-Meteo adapter is confined to server code. Raw provider response objects do not enter `OrbitSnapshot`; only validated `WeatherReading` fields cross the normalization boundary. `GET /api/orbit/snapshot` returns this same contract with no-store response caching.
+The Open-Meteo and Google Calendar adapters are confined to server code. Raw
+provider response objects do not enter `OrbitSnapshot`; only validated
+`WeatherReading` and minimal `CalendarEvent` payloads cross the normalization
+boundary. Google provider IDs are hashed before becoming opaque source
+references. `GET /api/orbit/snapshot` returns this same contract with no-store
+response caching and never returns tokens, authorization codes, or raw events.
 
 ### Freshness and attribution
 
 Every weather `SourceRecord` includes `observedAt`, `retrievedAt`, and `staleAfter`. A record is fresh only while `now < staleAfter`; equality is stale. `SourceEvidence` carries the resulting freshness state and, in live mode, Open-Meteo attribution and the fact that values were transformed. A stale record may remain visible as evidence after a failed refresh, but it cannot create an attention bundle.
+
+Calendar records use the same timestamps and additionally travel with batch
+completeness and a fixed read window. A page-capped, stale, unavailable, or
+unauthorized batch cannot create Calendar attention. Descriptions, locations,
+conference links, attachments, and attendee identities are not normalized.
 
 ## Confidence and epistemic status
 
@@ -104,6 +116,8 @@ stateDiagram-v2
 - Respect domain-specific retention and deletion rather than one global forever-memory setting.
 - Do not infer household visibility merely because a source account is connected.
 - Do not send Stage 2a provider data to a reasoning model.
+- Keep normalized Calendar events only in the process cache; persist only the
+  DPAPI-encrypted refresh-token record needed to reconnect.
 
 ## Versioning
 

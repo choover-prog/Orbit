@@ -70,6 +70,40 @@ The home route consumes this boundary directly on the server. `GET /api/orbit/sn
 
 This slice has no reasoning-provider call, OAuth, credential store, authentication, background sync, or write path. A stale weather record remains inspectable but cannot create an attention item.
 
+## Local Google Calendar read boundary
+
+Stage 2b extends the same thin gateway with a single authenticated personal
+source. The local server owns a one-use PKCE transaction, token exchange,
+Windows DPAPI credential vault, bounded Calendar request, response validation,
+normalization, cache health, and deterministic overlap policy. The browser sees
+only provider-neutral state and records.
+
+A Next.js request proxy rejects every dynamic request whose raw `Host` is not
+exactly `127.0.0.1:<bounded-port>`. This closes the browser DNS-rebinding path
+created by an otherwise unauthenticated loopback service. Calendar provider I/O
+is limited to consent completion and explicit same-origin refresh POSTs; page,
+RSC, and snapshot GETs only inspect local state.
+
+```mermaid
+flowchart LR
+    B["System browser"] --> H["Exact loopback Host boundary"]
+    H --> O["Local Orbit OAuth callback"]
+    O --> D["DPAPI CurrentUser vault"]
+    O --> G["Google OAuth endpoints"]
+    D --> S["Bounded Calendar service"]
+    S --> C["Primary Calendar Events endpoint"]
+    C --> V["Validate and minimize"]
+    V --> R["Calendar SourceRecord values"]
+    R --> A["Fresh and complete overlap gate"]
+    A --> P["Provider-neutral OrbitSnapshot"]
+```
+
+Only owned primary-calendar events are authorized. Access tokens live in
+memory; the refresh token is encrypted outside the repository for the current
+Windows user. The event cache is process-local. Stale or incomplete reads
+cannot produce attention. No Calendar write capability is registered, and the
+fictional scheduling action remains a distinct demo adapter.
+
 ## First action vertical slice
 
 The action demonstration continues to use fictional adapter data. A calendar change and related email create an observation that a meeting conflicts with travel. Orbit recommends rescheduling, drafts a calendar update plus message, requests approval, executes through a mock adapter, verifies the event state, records the audit trail, and offers undo. The Open-Meteo sandbox does not participate in this action path.
@@ -131,4 +165,9 @@ sequenceDiagram
 
 ## Deployment posture
 
-No production topology is selected. Stage 2a remains a local evaluation sandbox: its only live source is a public Open-Meteo forecast for a fixed fictional location, its cache is process memory, and it has no personal data or credential. Authentication, OAuth, encrypted token storage, durable background synchronization, retention, user isolation, provider service levels, and deployment require explicit decisions before a personal connector is enabled.
+No production topology is selected. Weather remains a public evaluation
+sandbox. Google Calendar is a local single-Windows-user experiment with a
+DPAPI-protected refresh token and process-local normalized cache. Google consent
+does not authenticate the Orbit application or isolate multiple people. Hosted
+authentication, per-user encrypted storage, durable jobs, retention/export,
+provider verification, service levels, and deployment require new decisions.

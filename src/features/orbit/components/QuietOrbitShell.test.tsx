@@ -65,6 +65,73 @@ function createWeatherSnapshot(): OrbitSnapshot {
   };
 }
 
+function createCalendarSnapshot(): OrbitSnapshot {
+  const base = createClientFixtureSnapshot();
+  const evidence = [
+    {
+      id: "evidence_calendar_first",
+      sourceLabel: "Fictional Google Calendar fixture",
+      summary: "Project Review runs from 2:30 PM to 3:15 PM.",
+      observedAt: "2026-07-19T13:55:00.000Z",
+      freshnessLabel: "Calendar data is current",
+      epistemicStatus: "fact" as const,
+      freshnessStatus: "fresh" as const,
+    },
+    {
+      id: "evidence_calendar_second",
+      sourceLabel: "Fictional Google Calendar fixture",
+      summary: "Design Critique runs from 3:00 PM to 4:00 PM.",
+      observedAt: "2026-07-19T13:56:00.000Z",
+      freshnessLabel: "Calendar data is current",
+      epistemicStatus: "fact" as const,
+      freshnessStatus: "fresh" as const,
+    },
+  ];
+  const contextRecords = evidence.map((item, index) => ({
+    id: `context_calendar_${index}`,
+    domain: "calendar" as const,
+    kind: "scheduled_event",
+    occurredAt: `2026-07-19T${index === 0 ? "14:30" : "15:00"}:00.000Z`,
+    summary: item.summary,
+    evidenceIds: [item.id],
+  }));
+  const bundle: AttentionBundle = {
+    id: "bundle_calendar_conflict_test",
+    kind: "calendar_conflict",
+    label: "Calendar timing conflict",
+    explanation:
+      "Orbit found a direct overlap in fresh read-only Calendar data.",
+    item: {
+      id: "attention_calendar_conflict_test",
+      title: "Project Review overlaps Design Critique.",
+      reason: "The events overlap by 15 minutes.",
+      evidenceIds: evidence.map((item) => item.id),
+      status: "active",
+      otherEligibleCount: 0,
+    },
+    contextRecords,
+    evidence,
+    actionability: "read_only",
+  };
+
+  return {
+    ...base,
+    selectedAttentionId: bundle.id,
+    attention: [bundle],
+    contextRecords,
+    evidence,
+    calendar: {
+      status: "fresh",
+      authorization: "connected",
+      mode: "fixture",
+      records: [],
+      complete: true,
+      eventCount: 2,
+      attention: bundle,
+    },
+  };
+}
+
 describe("QuietOrbitShell", () => {
   beforeEach(() => window.localStorage.clear());
 
@@ -226,6 +293,38 @@ describe("QuietOrbitShell", () => {
     );
     expect(
       screen.queryByRole("button", { name: "Approve mocked change" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps authenticated Calendar context read-only even after action-like input", async () => {
+    const user = userEvent.setup();
+    render(
+      <QuietOrbitShell
+        snapshot={createCalendarSnapshot()}
+        initialState="attention"
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Project Review overlaps Design Critique.",
+      }),
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Talk it through" }));
+    await user.click(screen.getByRole("button", { name: "Show the evidence" }));
+    expect(screen.getByText(/This context is read-only/i)).toBeVisible();
+
+    await user.type(
+      screen.getByRole("textbox", { name: "Ask Orbit" }),
+      "Move Project Review",
+    );
+    await user.click(screen.getByRole("button", { name: "Ask" }));
+
+    expect(
+      screen.queryByRole("button", { name: "Approve mocked change" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Draft this" }),
     ).not.toBeInTheDocument();
   });
 
