@@ -7,6 +7,7 @@ import {
   type OrbitPresenceState,
   usePresencePreference,
 } from "@/components/orbit-presence";
+import type { AttentionBundle, OrbitSnapshot } from "@/domain/orbit/connectors";
 import {
   ORBIT_PREFERENCES_STORAGE_KEY,
   orbitPreferenceDefaults,
@@ -17,10 +18,9 @@ import type {
   ConversationStep,
   OrbitExperienceState,
 } from "@/domain/orbit/types";
+import { useLocalStorageValue } from "@/lib/useLocalStorageValue";
 import { createMockCalendarAdapter } from "@/mocks/calendar-adapter";
 import { saveAuditRecord } from "@/mocks/history-store";
-import { moveReviewProposal } from "@/mocks/fixtures";
-import { useLocalStorageValue } from "@/lib/useLocalStorageValue";
 import { ActionScene } from "./ActionScene";
 import { CenteredAttention } from "./CenteredAttention";
 import { ConversationScene } from "./ConversationScene";
@@ -28,17 +28,76 @@ import { OrbitInput } from "./OrbitInput";
 import styles from "./QuietOrbit.module.css";
 
 interface QuietOrbitShellProps {
+  snapshot: OrbitSnapshot;
   initialState?: OrbitExperienceState;
 }
 
+const ACTION_STATES = new Set<OrbitExperienceState>([
+  "action",
+  "executing",
+  "completed",
+  "error",
+  "undone",
+]);
+
+function selectedAttention(snapshot: OrbitSnapshot) {
+  if (!snapshot.selectedAttentionId) return null;
+  return (
+    snapshot.attention.find(
+      (bundle) => bundle.id === snapshot.selectedAttentionId,
+    ) ?? null
+  );
+}
+
+function supportsMockedAction(bundle: AttentionBundle | null) {
+  return (
+    bundle?.actionability === "mocked_action" &&
+    bundle.actionProposal !== undefined
+  );
+}
+
+function safeInitialState(
+  requested: OrbitExperienceState,
+  bundle: AttentionBundle | null,
+) {
+  if (!bundle) return "resting";
+  if (!supportsMockedAction(bundle) && ACTION_STATES.has(requested)) {
+    return "attention";
+  }
+  return requested;
+}
+
+function weatherTrustMessage(snapshot: OrbitSnapshot) {
+  if (snapshot.weather.status === "fresh") {
+    return "The current modeled forecast crosses no Orbit attention threshold.";
+  }
+  if (snapshot.weather.status === "stale") {
+    return "The weather forecast is stale, so Orbit suppressed it from attention.";
+  }
+
+  const reason = snapshot.weather.failure?.message;
+  return reason
+    ? "No weather concern was inferred. " + reason
+    : "No weather concern was inferred because weather context is unavailable.";
+}
+
 export function QuietOrbitShell({
+  snapshot,
   initialState = "attention",
 }: QuietOrbitShellProps) {
-  const [state, setState] = useState<OrbitExperienceState>(initialState);
+  const bundle = selectedAttention(snapshot);
+  const canAct = supportsMockedAction(bundle);
+  const firstName =
+    snapshot.person.displayName.split(" ")[0] ?? snapshot.person.displayName;
+  const [state, setState] = useState<OrbitExperienceState>(() =>
+    safeInitialState(initialState, bundle),
+  );
   const [conversationStep, setConversationStep] =
     useState<ConversationStep>("overview");
   const [announcement, setAnnouncement] = useState(
-    "Orbit has one concern that needs attention.",
+    bundle
+      ? "Orbit has one concern that needs attention."
+      : "Nothing needs your attention.",
   );
   const [auditRecord, setAuditRecord] = useState<ActionAuditRecord | null>(
     null,
@@ -54,23 +113,61 @@ export function QuietOrbitShell({
 
   const enterConversation = (step: ConversationStep = "overview") => {
     setPresenceOverride(null);
+    if (!bundle) {
+      setState("resting");
+      setAnnouncement("Nothing needs your attention.");
+      return;
+    }
     setConversationStep(step);
     setState("conversation");
-    setAnnouncement("Orbit is explaining the travel conflict.");
+    setAnnouncement("Orbit is explaining " + bundle.label.toLowerCase() + ".");
+  };
+
+  const requestAction = () => {
+    if (!canAct) {
+      enterConversation("reason");
+      setAnnouncement(
+        "This context is read-only. Orbit has not proposed an action.",
+      );
+      return;
+    }
+    setState("action");
+    setAnnouncement("Orbit has prepared a mocked calendar change for review.");
   };
 
   const handleQuestion = (question: string) => {
     setPresenceOverride(null);
-    const normalized = question.toLowerCase();
-    if (normalized.includes("evidence") || normalized.includes("show me"))
-      enterConversation("evidence");
-    else if (normalized.includes("option") || normalized.includes("what could"))
-      enterConversation("options");
-    else if (normalized.includes("move") || normalized.includes("reschedule"))
-      setState("action");
-    else if (normalized.includes("nothing") || normalized.includes("rest"))
+    if (!bundle) {
       setState("resting");
-    else enterConversation("reason");
+      setAnnouncement("Nothing needs your attention.");
+      return;
+    }
+
+    const normalized = question.toLowerCase();
+    if (normalized.includes("evidence") || normalized.includes("show me")) {
+      enterConversation("evidence");
+    } else if (
+      normalized.includes("option") ||
+      normalized.includes("what could")
+    ) {
+      if (bundle.recommendation?.options.length) {
+        enterConversation("options");
+      } else {
+        enterConversation("reason");
+        setAnnouncement(
+          "This context is read-only. Orbit has not proposed an action.",
+        );
+      }
+    } else if (
+      normalized.includes("move") ||
+      normalized.includes("reschedule")
+    ) {
+      requestAction();
+    } else if (normalized.includes("nothing") || normalized.includes("rest")) {
+      setState("resting");
+    } else {
+      enterConversation("reason");
+    }
   };
 
   const handleListen = () => {
@@ -81,13 +178,25 @@ export function QuietOrbitShell({
   };
 
   const approve = async (forceVerificationFailure = false) => {
+    const proposal =
+      bundle?.actionability === "mocked_action"
+        ? bundle.actionProposal
+        : undefined;
+    if (!proposal) {
+      setState(bundle ? "attention" : "resting");
+      setAnnouncement(
+        "This context is read-only. Orbit has not proposed an action.",
+      );
+      return;
+    }
+
     setState("executing");
     setAnnouncement("Orbit is performing the approved mocked change.");
     const now = new Date();
     const approval = {
-      id: "approval_move_review",
-      proposalId: moveReviewProposal.id,
-      planHash: moveReviewProposal.planHash,
+      id: "approval_" + proposal.id,
+      proposalId: proposal.id,
+      planHash: proposal.planHash,
       riskClass: "R3" as const,
       permissionLabel: "Update this calendar event once",
       expiresAt: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
@@ -95,7 +204,7 @@ export function QuietOrbitShell({
     };
 
     try {
-      const record = await adapter.execute(moveReviewProposal, approval, {
+      const record = await adapter.execute(proposal, approval, {
         forceVerificationFailure,
       });
       saveAuditRecord(record);
@@ -164,20 +273,27 @@ export function QuietOrbitShell({
             motionEnabled={preferences.motionEnabled}
             className={styles.heroPresence}
           />
-          <p className={styles.greeting}>Good morning, Maya</p>
+          <p className={styles.greeting}>Good morning, {firstName}</p>
           <h1 id="resting-title">Nothing needs your attention.</h1>
           <p>Orbit is quiet until something becomes relevant or you ask.</p>
-          <button
-            className="button-secondary"
-            onClick={() => setState("attention")}
-          >
-            Show the demo concern
-          </button>
+          {!bundle ? (
+            <p className={styles.trustLine}>{weatherTrustMessage(snapshot)}</p>
+          ) : null}
+          {bundle ? (
+            <button
+              className="button-secondary"
+              onClick={() => setState("attention")}
+            >
+              Show the demo concern
+            </button>
+          ) : null}
         </section>
       ) : null}
 
-      {state === "attention" ? (
+      {state === "attention" && bundle ? (
         <CenteredAttention
+          bundle={bundle}
+          person={snapshot.person}
           variant={variant}
           presenceState={presenceOverride ?? "attention"}
           motionEnabled={preferences.motionEnabled}
@@ -185,23 +301,23 @@ export function QuietOrbitShell({
         />
       ) : null}
 
-      {state === "conversation" ? (
+      {state === "conversation" && bundle ? (
         <ConversationScene
+          bundle={bundle}
           step={conversationStep}
           variant={variant}
           motionEnabled={preferences.motionEnabled}
           onStep={setConversationStep}
-          onPropose={() => {
-            setState("action");
-            setAnnouncement(
-              "Orbit has prepared a mocked calendar change for review.",
-            );
-          }}
+          onPropose={canAct ? requestAction : undefined}
         />
       ) : null}
 
-      {state === "action" ? (
+      {state === "action" &&
+      bundle?.actionability === "mocked_action" &&
+      bundle.actionProposal ? (
         <ActionScene
+          proposal={bundle.actionProposal}
+          evidence={bundle.evidence}
           variant={variant}
           motionEnabled={preferences.motionEnabled}
           onApprove={approve}
@@ -322,7 +438,8 @@ export function QuietOrbitShell({
           </button>
           <button
             className="button-quiet"
-            onClick={() => setState("attention")}
+            onClick={() => setState(bundle ? "attention" : "resting")}
+            disabled={!bundle}
           >
             Attention state
           </button>

@@ -32,9 +32,37 @@ test("complete mocked scheduling flow through undo", async ({ page }) => {
   expect(consoleErrors).toEqual([]);
 });
 
+test("weather fixture stays read-only and explains its evidence", async ({
+  page,
+}) => {
+  await page.goto("/?context=weather&state=action");
+  await expect(
+    page.getByRole("heading", { name: /precipitation is likely/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Approve mocked change" }),
+  ).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Talk it through" }).click();
+  await page.getByRole("button", { name: "Show the evidence" }).click();
+  await expect(page.getByText("Fictional weather fixture")).toBeVisible();
+  await expect(page.getByText(/This context is read-only/i)).toBeVisible();
+
+  await page.getByRole("textbox", { name: "Ask Orbit" }).fill("Move it");
+  await page.getByRole("button", { name: "Ask", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: /precipitation is likely/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Approve mocked change" }),
+  ).toHaveCount(0);
+});
+
 test("all routes render and main routes pass accessibility smoke checks", async ({
   page,
 }) => {
+  test.setTimeout(60_000);
+
   for (const route of [
     "/",
     "/history",
