@@ -105,8 +105,12 @@ npm run test:e2e
 Automated tests use only fictional credentials and provider responses. Live
 consent is a separate manual checkpoint and must never be recorded.
 
+The private live procedure and its data-safe qualification helper are described
+in [Google Calendar private live qualification](google-calendar-live-qualification.md).
+
 ## Related documents
 
 - [Local auth ADR](../adr/ADR-google-calendar-local-auth.md)
 - [Threat model](../security/google-calendar-threat-model.md)
 - [Connector boundary](../adr/ADR-connector-server-boundary.md)
+- [Private live qualification](google-calendar-live-qualification.md)
