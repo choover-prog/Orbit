@@ -43,6 +43,7 @@
 
 .attentionScene {
   width: min(100%, 46rem);
+  min-width: 0;
   min-height: 37rem;
   display: grid;
   align-content: center;
@@ -51,6 +52,8 @@
   text-align: center;
 }
 .presenceStage {
+  width: 100%;
+  min-width: 0;
   display: grid;
   justify-items: center;
   gap: 0.15rem;
@@ -67,6 +70,8 @@
   text-transform: uppercase;
 }
 .focalSignal {
+  width: 100%;
+  min-width: 0;
   max-width: 44rem;
   display: grid;
   justify-items: center;
@@ -192,6 +197,23 @@
 .freshness {
   text-align: right;
 }
+.attribution {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.attribution a {
+  color: inherit;
+  text-underline-offset: 0.18em;
+}
+.signalAttribution {
+  margin: -0.35rem 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.signalAttribution a {
+  color: inherit;
+  text-underline-offset: 0.18em;
+}
 .evidenceList > button {
   margin-top: 1.5rem;
 }
@@ -219,6 +241,12 @@
 }
 .trustLine {
   margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.readOnlyLine {
+  margin: 1.4rem 0 0;
+  max-width: 34rem;
   color: var(--muted);
   font-size: 0.92rem;
 }

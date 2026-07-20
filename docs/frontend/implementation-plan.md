@@ -42,4 +42,7 @@ Build Quiet Orbit as a responsive daily shell. Use the centered-person compositi
 - Desktop, tablet, and phone screenshots preserve one focal concern and reachable input.
 - Keyboard-only scheduling flow, live-region announcements, reduced motion, and no-color-only states are verified.
 - Reference and rendered screenshots pass Product Design QA with no P0, P1, or P2 findings.
-- No production credentials, provider calls, microphone stream, authentication, database, or deployment code is introduced.
+- Historical Stage 1 constraint: no production credentials, provider calls,
+  microphone stream, authentication, database, or deployment code was
+  introduced. Stage 2b later added only the separately threat-modeled local
+  read-only Google Calendar provider path; the other constraints remain.

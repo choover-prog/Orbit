@@ -37,3 +37,18 @@ Conversation content uses four bounded steps: `overview`, `reason`, `evidence`, 
 | Executing and verifying | `thinking`     |
 | Completed or undone     | `completed`    |
 | Failure or mismatch     | `error`        |
+
+## Google Calendar connection state
+
+```text
+configuration required or disconnected
+  -> authorizing
+  -> connected and bounded read
+  -> fresh / stale / rate limited / unavailable
+  -> reconnect required
+  -> disconnected and locally deleted
+```
+
+This lifecycle is independent from the action state machine. A connected live
+Calendar grants only R0 Observe authority. Its `calendar_conflict` bundle is
+always `read_only`, so conversation cannot transition into action review.

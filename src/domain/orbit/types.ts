@@ -3,6 +3,16 @@ export type IsoDateTime = string;
 export type EpistemicStatus =
   "fact" | "derived" | "inference" | "user_asserted" | "verified_result";
 
+export type FreshnessStatus = "fresh" | "stale";
+
+export interface SourceAttribution {
+  label: string;
+  url: string;
+  license: string;
+  licenseUrl: string;
+  transformed: boolean;
+}
+
 export interface PersonReference {
   id: string;
   displayName: string;
@@ -17,6 +27,10 @@ export interface SourceEvidence {
   observedAt: IsoDateTime;
   freshnessLabel: string;
   epistemicStatus: EpistemicStatus;
+  sourceRecordIds?: string[];
+  staleAfter?: IsoDateTime;
+  freshnessStatus?: FreshnessStatus;
+  attribution?: SourceAttribution;
 }
 
 export interface ContextRecord {
@@ -123,14 +137,26 @@ export interface ConnectionStatus {
   displayName: string;
   category:
     "calendar" | "email" | "contacts" | "weather" | "home" | "developer";
-  mode: "mock";
-  health: "connected" | "attention" | "paused";
+  mode: "fixture" | "live";
+  health:
+    | "connected"
+    | "syncing"
+    | "stale"
+    | "unavailable"
+    | "misconfigured"
+    | "configuration_required"
+    | "disconnected"
+    | "reauthorization_required"
+    | "rate_limited"
+    | "paused";
   capabilities: Array<{
     id: string;
     label: string;
     access: "read" | "draft" | "write";
   }>;
   lastSyncLabel: string;
+  lastSyncedAt?: IsoDateTime;
+  statusDetail?: string;
 }
 
 export type OrbitExperienceState =

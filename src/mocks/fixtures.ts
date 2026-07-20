@@ -124,10 +124,10 @@ export const moveReviewProposal: ActionProposal = {
 
 export const connections: ConnectionStatus[] = [
   {
-    id: "connection_calendar",
-    displayName: "Calendar",
+    id: "connection_demo_calendar",
+    displayName: "Demo calendar",
     category: "calendar",
-    mode: "mock",
+    mode: "fixture",
     health: "connected",
     capabilities: [
       {
@@ -141,13 +141,15 @@ export const connections: ConnectionStatus[] = [
         access: "write",
       },
     ],
-    lastSyncLabel: "Mock sync · 2 minutes ago",
+    lastSyncLabel: "Fixture sync · 2 minutes ago",
+    statusDetail:
+      "Fictional action adapter only; it is separate from personal Google Calendar context.",
   },
   {
     id: "connection_email",
     displayName: "Email",
     category: "email",
-    mode: "mock",
+    mode: "fixture",
     health: "connected",
     capabilities: [
       {
@@ -156,28 +158,31 @@ export const connections: ConnectionStatus[] = [
         access: "read",
       },
     ],
-    lastSyncLabel: "Mock sync · 5 minutes ago",
+    lastSyncLabel: "Fixture sync · 5 minutes ago",
+    statusDetail: "Fictional local adapter; no provider account is connected.",
   },
   {
     id: "connection_weather",
     displayName: "Weather",
     category: "weather",
-    mode: "mock",
+    mode: "fixture",
     health: "connected",
     capabilities: [
       { id: "weather_read", label: "Read local forecast", access: "read" },
     ],
-    lastSyncLabel: "Mock sync · 12 minutes ago",
+    lastSyncLabel: "Fixture sync · 12 minutes ago",
+    statusDetail: "Fictional local forecast; no network request.",
   },
   {
     id: "connection_home",
     displayName: "Home",
     category: "home",
-    mode: "mock",
+    mode: "fixture",
     health: "paused",
     capabilities: [
       { id: "home_read", label: "Read selected device status", access: "read" },
     ],
     lastSyncLabel: "Paused locally",
+    statusDetail: "Fictional local adapter with read access paused.",
   },
 ];

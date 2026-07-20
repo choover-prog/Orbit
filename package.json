@@ -6,9 +6,9 @@
     "node": ">=24.0.0 <25"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 127.0.0.1",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -16,6 +16,7 @@
     "test": "vitest run --pool=forks --maxWorkers=1",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "qualify:calendar": "node scripts/qualify-google-calendar.mjs",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

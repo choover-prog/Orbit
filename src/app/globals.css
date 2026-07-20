@@ -223,6 +223,18 @@ select {
   margin: 0;
   font-size: 1.1rem;
 }
+.connection-mode {
+  margin-top: 0.25rem !important;
+  color: var(--quiet) !important;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+.connection-detail {
+  max-width: 42rem;
+  margin-top: 0.55rem !important;
+  color: var(--quiet) !important;
+  font-size: 0.88rem;
+}
 .admin-row p {
   margin: 0;
   color: var(--muted);
@@ -237,6 +249,212 @@ select {
 }
 .status-text[data-status="paused"] {
   color: var(--muted);
+}
+.status-text[data-status="stale"],
+.status-text[data-status="unavailable"],
+.status-text[data-status="misconfigured"],
+.status-text[data-status="configuration_required"],
+.status-text[data-status="reauthorization_required"],
+.status-text[data-status="rate_limited"],
+.status-text[data-status="storage_unavailable"] {
+  color: var(--danger);
+}
+.status-text[data-status="disconnected"] {
+  color: var(--muted);
+}
+
+.calendar-connection,
+.gmail-connection {
+  margin-top: 3.5rem;
+  padding: 1.75rem 0 2rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.calendar-connection__header,
+.gmail-connection__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.calendar-connection__header h2,
+.calendar-connection__disconnect h3,
+.gmail-connection__header h2,
+.gmail-connection__disconnect h3 {
+  margin: 0;
+}
+.calendar-connection__consent,
+.gmail-connection__consent {
+  max-width: 46rem;
+  margin-top: 1.35rem;
+  color: var(--muted);
+}
+.calendar-connection__consent p,
+.gmail-connection__consent p {
+  max-width: 42rem;
+  font-size: 1.04rem;
+}
+.calendar-connection__consent ul,
+.gmail-connection__consent ul {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+}
+.calendar-connection__consent li + li,
+.gmail-connection__consent li + li {
+  margin-top: 0.35rem;
+}
+.calendar-connection__notice,
+.calendar-connection__problem,
+.gmail-connection__notice,
+.gmail-connection__problem {
+  max-width: 46rem;
+  margin: 1.2rem 0 0;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--success);
+  background: var(--success-soft);
+}
+.calendar-connection__notice[data-severity="warning"],
+.gmail-connection__notice[data-severity="warning"] {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+.calendar-connection__notice[data-severity="error"],
+.gmail-connection__notice[data-severity="error"] {
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.calendar-connection__problem,
+.gmail-connection__problem {
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.calendar-connection__facts,
+.gmail-connection__facts {
+  max-width: 54rem;
+  margin: 1.75rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2rem;
+}
+.calendar-connection__facts div,
+.gmail-connection__facts div {
+  min-width: 0;
+}
+.calendar-connection__facts dt,
+.gmail-connection__facts dt {
+  color: var(--quiet);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.calendar-connection__facts dd,
+.gmail-connection__facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.calendar-connection__actions,
+.gmail-connection__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.calendar-connection__actions .connection-detail,
+.gmail-connection__actions .connection-detail {
+  margin: 0;
+}
+.calendar-connection__disconnect,
+.gmail-connection__disconnect {
+  max-width: 46rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.calendar-connection__disconnect p,
+.gmail-connection__disconnect p {
+  color: var(--muted);
+}
+
+.calendar-connection__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.calendar-connection__heading h2 {
+  margin: 0;
+}
+.nest-device-list {
+  display: grid;
+  margin: 1.5rem 0;
+  border-block: 1px solid var(--line);
+}
+.nest-device {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.nest-device:last-child {
+  border-bottom: 0;
+}
+.nest-device h3,
+.nest-device p {
+  margin: 0;
+}
+.nest-controls,
+.nest-approval {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+}
+.nest-controls label {
+  display: grid;
+  gap: 0.35rem;
+}
+.nest-controls input {
+  width: 7rem;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  color: var(--ink);
+}
+.nest-approval,
+.nest-stream {
+  margin: 1rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.nest-approval h3,
+.nest-approval p {
+  width: 100%;
+  margin: 0;
+}
+.nest-stream__frame {
+  display: grid;
+  min-height: 15rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: #111;
+  color: #fff;
+}
+.nest-stream video {
+  width: 100%;
+  max-height: 70vh;
+  background: #111;
 }
 
 .button-primary,
@@ -317,6 +535,20 @@ select {
   }
   .admin-row > p {
     grid-column: 1 / -1;
+  }
+  .calendar-connection__facts,
+  .gmail-connection__facts {
+    grid-template-columns: 1fr;
+  }
+  .nest-controls,
+  .nest-approval {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .nest-controls button,
+  .nest-approval button,
+  .nest-controls label {
+    width: 100%;
   }
 }
 

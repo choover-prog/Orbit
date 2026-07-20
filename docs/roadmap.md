@@ -14,15 +14,54 @@
 - Responsive, keyboard, screen-reader, and reduced-motion behavior
 - Automated unit, component, route, accessibility-smoke, and end-to-end test coverage, with live in-app browser validation
 
-This is not a production system. Data, execution, history, and preferences are mocked or browser-local.
+This is not a production system. Stage 1 scheduling data and execution remain mocked, and history and preferences are browser-local. The optional public weather sandbox is documented separately in Stage 2a below.
 
-## Stage 2 — Connector-Backed Read-Only Context
+## Stage 2 — Connector-Backed Context
 
-**Prepared through contracts; deferred until a separate goal.**
+**Stage 2a weather, Stage 2b Calendar, and the local Gmail slice are implemented. Stage 2c Google Nest is in fixture qualification.**
 
-Start with weather and one calendar provider, then evaluate Gmail, contacts, Home Assistant, and GitHub read-only adapters. Implement provider-hosted OAuth, encrypted token storage, incremental synchronization, normalization, freshness, revocation, and connector-health reporting only after a threat model and deployment posture are approved.
+Stage 2a proves the smallest server-side context path:
 
-Loop: connect → synchronize → normalize → detect one attention candidate → explain with evidence.
+- fixture-default and live-opt-in Open-Meteo weather modes;
+- a fixed fictional coarse test location with no browser geolocation or credential;
+- provider response validation and normalization into a versioned `OrbitSnapshot`;
+- provenance, 15-minute freshness, connection health, and stale fallback;
+- deterministic weather attention with stale evidence suppressed;
+- `GET /api/orbit/snapshot` plus Quiet Orbit and Connections integration;
+- provider attribution and explicit evaluation-only limitations.
+
+Stage 2b proves the first authenticated personal connector on one local Windows
+account:
+
+- explicit Google Calendar onboarding and disconnect;
+- a server-owned Desktop authorization-code flow with S256 PKCE;
+- the owned-primary-events read-only scope;
+- a Windows DPAPI refresh-token vault and deletion;
+- a bounded fourteen-day primary-calendar read with rate-limit and freshness
+  state;
+- minimal provider-neutral event records and opaque provider references;
+- at most one deterministic, read-only overlap concern;
+- no Calendar write, model call, autonomous action, hosted deployment, or
+  multi-user authentication.
+
+The fictional flight-versus-meeting execution remains a separate mock. Calendar
+and Gmail have independently qualified local OAuth/vault boundaries and bounded
+read-only context.
+
+Stage 2c adds shared provider-neutral home contracts and a Google Nest Device
+Access adapter. Useful home behavior includes explicitly requested temporary
+WebRTC video and narrowly allowlisted thermostat/fan commands. Every control is
+an immutable plan with explicit approval, one execution, provider readback,
+verification, audit, and a separately approved undo plan when possible. Fixture
+qualification precedes the private supported-device live checkpoint. Broader
+native Google Home coverage and Home Assistant remain later adapters to the same
+Orbit Core contracts.
+
+Target read loop: connect -> synchronize -> normalize -> detect one attention
+candidate -> explain with evidence.
+
+Target home action loop: fresh state -> plan -> approve -> execute -> verify ->
+audit -> offer undo.
 
 ## Stage 3 — Draft and Approval Actions
 
@@ -40,4 +79,4 @@ Microphone permission, streaming audio, speech-to-text, interruption, text-to-sp
 
 **Deferred until personal usage validates value.**
 
-Managed authentication, encrypted connection storage, hosted background synchronization, notifications, consented telemetry, account deletion, export, and invited users require an alpha-readiness review. Billing, commercial multi-tenancy, public deployment, and hardware remain out of scope.
+Managed authentication, hosted encrypted connection storage, background synchronization, notifications, consented telemetry, account deletion, export, and invited users require an alpha-readiness review. The local Calendar DPAPI vault does not satisfy those hosted requirements. Billing, commercial multi-tenancy, public deployment, and hardware remain out of scope.

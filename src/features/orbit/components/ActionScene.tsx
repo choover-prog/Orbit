@@ -1,18 +1,26 @@
-import { evidence, moveReviewProposal } from "@/mocks/fixtures";
 import {
   OrbitPresence,
   type OrbitPresenceVariant,
 } from "@/components/orbit-presence";
+import type { ActionProposal, SourceEvidence } from "@/domain/orbit/types";
 import styles from "./QuietOrbit.module.css";
 
 interface ActionSceneProps {
+  proposal: ActionProposal;
+  evidence: SourceEvidence[];
   onApprove: (forceFailure?: boolean) => void;
   onCancel: () => void;
   variant: OrbitPresenceVariant;
   motionEnabled: boolean;
 }
 
+function proposalTitle(summary: string) {
+  return `${summary.replace(/\s+from\s+.+?\s+to\s+/i, " to ")}?`;
+}
+
 export function ActionScene({
+  proposal,
+  evidence,
   onApprove,
   onCancel,
   variant,
@@ -30,9 +38,10 @@ export function ActionScene({
         <span>Orbit prepared a change</span>
       </div>
       <p className={styles.eyebrow}>
-        Approval required · reversible calendar action
+        Approval required · {proposal.reversible ? "reversible " : ""}
+        calendar action
       </p>
-      <h1 id="action-title">Move Project Review to 4:30 PM?</h1>
+      <h1 id="action-title">{proposalTitle(proposal.summary)}</h1>
       <p className={styles.actionSummary}>
         Orbit will update one shared calendar event after your approval. This
         demo does not contact a real provider.
@@ -41,16 +50,16 @@ export function ActionScene({
       <dl className={styles.actionDetails}>
         <div>
           <dt>Current</dt>
-          <dd>{moveReviewProposal.previousValue}</dd>
+          <dd>{proposal.previousValue}</dd>
         </div>
         <div>
           <dt>Proposed</dt>
-          <dd>{moveReviewProposal.nextValue}</dd>
+          <dd>{proposal.nextValue}</dd>
         </div>
         <div>
           <dt>Affects</dt>
           <dd>
-            {moveReviewProposal.affectedPeople
+            {proposal.affectedPeople
               .map((person) => person.displayName)
               .join(", ")}
           </dd>
@@ -61,12 +70,13 @@ export function ActionScene({
         </div>
         <div>
           <dt>Expected effect</dt>
-          <dd>Calendar readback matches 4:30 PM</dd>
+          <dd>{proposal.expectedEffect}</dd>
         </div>
         <div>
           <dt>Undo</dt>
           <dd>
-            Restore 2:30 PM for 20 minutes; notifications cannot be recalled
+            Restore the previous value for 20 minutes; notifications cannot be
+            recalled
           </dd>
         </div>
       </dl>

@@ -1,30 +1,36 @@
 import {
-  evidence,
-  travelConflict,
-  travelRecommendation,
-} from "@/mocks/fixtures";
-import type { ConversationStep } from "@/domain/orbit/types";
-import {
   OrbitPresence,
   type OrbitPresenceVariant,
 } from "@/components/orbit-presence";
+import type { AttentionBundle } from "@/domain/orbit/connectors";
+import type { ConversationStep } from "@/domain/orbit/types";
 import styles from "./QuietOrbit.module.css";
+import { SourceAttributionLine } from "./SourceAttributionLine";
 
 interface ConversationSceneProps {
+  bundle: AttentionBundle;
   step: ConversationStep;
   onStep: (step: ConversationStep) => void;
-  onPropose: () => void;
+  onPropose?: () => void;
   variant: OrbitPresenceVariant;
   motionEnabled: boolean;
 }
 
 export function ConversationScene({
+  bundle,
   step,
   onStep,
   onPropose,
   variant,
   motionEnabled,
 }: ConversationSceneProps) {
+  const options = bundle.recommendation?.options ?? [];
+  const hasOptions = options.length > 0;
+  const canPropose =
+    bundle.actionability === "mocked_action" &&
+    Boolean(bundle.actionProposal) &&
+    Boolean(onPropose);
+
   return (
     <section
       className={styles.conversationScene}
@@ -41,12 +47,12 @@ export function ConversationScene({
         />
         <span>Orbit is speaking</span>
       </div>
-      <p className={styles.eyebrow}>Travel conflict</p>
-      <h1 id="conversation-title">Let’s make the conflict workable.</h1>
+      <p className={styles.eyebrow}>{bundle.label}</p>
+      <h1 id="conversation-title">{bundle.item.title}</h1>
 
       {step === "overview" ? (
         <div className={styles.conversationAnswer}>
-          <p>{travelConflict.reason}</p>
+          <p>{bundle.item.reason}</p>
           <div className={styles.promptActions}>
             <button
               className="button-secondary"
@@ -60,55 +66,76 @@ export function ConversationScene({
             >
               Show the evidence
             </button>
-            <button
-              className="button-primary"
-              onClick={() => onStep("options")}
-            >
-              What are my options?
-            </button>
+            {hasOptions ? (
+              <button
+                className="button-primary"
+                onClick={() => onStep("options")}
+              >
+                What are my options?
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
 
       {step === "reason" ? (
         <div className={styles.conversationAnswer}>
-          <p className={styles.largeAnswer}>
-            There is only a ten-minute gap. The usual airport-to-office trip
-            takes at least 35 minutes.
-          </p>
-          <button className="button-primary" onClick={() => onStep("options")}>
-            Show my options
+          <p className={styles.largeAnswer}>{bundle.explanation}</p>
+          <button
+            className="button-primary"
+            onClick={() => onStep(hasOptions ? "options" : "evidence")}
+          >
+            {hasOptions ? "Show my options" : "Show the evidence"}
           </button>
         </div>
       ) : null}
 
       {step === "evidence" ? (
         <div className={styles.evidenceList} aria-label="Supporting evidence">
-          {evidence.map((item) => (
+          {bundle.evidence.map((item) => (
             <article key={item.id}>
               <div>
                 <p className={styles.evidenceSource}>{item.sourceLabel}</p>
                 <p>{item.summary}</p>
+                {item.attribution ? (
+                  <SourceAttributionLine
+                    attribution={item.attribution}
+                    className={styles.attribution}
+                  />
+                ) : null}
               </div>
               <p className={styles.freshness}>
                 {item.freshnessLabel} · {item.epistemicStatus}
               </p>
             </article>
           ))}
-          <button className="button-primary" onClick={() => onStep("options")}>
-            What can I do?
-          </button>
+          {hasOptions ? (
+            <button
+              className="button-primary"
+              onClick={() => onStep("options")}
+            >
+              What can I do?
+            </button>
+          ) : (
+            <p className={styles.readOnlyLine}>
+              This context is read-only. Orbit has not proposed an action.
+            </p>
+          )}
         </div>
       ) : null}
 
-      {step === "options" ? (
+      {step === "options" && hasOptions ? (
         <div className={styles.optionsList}>
-          <p className={styles.answerLead}>Three ways forward</p>
-          {travelRecommendation.options.map((option, index) => (
+          <p className={styles.answerLead}>
+            {options.length === 1
+              ? "One way forward"
+              : `${options.length} ways forward`}
+          </p>
+          {options.map((option, index) => (
             <div className={styles.optionRow} key={option.id}>
               <span>{index + 1}</span>
               <p>{option.label}</p>
-              {option.id === "option_move" ? (
+              {canPropose && index === 0 ? (
                 <button className="button-primary" onClick={onPropose}>
                   Draft this
                 </button>
@@ -120,6 +147,20 @@ export function ConversationScene({
             </div>
           ))}
           <p className={styles.trustLine}>Nothing changes until you approve.</p>
+        </div>
+      ) : null}
+
+      {step === "options" && !hasOptions ? (
+        <div className={styles.conversationAnswer}>
+          <p className={styles.readOnlyLine}>
+            This context is read-only. Orbit has not proposed an action.
+          </p>
+          <button
+            className="button-secondary"
+            onClick={() => onStep("evidence")}
+          >
+            Show the evidence
+          </button>
         </div>
       ) : null}
     </section>
