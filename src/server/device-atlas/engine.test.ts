@@ -77,4 +77,20 @@ describe("Device Atlas", () => {
     expect(light?.preferredPath?.source).toBe("govee");
     expect(light?.preferredPath?.capabilities).toContain("control.scene");
   });
+
+  it("does not infer event support from a provider or treat unknown as available", () => {
+    const observation = {
+      ...deviceAtlasFixtureObservations[1],
+      status: "unknown" as const,
+      monitoringModes: ["bounded_poll" as const],
+    };
+    const device = reconcileDevices([observation])[0];
+    expect(device.paths[0]).toMatchObject({
+      source: "govee",
+      eventDriven: false,
+      available: false,
+    });
+    expect(device.preferredPath).toBeUndefined();
+    expect(device.monitoring.strategy).toBe("manual_refresh");
+  });
 });

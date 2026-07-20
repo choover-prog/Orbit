@@ -12,7 +12,7 @@ Device Atlas answers three questions without becoming a device dashboard:
 - Fictional Google Home, Govee, Matter, and selected mDNS observations.
 - Strong-evidence reconciliation and a visible unresolved count.
 - Deterministic path scoring and event-first monitoring selection.
-- A signed/fresh/replay-protected bridge envelope validator with an injected signature verifier.
+- A runtime-validated, byte-bounded, signed/fresh/replay-protected bridge message validator with an injected exact-byte signature verifier.
 - An isolated Android companion shell and native fixture inventory contract.
 - A lightweight Connections preview and `GET /api/device-atlas` fixture endpoint.
 
@@ -22,7 +22,7 @@ The fixture demonstrates one Govee light seen through both Google Home and Govee
 
 Google Home, Govee, and local services are three independent grants. Declining one does not block the others. Local discovery defaults off in the companion. A person may select a specific advertised service without granting broad network visibility where the Android version supports it.
 
-Orbit never guesses a password, probes arbitrary ports, retains network addresses in the normalized model, or promotes a discovered endpoint into a control path without an approved adapter.
+Orbit never guesses a password, probes arbitrary ports, or permits network addresses in the normalized model. A transient discovery implementation must discard its endpoint before creating an observation and cannot promote discovery into a control path without an approved adapter.
 
 ## Path scoring
 

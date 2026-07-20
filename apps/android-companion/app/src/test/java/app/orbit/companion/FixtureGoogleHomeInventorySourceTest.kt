@@ -11,6 +11,7 @@ class FixtureGoogleHomeInventorySourceTest {
         val inventory = FixtureGoogleHomeInventorySource().inventory()
         assertEquals("off", inventory.localDiscoveryMode)
         assertEquals(2, inventory.observations.size)
-        assertTrue(inventory.observations.all { it.consentScope.contains("fictional") })
+        assertTrue(inventory.observations.all { it.consent.scope.contains("fictional") })
+        assertTrue(inventory.observations.all { it.identity.isNotEmpty() })
     }
 }

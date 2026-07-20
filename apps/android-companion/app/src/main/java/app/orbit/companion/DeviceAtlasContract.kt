@@ -2,15 +2,32 @@ package app.orbit.companion
 
 enum class AtlasSource { GOOGLE_HOME, GOVEE, MATTER, LOCAL_MDNS }
 
+data class AtlasIdentityEvidence(
+    val kind: String,
+    val value: String,
+    val strength: String,
+)
+
+data class AtlasConsent(
+    val granted: Boolean,
+    val scope: String,
+)
+
 data class AtlasObservation(
     val id: String,
     val source: AtlasSource,
     val displayName: String,
     val category: String,
     val roomLabel: String?,
+    val sourceLabel: String,
+    val observedAt: String,
+    val freshnessSeconds: Int,
     val capabilityIds: List<String>,
-    val consentScope: String,
+    val identity: List<AtlasIdentityEvidence>,
+    val consent: AtlasConsent,
+    val transport: String,
     val status: String,
+    val monitoringModes: List<String>,
 )
 
 data class CompanionInventory(
@@ -25,9 +42,18 @@ interface HomeInventorySource {
 }
 
 interface OrbitLocalBridge {
-    /** Publishes provider-neutral observations only; native SDK objects never cross this boundary. */
-    suspend fun publish(inventory: CompanionInventory): BridgeReceipt
+    /** Publishes the exact signed UTF-8 JSON bytes; native SDK objects never cross this boundary. */
+    suspend fun publish(message: SignedBridgeMessage): BridgeReceipt
 }
+
+data class SignedBridgeMessage(
+    val protocol: String = "orbit.device-atlas.v1",
+    val sessionId: String,
+    val sequence: Long,
+    val capturedAt: String,
+    val rawPayloadUtf8: ByteArray,
+    val signature: ByteArray,
+)
 
 data class BridgeReceipt(
     val accepted: Boolean,

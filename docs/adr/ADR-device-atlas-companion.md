@@ -14,12 +14,12 @@ Orbit will build one provider-neutral Device Atlas and treat every provider as a
 1. The Android companion requests Google Home permission for a selected home and devices and emits normalized observations.
 2. A direct Govee adapter may add capability and event observations after separate consent.
 3. Local discovery begins with Android's privacy-preserving selected-service flow. Broad LAN access is off and requires a later explicit checkpoint.
-4. Device observations merge only through strong provider links, Matter node identity, manufacturer serial identity, or explicit user confirmation. Names, IP addresses, MAC addresses, and service labels are insufficient by themselves.
-5. Orbit scores candidate paths deterministically from consent, availability, locality, readback verification, reversibility, and event support.
-6. Event subscriptions are preferred. Polling is bounded to a documented interval and active use. Unknown devices remain observe-only.
+4. Device observations merge only through strong provider links, Matter node identity, manufacturer serial identity, or explicit user confirmation. Network endpoints are prohibited from the normalized model; names and service labels are insufficient by themselves.
+5. Orbit scores candidate paths deterministically from consent, confirmed-online availability, locality, readback verification, reversibility, and adapter-declared event support.
+6. Event subscriptions are preferred only when an adapter declares them for that observation. Polling is bounded to a documented interval and active use. Unknown-status devices remain observe-only.
 7. Automation output stops at draft and simulation. Activation and command execution require future approval, execution, verification, audit, and undo work.
 
-The local bridge protocol is versioned, bounded, signed, freshness checked, and replay protected. There is no ingest route until device-bound key storage and transport are implemented and reviewed.
+The local bridge protocol is versioned, runtime-schema and byte bounded, freshness checked, and replay protected. Signatures cover the exact received UTF-8 payload rather than a language-specific reserialization. There is no ingest route until device-bound key storage and transport are implemented and reviewed.
 
 ## Consequences
 

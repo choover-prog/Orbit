@@ -15,7 +15,7 @@ The qualification suite must prove:
 - event-capable sources select subscriptions and other sources use bounded polling;
 - an automation remains simulated and sends no command;
 - fixture output retains no IP or hardware address;
-- bridge messages reject invalid signatures, stale timestamps, and replayed sequences;
+- bridge messages runtime-validate bounded fields and bytes, sign exact received payloads, and reject invalid signatures, stale timestamps, replayed sequences, and network identities;
 - the Connections panel communicates privacy and simulated authority;
 - the fixture API is non-cacheable.
 

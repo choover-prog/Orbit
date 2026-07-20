@@ -30,6 +30,7 @@ export const deviceAtlasFixtureObservations: DeviceSourceObservation[] = [
     consent: { granted: true, scope: "Selected home and devices" },
     transport: "hybrid",
     status: "online",
+    monitoringModes: ["bounded_poll"],
   },
   {
     id: "govee_entry_lamp",
@@ -58,6 +59,7 @@ export const deviceAtlasFixtureObservations: DeviceSourceObservation[] = [
     consent: { granted: true, scope: "Selected fictional Govee devices" },
     transport: "cloud",
     status: "online",
+    monitoringModes: ["event_subscription", "bounded_poll"],
   },
   {
     id: "matter_coffee_plug",
@@ -79,6 +81,7 @@ export const deviceAtlasFixtureObservations: DeviceSourceObservation[] = [
     consent: { granted: true, scope: "One selected local service" },
     transport: "local",
     status: "online",
+    monitoringModes: ["event_subscription"],
   },
   {
     id: "mdns_speaker",
@@ -100,6 +103,7 @@ export const deviceAtlasFixtureObservations: DeviceSourceObservation[] = [
     consent: { granted: true, scope: "One selected service" },
     transport: "local",
     status: "online",
+    monitoringModes: ["bounded_poll"],
   },
   {
     id: "same_name_untrusted",
@@ -114,6 +118,7 @@ export const deviceAtlasFixtureObservations: DeviceSourceObservation[] = [
     consent: { granted: true, scope: "One selected service" },
     transport: "local",
     status: "unknown",
+    monitoringModes: ["manual_refresh"],
   },
 ];
 

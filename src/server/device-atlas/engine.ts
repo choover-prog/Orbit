@@ -73,9 +73,8 @@ function pathFor(observation: DeviceSourceObservation): ControlPathCandidate {
       item.startsWith("observe."),
     ),
     reversible: controlCapabilities.every((item) => item !== "stream.video"),
-    eventDriven:
-      observation.source === "govee" || observation.source === "matter",
-    available: observation.status !== "offline",
+    eventDriven: observation.monitoringModes.includes("event_subscription"),
+    available: observation.status === "online",
   });
 }
 
@@ -86,7 +85,7 @@ function monitoringFor(
     (item) =>
       item.consent.granted &&
       item.status !== "offline" &&
-      (item.source === "govee" || item.source === "matter"),
+      item.monitoringModes.includes("event_subscription"),
   );
   if (eventSource) {
     return {
@@ -96,7 +95,10 @@ function monitoringFor(
     };
   }
   const pollSource = observations.find(
-    (item) => item.consent.granted && item.status !== "offline",
+    (item) =>
+      item.consent.granted &&
+      item.status === "online" &&
+      item.monitoringModes.includes("bounded_poll"),
   );
   if (pollSource) {
     return {

@@ -25,10 +25,13 @@ export type DeviceIdentityEvidence =
       strength: "strong";
     }
   | {
-      kind: "display_name" | "network_endpoint" | "service_instance";
+      kind: "display_name" | "service_instance";
       value: string;
       strength: "weak";
     };
+
+export type DeviceMonitoringMode =
+  "event_subscription" | "bounded_poll" | "manual_refresh";
 
 export interface DeviceSourceObservation {
   id: string;
@@ -47,6 +50,7 @@ export interface DeviceSourceObservation {
   };
   transport: "local" | "cloud" | "hybrid";
   status: "online" | "offline" | "unknown";
+  monitoringModes: DeviceMonitoringMode[];
 }
 
 export interface ControlPathCandidate {

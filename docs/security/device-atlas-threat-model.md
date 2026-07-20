@@ -10,11 +10,11 @@
 | Credential guessing or unsafe probing | Explicit non-goal; no port scanner, login attempt, or credential field exists. |
 | Wrong-device merge | Only strong identifiers merge. Same name, address, or service instance alone remains separate. |
 | Provider object leakage | Only versioned provider-neutral observations cross into Orbit Core. |
-| Malicious companion or bridge replay | Future envelopes require an authenticated session, signature verification, five-minute freshness, monotonic sequence, and record cap. No ingest route exists yet. |
+| Malicious companion or bridge replay | Future messages require an authenticated session, exact-received-byte signature verification, runtime schema and field/byte bounds, five-minute freshness, monotonic sequence, and record cap. No ingest route exists yet. |
 | Path score grants authority | Scores rank already-consented candidates only; absence of consent prevents preferred-path selection. |
 | Hidden monitoring | Event-first plans are visible; polling is bounded to 15 minutes while active; otherwise refresh is manual. |
 | Automation executes from a draft | Draft state and `requiredApproval: true` are structural. Sprint 1 exposes no activation or execution endpoint. |
-| Sensitive network identifiers persist | Network endpoints may be transient weak evidence but normalized fixtures and snapshot state retain none. |
+| Sensitive network identifiers persist | The normalized identity union and bridge schema prohibit network endpoints; discovery adapters must discard endpoints before normalization. |
 | Camera or microphone access | Android manifest requests neither. Camera video remains isolated to the existing explicit Nest flow. |
 | Secret committed to source | No Google Home registration data, Govee API key, token, local bridge key, or personal fixture is present. |
 
