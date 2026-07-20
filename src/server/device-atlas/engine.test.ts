@@ -51,6 +51,9 @@ describe("Device Atlas", () => {
       credentialGuessing: false,
       autonomousControl: false,
     });
+    expect(JSON.stringify(snapshot)).not.toMatch(
+      /(?:ipAddress|macAddress|hardwareAddress|\b(?:\d{1,3}\.){3}\d{1,3}\b)/i,
+    );
   });
 
   it("uses events where available and bounded refresh otherwise", () => {
