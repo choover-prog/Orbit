@@ -19,6 +19,8 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+**/.gradle/
+local.properties
 __pycache__/
 *.py[cod]
 *.tsbuildinfo

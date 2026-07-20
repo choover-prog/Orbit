@@ -57,6 +57,14 @@ qualification precedes the private supported-device live checkpoint. Broader
 native Google Home coverage and Home Assistant remain later adapters to the same
 Orbit Core contracts.
 
+Stage 2d Device Atlas is now in fixture implementation. It adds a provider-neutral
+multi-source device identity model, deterministic control-path scoring,
+event-first monitoring plans, a versioned local companion bridge boundary, and
+an isolated Android shell. Google Home, Govee, Matter, and selected local-service
+observations are fictional. Automation is draft-and-simulate only. Native SDK
+compilation, live home consent, real Govee authorization, broad network access,
+background monitoring, and device command execution remain qualification gates.
+
 Target read loop: connect -> synchronize -> normalize -> detect one attention
 candidate -> explain with evidence.
 
