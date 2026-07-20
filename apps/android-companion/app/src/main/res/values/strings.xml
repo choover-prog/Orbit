@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orbit Companion</string>
+    <string name="companion_status">Device Atlas foundation\n\nNo home is connected yet. You will choose a home and devices before Orbit can read them. Local network discovery is off.</string>
+</resources>

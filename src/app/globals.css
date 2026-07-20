@@ -457,6 +457,57 @@ select {
   background: #111;
 }
 
+.device-atlas__intro,
+.device-atlas__privacy {
+  max-width: 46rem;
+  color: var(--muted);
+}
+.device-atlas__privacy li + li {
+  margin-top: 0.35rem;
+}
+.device-atlas__list {
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+.device-atlas__device {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.8fr) minmax(14rem, 1.4fr) minmax(
+      10rem,
+      0.8fr
+    );
+  gap: 1.5rem;
+}
+.device-atlas__device h3,
+.device-atlas__device p,
+.device-atlas__draft h3,
+.device-atlas__draft p {
+  margin: 0;
+}
+.device-atlas__device p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.device-atlas__path {
+  color: var(--success) !important;
+  font-weight: 650;
+}
+.device-atlas__draft {
+  max-width: 46rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.device-atlas__draft h3 {
+  margin-bottom: 0.5rem;
+}
+.device-atlas__draft p + p {
+  margin-top: 0.5rem;
+}
+
 .button-primary,
 .button-secondary,
 .button-quiet,
@@ -549,6 +600,10 @@ select {
   .nest-approval button,
   .nest-controls label {
     width: 100%;
+  }
+  .device-atlas__device {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
   }
 }
 

@@ -18,4 +18,6 @@ The bridge must never expose native SDK objects to product components. It must u
 
 Nest Device Access and a future Home Assistant adapter map into the same provider-neutral home contracts. Neither adapter owns Orbit's attention, approval, audit, or undo policy.
 
-Native implementation, commissioning, automations, background presence, microphone input, hosted relay, and household multi-user policy remain deferred.
+The fixture companion foundation and Device Atlas bridge contract now live under `apps/android-companion` and `src/server/device-atlas`. See `docs/adr/ADR-device-atlas-companion.md` for the accepted reconciliation, path-scoring, and privacy decisions.
+
+Native Google Home SDK integration, commissioning, activated automations, background presence, microphone input, hosted relay, and household multi-user policy remain deferred.

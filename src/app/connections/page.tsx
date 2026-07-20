@@ -12,6 +12,8 @@ import {
   GoogleNestConnectionPanel,
   type GoogleNestNotice,
 } from "@/features/connections/GoogleNestConnectionPanel";
+import { DeviceAtlasPanel } from "@/features/connections/DeviceAtlasPanel";
+import { getDeviceAtlasFixture } from "@/server/device-atlas/fixture";
 
 export const metadata: Metadata = { title: "Connections" };
 export const dynamic = "force-dynamic";
@@ -125,6 +127,7 @@ export default async function ConnectionsPage({
         snapshot={snapshot.home}
         notice={parseNestNotice(nest)}
       />
+      <DeviceAtlasPanel snapshot={getDeviceAtlasFixture()} />
       <div className="admin-list">
         {snapshot.connections
           .filter(
