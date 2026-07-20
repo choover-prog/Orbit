@@ -1,6 +1,6 @@
 # ADR: Device Atlas and the Android companion boundary
 
-- Status: Accepted for fixture implementation; native and live qualification pending
+- Status: Accepted; fixture and native harness qualified, private live consent pending
 - Date: 2026-07-19
 
 ## Context
@@ -26,7 +26,7 @@ The local bridge protocol is versioned, runtime-schema and byte bounded, freshne
 - Orbit Core stays independent of Google Home, Govee, Matter, Android, and Home Assistant objects.
 - One physical device can have several paths while presenting one understandable identity.
 - Conservative reconciliation can leave duplicates for user review; this is safer than silently controlling the wrong device.
-- Native live work needs Android Studio, JDK 17, Google Home SDK/app registration access, and a physical Android 10+ device.
+- The native harness now compiles and passes tests/lint with JDK 17 and Android SDK 35. Private live work still needs the authenticated Google Home Developers SDK download, app/OAuth registration, and a physical Android 10+ device.
 - Home Assistant remains an optional future adapter, not a prerequisite.
 
 ## References

@@ -13,7 +13,8 @@ Device Atlas answers three questions without becoming a device dashboard:
 - Strong-evidence reconciliation and a visible unresolved count.
 - Deterministic path scoring and event-first monitoring selection.
 - A runtime-validated, byte-bounded, signed/fresh/replay-protected bridge message validator with an injected exact-byte signature verifier.
-- An isolated Android companion shell and native fixture inventory contract.
+- An isolated Android companion with a native fixture contract, explicit consent states,
+  bounded normalization, Keystore pseudonyms, and device-bound bridge signing.
 - A lightweight Connections preview and `GET /api/device-atlas` fixture endpoint.
 
 The fixture demonstrates one Govee light seen through both Google Home and Govee. Those observations merge through an explicit provider link. A second local device with the same name remains separate because a name is weak evidence.
@@ -30,13 +31,18 @@ The maximum score is 100: explicit consent 30, current availability 20, local tr
 
 ## Native qualification checkpoint
 
-The companion source is intentionally a fixture. Live Google Home work requires:
+The companion now has a compiled provider seam and a fail-closed unprovisioned
+client. Live Google Home work still requires:
 
-- Android Studio 2024.2.1 or newer, JDK 17, and Android SDK 35;
+- the official partner-provisioned Google Home SDK artifacts;
 - an Android 10 or newer physical test device;
 - Google Home SDK project/app registration access;
 - a consent run against a private test home;
 - device count and capability reconciliation against what Google Home visibly shows;
-- bridge key storage, encrypted local transport, revocation, and threat review.
+- a pinned local transport and physical-device revocation review.
 
-This workstation lacks the Android toolchain, so Kotlin compilation and device qualification remain unverified. TypeScript core, UI, and bridge-policy tests are independently verifiable.
+The JDK 17 / Android SDK 35 gate now passes locally. The private live-consent
+checkpoint remains unqualified because SDK partner access and a physical device
+require the person to be present. See
+[Google Home private qualification](google-home-live-qualification.md) and the
+[mobile bridge threat model](../security/google-home-mobile-bridge-threat-model.md).
