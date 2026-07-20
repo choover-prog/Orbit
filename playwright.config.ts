@@ -8,6 +8,7 @@ const fixtureEnvironment = Object.fromEntries(
 fixtureEnvironment.ORBIT_WEATHER_MODE = "fixture";
 fixtureEnvironment.ORBIT_GOOGLE_CALENDAR_MODE = "fixture";
 fixtureEnvironment.ORBIT_GOOGLE_GMAIL_MODE = "fixture";
+fixtureEnvironment.ORBIT_GOOGLE_NEST_MODE = "fixture";
 
 const testServerUrl = "http://127.0.0.1:3100";
 

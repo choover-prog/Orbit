@@ -319,3 +319,63 @@ test("local Gmail lifecycle stays bounded and clears its state", async ({
     records: [],
   });
 });
+
+test("local Nest lifecycle streams on request and controls only after approval", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "single local connector lane");
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+
+  await page.goto("/connections");
+  await page.waitForLoadState("networkidle");
+  const nest = page.getByRole("article", { name: "Google Home / Nest" });
+  const connect = nest.getByRole("button", {
+    name: "Connect fictional Nest home",
+  });
+  if (!(await connect.isVisible())) {
+    await nest.getByRole("button", { name: "Disconnect" }).click();
+    await nest.getByRole("button", { name: "Remove Nest connection" }).click();
+  }
+  await connect.click();
+  await page.waitForLoadState("networkidle");
+
+  await expect(nest.getByRole("status").first()).toContainText(
+    /connected|fresh/i,
+  );
+  await expect(nest.getByText("Kitchen speaker")).toBeVisible();
+  await expect(nest.getByText("not supported by this connector")).toBeVisible();
+
+  await nest.getByRole("button", { name: "View live video" }).click();
+  await expect(
+    nest.getByRole("dialog", { name: /View Front door camera live/i }),
+  ).toContainText(/recorded or analyzed/i);
+  await nest.getByRole("button", { name: "Start live video" }).click();
+  await expect(
+    nest.getByRole("img", { name: "Fictional camera stream preview" }),
+  ).toBeVisible();
+  await nest.getByRole("button", { name: "Stop video" }).click();
+
+  await nest.getByRole("button", { name: "Set cool" }).click();
+  const approval = nest.getByRole("dialog", {
+    name: "Approve this device change?",
+  });
+  await expect(approval).toContainText("Mode was heat");
+  await expect(approval).toContainText("execute this once");
+  await approval.getByRole("button", { name: "Approve change" }).click();
+  await expect(nest.getByRole("status").last()).toContainText("Verified");
+  await expect(nest.getByRole("button", { name: "Review undo" })).toBeVisible();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+
+  await nest.getByRole("button", { name: "Disconnect" }).click();
+  await nest.getByRole("button", { name: "Remove Nest connection" }).click();
+  await expect(nest.getByRole("status").first()).toContainText(/disconnected/i);
+  const snapshot = await page.request.get("/api/orbit/snapshot");
+  const json = (await snapshot.json()) as {
+    home: { status: string; records: unknown[] };
+  };
+  expect(json.home).toMatchObject({ status: "disconnected", records: [] });
+  expect(consoleErrors).toEqual([]);
+});

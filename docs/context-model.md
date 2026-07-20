@@ -118,6 +118,11 @@ stateDiagram-v2
 - Do not send Stage 2a provider data to a reasoning model.
 - Keep normalized Calendar events only in the process cache; persist only the
   DPAPI-encrypted refresh-token record needed to reconnect.
+- Keep normalized home hierarchy and device traits in the process cache. Never
+  persist or add WebRTC SDP, ICE details, stream/session tokens, video, audio,
+  frames, or provider resource names to `OrbitSnapshot`, audit, or model input.
+- Home commands are separate immutable plan/result/audit records; raw provider
+  command strings remain inside the Nest adapter.
 
 ## Versioning
 

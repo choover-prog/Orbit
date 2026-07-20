@@ -149,6 +149,132 @@ export interface EmailMessageSummary {
   important: boolean;
 }
 
+export type HomeDeviceCategory =
+  "thermostat" | "camera" | "doorbell" | "display" | "unsupported";
+
+export type HomeTraitKind =
+  | "connectivity"
+  | "temperature"
+  | "humidity"
+  | "hvac"
+  | "thermostat_mode"
+  | "thermostat_setpoint"
+  | "fan"
+  | "camera_live_stream";
+
+export type HomeDeviceCapability =
+  | { kind: "camera.live_stream"; protocols: Array<"webrtc" | "rtsp"> }
+  | {
+      kind: "thermostat.set_mode";
+      modes: Array<"heat" | "cool" | "heat_cool" | "off">;
+    }
+  | {
+      kind: "thermostat.set_temperature";
+      modes: Array<"heat" | "cool" | "heat_cool">;
+    }
+  | { kind: "fan.set_timer"; maximumSeconds: number };
+
+/** Provider-neutral home hierarchy. Provider resource names never cross this boundary. */
+export interface HomeStructure {
+  id: string;
+  displayName: string;
+}
+
+export interface HomeRoom {
+  id: string;
+  structureId: string;
+  displayName: string;
+}
+
+export interface HomeTraitObservation {
+  kind: HomeTraitKind;
+  observedAt: IsoDateTime;
+  value:
+    | { status: "online" | "offline" | "unknown" }
+    | { celsius: number }
+    | { percent: number }
+    | { status: "heating" | "cooling" | "off" | "unknown" }
+    | { mode: "heat" | "cool" | "heat_cool" | "off" | "unknown" }
+    | { heatCelsius?: number; coolCelsius?: number }
+    | { timerMode: "on" | "off" | "unknown"; timerTimeout?: IsoDateTime }
+    | {
+        protocols: Array<"webrtc" | "rtsp">;
+        maxWidth?: number;
+        maxHeight?: number;
+      };
+}
+
+export interface HomeDevice {
+  id: string;
+  displayName: string;
+  category: HomeDeviceCategory;
+  structureId?: string;
+  roomId?: string;
+  supported: boolean;
+  capabilities: HomeDeviceCapability[];
+  observations: HomeTraitObservation[];
+}
+
+export type HomeCommandCapability =
+  "thermostat.set_mode" | "thermostat.set_temperature" | "fan.set_timer";
+
+export interface HomeCommandPlan {
+  id: string;
+  deviceId: string;
+  capability: HomeCommandCapability;
+  summary: string;
+  expectedEffect: string;
+  previousState: string;
+  planHash: string;
+  expiresAt: IsoDateTime;
+  reversible: boolean;
+  parameters:
+    | { mode: "heat" | "cool" | "heat_cool" | "off" }
+    | { heatCelsius?: number; coolCelsius?: number }
+    | { timerMode: "on" | "off"; durationSeconds?: number };
+}
+
+export interface HomeCommandResult {
+  planId: string;
+  state: "verified" | "failed" | "verification_failed";
+  completedAt: IsoDateTime;
+  observedState?: string;
+  undoPlan?: HomeCommandPlan;
+}
+
+export interface HomeAuditEvent {
+  id: string;
+  occurredAt: IsoDateTime;
+  deviceId: string;
+  kind:
+    | "plan_created"
+    | "approved"
+    | "executed"
+    | "verified"
+    | "failed"
+    | "stream_started"
+    | "stream_stopped";
+  summary: string;
+}
+
+export interface HomePermission {
+  id:
+    | "home.structure.read"
+    | "home.device.read"
+    | "home.camera.stream"
+    | "home.device.control";
+  access: "read" | "write";
+  granted: boolean;
+  explanation: string;
+}
+
+export interface HomeContextPayload {
+  structures: HomeStructure[];
+  rooms: HomeRoom[];
+  devices: HomeDevice[];
+  permissions: HomePermission[];
+}
+
 interface AttentionBundleBase {
   id: string;
   label: string;
@@ -166,7 +292,11 @@ export interface MockedActionAttentionBundle extends AttentionBundleBase {
 }
 
 export interface ReadOnlyAttentionBundle extends AttentionBundleBase {
-  kind: "weather" | "calendar_conflict" | "calendar_email_preparation";
+  kind:
+    | "weather"
+    | "calendar_conflict"
+    | "calendar_email_preparation"
+    | "home_temperature_attention";
   recommendation?: Recommendation;
   actionProposal?: never;
   actionability: "read_only";
@@ -236,10 +366,31 @@ export interface EmailContextSnapshot {
   failure?: ConnectorFailure;
 }
 
+export type HomeAuthorizationStatus = ReadOnlyConnectorAuthorizationStatus;
+export type HomeContextStatus = ReadOnlyConnectorContextStatus;
+
+export interface HomeContextSnapshot {
+  status: HomeContextStatus;
+  authorization: HomeAuthorizationStatus;
+  mode: ConnectorMode;
+  records: Array<SourceRecord<HomeContextPayload>>;
+  complete: boolean;
+  structureCount: number;
+  roomCount: number;
+  deviceCount: number;
+  supportedDeviceCount: number;
+  unsupportedDeviceCount: number;
+  audit: HomeAuditEvent[];
+  lastSyncedAt?: IsoDateTime;
+  nextSyncEligibleAt?: IsoDateTime;
+  attention?: ReadOnlyAttentionBundle;
+  failure?: ConnectorFailure;
+}
+
 export interface OrbitSnapshot {
   schemaVersion: "1";
   generatedAt: IsoDateTime;
-  requestedContext: "weather" | "calendar" | "email" | null;
+  requestedContext: "weather" | "calendar" | "email" | "home" | null;
   person: PersonReference;
   selectedAttentionId: string | null;
   attention: AttentionBundle[];
@@ -250,4 +401,5 @@ export interface OrbitSnapshot {
   weather: WeatherContextSnapshot;
   calendar: CalendarContextSnapshot;
   email: EmailContextSnapshot;
+  home: HomeContextSnapshot;
 }

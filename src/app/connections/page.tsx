@@ -8,12 +8,31 @@ import {
   type GmailConnectionNotice,
 } from "@/features/connections/GmailConnectionPanel";
 import { buildOrbitSnapshot } from "@/server/context/buildOrbitSnapshot";
+import {
+  GoogleNestConnectionPanel,
+  type GoogleNestNotice,
+} from "@/features/connections/GoogleNestConnectionPanel";
 
 export const metadata: Metadata = { title: "Connections" };
 export const dynamic = "force-dynamic";
 
 interface ConnectionsPageProps {
-  searchParams: Promise<{ calendar?: string; gmail?: string }>;
+  searchParams: Promise<{ calendar?: string; gmail?: string; nest?: string }>;
+}
+
+function parseNestNotice(
+  value: string | undefined,
+): GoogleNestNotice | undefined {
+  return [
+    "connected",
+    "disconnected",
+    "synced",
+    "current",
+    "denied",
+    "invalid_callback",
+    "failed",
+    "local_only",
+  ].find((notice) => notice === value) as GoogleNestNotice | undefined;
 }
 
 function parseCalendarNotice(
@@ -53,7 +72,7 @@ function parseGmailNotice(
 export default async function ConnectionsPage({
   searchParams,
 }: ConnectionsPageProps) {
-  const { calendar, gmail } = await searchParams;
+  const { calendar, gmail, nest } = await searchParams;
   const snapshot = await buildOrbitSnapshot();
 
   return (
@@ -102,6 +121,10 @@ export default async function ConnectionsPage({
         }}
         notice={parseGmailNotice(gmail)}
       />
+      <GoogleNestConnectionPanel
+        snapshot={snapshot.home}
+        notice={parseNestNotice(nest)}
+      />
       <div className="admin-list">
         {snapshot.connections
           .filter(
@@ -110,6 +133,8 @@ export default async function ConnectionsPage({
                 "connection_google_calendar",
                 "connection_google_gmail",
                 "connection_email",
+                "connection_home",
+                "connection_google_nest",
               ].includes(connection.id),
           )
           .map((connection) => (

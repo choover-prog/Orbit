@@ -16,9 +16,9 @@
 
 This is not a production system. Stage 1 scheduling data and execution remain mocked, and history and preferences are browser-local. The optional public weather sandbox is documented separately in Stage 2a below.
 
-## Stage 2 — Connector-Backed Read-Only Context
+## Stage 2 — Connector-Backed Context
 
-**Stage 2a weather sandbox and Stage 2b local Calendar slice implemented.**
+**Stage 2a weather, Stage 2b Calendar, and the local Gmail slice are implemented. Stage 2c Google Nest is in fixture qualification.**
 
 Stage 2a proves the smallest server-side context path:
 
@@ -44,13 +44,24 @@ account:
 - no Calendar write, model call, autonomous action, hosted deployment, or
   multi-user authentication.
 
-The fictional flight-versus-meeting execution remains a separate mock. Fixture
-mode validates the full Calendar lifecycle offline; one real Google consent
-round-trip is a manual local checkpoint requiring the evaluator's own Cloud
-client and account. Gmail, contacts, Home Assistant, GitHub, and other read-only
-adapters follow only after this slice validates usefulness and trust.
+The fictional flight-versus-meeting execution remains a separate mock. Calendar
+and Gmail have independently qualified local OAuth/vault boundaries and bounded
+read-only context.
 
-Target loop for personal connectors: connect -> synchronize -> normalize -> detect one attention candidate -> explain with evidence.
+Stage 2c adds shared provider-neutral home contracts and a Google Nest Device
+Access adapter. Useful home behavior includes explicitly requested temporary
+WebRTC video and narrowly allowlisted thermostat/fan commands. Every control is
+an immutable plan with explicit approval, one execution, provider readback,
+verification, audit, and a separately approved undo plan when possible. Fixture
+qualification precedes the private supported-device live checkpoint. Broader
+native Google Home coverage and Home Assistant remain later adapters to the same
+Orbit Core contracts.
+
+Target read loop: connect -> synchronize -> normalize -> detect one attention
+candidate -> explain with evidence.
+
+Target home action loop: fresh state -> plan -> approve -> execute -> verify ->
+audit -> offer undo.
 
 ## Stage 3 — Draft and Approval Actions
 

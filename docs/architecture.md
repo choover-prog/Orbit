@@ -163,11 +163,31 @@ sequenceDiagram
 - Success means verified provider state, not a successful transport response.
 - Undo is a new authorized action, not a database rollback fiction.
 
+## Local Google Nest stream and control boundary
+
+Google Nest extends the connector registry with a separate Device Access OAuth
+session, DPAPI vault, cache, token, plan store, stream-session store, and audit.
+Product code receives only provider-neutral home structures, rooms, devices,
+capabilities, observations, permissions, freshness, completeness, and opaque
+references.
+
+Page and snapshot GETs call `peek` and cannot spend provider authority. Explicit
+same-origin POST routes perform synchronization, WebRTC session creation/stop,
+or plan/approval execution. The browser never selects a Google command string or
+provider resource name. Streams are ephemeral and absent from snapshots and
+audit payloads. Device commands require fresh complete context, immutable plans,
+approval, one execution, readback, verification, and a new approval for undo.
+
+The native Android/iOS Google Home SDK and future Home Assistant adapter remain
+replaceable providers behind the same Orbit Core home contracts.
+
 ## Deployment posture
 
 No production topology is selected. Weather remains a public evaluation
 sandbox. Google Calendar is a local single-Windows-user experiment with a
-DPAPI-protected refresh token and process-local normalized cache. Google consent
+DPAPI-protected refresh token and process-local normalized cache. Google Nest
+adds a separately protected local vault and process-only stream/control state.
+Google consent
 does not authenticate the Orbit application or isolate multiple people. Hosted
 authentication, per-user encrypted storage, durable jobs, retention/export,
 provider verification, service levels, and deployment require new decisions.

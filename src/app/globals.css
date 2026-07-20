@@ -382,6 +382,81 @@ select {
   color: var(--muted);
 }
 
+.calendar-connection__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.calendar-connection__heading h2 {
+  margin: 0;
+}
+.nest-device-list {
+  display: grid;
+  margin: 1.5rem 0;
+  border-block: 1px solid var(--line);
+}
+.nest-device {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.nest-device:last-child {
+  border-bottom: 0;
+}
+.nest-device h3,
+.nest-device p {
+  margin: 0;
+}
+.nest-controls,
+.nest-approval {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+}
+.nest-controls label {
+  display: grid;
+  gap: 0.35rem;
+}
+.nest-controls input {
+  width: 7rem;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  color: var(--ink);
+}
+.nest-approval,
+.nest-stream {
+  margin: 1rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.nest-approval h3,
+.nest-approval p {
+  width: 100%;
+  margin: 0;
+}
+.nest-stream__frame {
+  display: grid;
+  min-height: 15rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: #111;
+  color: #fff;
+}
+.nest-stream video {
+  width: 100%;
+  max-height: 70vh;
+  background: #111;
+}
+
 .button-primary,
 .button-secondary,
 .button-quiet,
@@ -464,6 +539,16 @@ select {
   .calendar-connection__facts,
   .gmail-connection__facts {
     grid-template-columns: 1fr;
+  }
+  .nest-controls,
+  .nest-approval {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .nest-controls button,
+  .nest-approval button,
+  .nest-controls label {
+    width: 100%;
   }
 }
 

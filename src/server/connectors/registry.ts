@@ -15,6 +15,13 @@ import {
 } from "./gmail";
 import type { GmailCredentialStore } from "./gmail/credential-store";
 import type { GmailOAuthSessionStore } from "./gmail/oauth-session";
+import {
+  createGoogleNestGateway,
+  type GoogleNestGateway,
+  type GoogleNestGatewayEnvironment,
+} from "./google-nest";
+import type { GoogleNestCredentialStore } from "./google-nest/credential-store";
+import type { GoogleNestOAuthSessionStore } from "./google-nest/oauth-session";
 
 export interface CreateConnectorRegistryOptions {
   weatherMode?: string;
@@ -30,12 +37,18 @@ export interface CreateConnectorRegistryOptions {
   gmailCredentialStore?: GmailCredentialStore;
   gmailSessions?: GmailOAuthSessionStore;
   gmailEnvironment?: GmailGatewayEnvironment;
+  nestMode?: string;
+  nestFetchImpl?: typeof globalThis.fetch;
+  nestCredentialStore?: GoogleNestCredentialStore;
+  nestSessions?: GoogleNestOAuthSessionStore;
+  nestEnvironment?: GoogleNestGatewayEnvironment;
 }
 
 export interface OrbitConnectorRegistry {
   weather: WeatherConnectorService;
   calendar: GoogleCalendarGateway;
   gmail: GmailGateway;
+  nest: GoogleNestGateway;
 }
 
 export function createConnectorRegistry(
@@ -63,6 +76,13 @@ export function createConnectorRegistry(
       sessions: options.gmailSessions,
       environment: options.gmailEnvironment,
     }),
+    nest: createGoogleNestGateway({
+      mode: options.nestMode,
+      fetchImpl: options.nestFetchImpl,
+      credentialStore: options.nestCredentialStore,
+      sessions: options.nestSessions,
+      environment: options.nestEnvironment,
+    }),
   };
 }
 
@@ -75,6 +95,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
   const configuredMode = process.env.ORBIT_WEATHER_MODE;
   const calendarMode = process.env.ORBIT_GOOGLE_CALENDAR_MODE;
   const gmailMode = process.env.ORBIT_GOOGLE_GMAIL_MODE;
+  const nestMode = process.env.ORBIT_GOOGLE_NEST_MODE;
   const configurationKey = JSON.stringify([
     configuredMode,
     calendarMode,
@@ -85,6 +106,11 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
     process.env.ORBIT_GOOGLE_GMAIL_CLIENT_ID,
     process.env.ORBIT_GOOGLE_GMAIL_CLIENT_SECRET,
     process.env.ORBIT_GOOGLE_GMAIL_REDIRECT_URI,
+    nestMode,
+    process.env.ORBIT_GOOGLE_NEST_CLIENT_ID,
+    process.env.ORBIT_GOOGLE_NEST_CLIENT_SECRET,
+    process.env.ORBIT_GOOGLE_NEST_PROJECT_ID,
+    process.env.ORBIT_GOOGLE_NEST_REDIRECT_URI,
     process.env.LOCALAPPDATA,
   ]);
   if (
@@ -99,6 +125,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
         weatherMode: configuredMode,
         calendarMode,
         gmailMode,
+        nestMode,
       });
   }
 
@@ -108,6 +135,7 @@ export function getConnectorRegistry(): OrbitConnectorRegistry {
 export function resetConnectorRegistryForTests(): void {
   globalForConnectorRegistry.__orbitConnectorRegistry?.calendar.resetForTests();
   globalForConnectorRegistry.__orbitConnectorRegistry?.gmail.resetForTests();
+  globalForConnectorRegistry.__orbitConnectorRegistry?.nest.resetForTests();
   globalForConnectorRegistry.__orbitConnectorRegistry = undefined;
   globalForConnectorRegistry.__orbitConnectorRegistryConfigurationKey =
     undefined;

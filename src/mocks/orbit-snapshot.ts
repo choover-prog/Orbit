@@ -60,5 +60,18 @@ export function createClientFixtureSnapshot(): OrbitSnapshot {
       complete: true,
       messageCount: 0,
     },
+    home: {
+      status: "disconnected",
+      authorization: "disconnected",
+      mode: "fixture",
+      records: [],
+      complete: true,
+      structureCount: 0,
+      roomCount: 0,
+      deviceCount: 0,
+      supportedDeviceCount: 0,
+      unsupportedDeviceCount: 0,
+      audit: [],
+    },
   };
 }

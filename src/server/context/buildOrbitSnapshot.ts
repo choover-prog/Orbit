@@ -2,6 +2,7 @@ import type { ConnectorMode, OrbitSnapshot } from "@/domain/orbit/connectors";
 import { buildWeatherContextArtifacts } from "@/domain/orbit/weather-attention";
 import { buildCalendarContextArtifacts } from "@/domain/orbit/calendar-attention";
 import { buildCalendarEmailContextArtifacts } from "@/domain/orbit/calendar-email-attention";
+import { buildHomeContextArtifacts } from "@/domain/orbit/home-attention";
 import {
   createClientFixtureSnapshot,
   travelAttentionBundle,
@@ -9,6 +10,7 @@ import {
 import type { ConnectionStatus } from "@/domain/orbit/types";
 import type { GoogleCalendarGatewayState } from "@/server/connectors/google-calendar";
 import type { GmailGatewayState } from "@/server/connectors/gmail";
+import type { GoogleNestGatewayState } from "@/server/connectors/google-nest";
 import {
   getConnectorRegistry,
   type OrbitConnectorRegistry,
@@ -144,16 +146,62 @@ function gmailConnection(state: GmailGatewayState): ConnectionStatus {
   };
 }
 
+function nestConnection(state: GoogleNestGatewayState): ConnectionStatus {
+  const batch = state.batch;
+  const payload = batch?.records[0]?.payload;
+  return {
+    id: "connection_google_nest",
+    displayName: "Google Home / Nest",
+    category: "home",
+    mode: state.mode,
+    health:
+      state.status === "fresh"
+        ? "connected"
+        : state.status === "storage_unavailable"
+          ? "configuration_required"
+          : state.status,
+    capabilities: [
+      {
+        id: "google_nest_context",
+        label: "Read selected structures and device traits",
+        access: "read",
+      },
+      {
+        id: "google_nest_stream",
+        label: "Open temporary camera video when requested",
+        access: "read",
+      },
+      {
+        id: "google_nest_control",
+        label: "Control supported devices after approval",
+        access: "write",
+      },
+    ],
+    lastSyncLabel: payload
+      ? `${payload.devices.length} validated devices in a bounded read`
+      : state.authorization === "connected"
+        ? "No validated read available"
+        : "No Google Nest home connected",
+    ...(batch ? { lastSyncedAt: batch.retrievedAt } : {}),
+    statusDetail:
+      state.failure?.message ??
+      (state.mode === "fixture"
+        ? "Fictional Nest devices, camera preview, and command execution."
+        : "Device Access is user-selected; video is temporary and commands require approval."),
+  };
+}
+
 export async function buildOrbitSnapshot(
   options: BuildOrbitSnapshotOptions = {},
 ): Promise<OrbitSnapshot> {
   const now = options.now ?? new Date();
   const registry = options.registry ?? getConnectorRegistry();
   const base = createClientFixtureSnapshot();
-  const [weatherRead, calendarRead, gmailRead] = await Promise.all([
+  const [weatherRead, calendarRead, gmailRead, nestRead] = await Promise.all([
     registry.weather.read(now),
     registry.calendar.peek(now),
     registry.gmail.peek(now),
+    registry.nest.peek(now),
   ]);
   const weatherBaseConnection = base.connections.find(
     (connection) => connection.id === "connection_weather",
@@ -191,11 +239,19 @@ export async function buildOrbitSnapshot(
         )
       : undefined;
   const calendarEmailAttention = calendarEmailArtifacts?.attention;
+  const homeArtifacts = nestRead.batch
+    ? buildHomeContextArtifacts(nestRead.batch.records, now, {
+        complete: nestRead.batch.completeness === "complete",
+        fresh: nestRead.status === "fresh",
+      })
+    : undefined;
+  const homeAttention = homeArtifacts?.attention;
   const attention = [
     travelAttentionBundle,
     ...(weatherAttention ? [weatherAttention] : []),
     ...(calendarAttention ? [calendarAttention] : []),
     ...(calendarEmailAttention ? [calendarEmailAttention] : []),
+    ...(homeAttention ? [homeAttention] : []),
   ];
   const selectedAttentionId =
     options.contextPreference === "weather"
@@ -204,7 +260,9 @@ export async function buildOrbitSnapshot(
         ? (calendarAttention?.id ?? null)
         : options.contextPreference === "email"
           ? (calendarEmailAttention?.id ?? null)
-          : travelAttentionBundle.id;
+          : options.contextPreference === "home"
+            ? (homeAttention?.id ?? null)
+            : travelAttentionBundle.id;
   const failure = "failure" in weatherRead ? weatherRead.failure : undefined;
   const weatherStatus = weatherRead.status;
 
@@ -214,7 +272,8 @@ export async function buildOrbitSnapshot(
     requestedContext:
       options.contextPreference === "weather" ||
       options.contextPreference === "calendar" ||
-      options.contextPreference === "email"
+      options.contextPreference === "email" ||
+      options.contextPreference === "home"
         ? options.contextPreference
         : null,
     selectedAttentionId,
@@ -224,17 +283,20 @@ export async function buildOrbitSnapshot(
       ...(artifacts ? [artifacts.contextRecord] : []),
       ...(calendarArtifacts ? calendarArtifacts.contextRecords : []),
       ...(calendarEmailArtifacts ? calendarEmailArtifacts.contextRecords : []),
+      ...(homeAttention ? homeAttention.contextRecords : []),
     ],
     evidence: [
       ...base.evidence,
       ...(artifacts ? [artifacts.evidence] : []),
       ...(calendarArtifacts ? calendarArtifacts.evidence : []),
       ...(calendarEmailArtifacts ? calendarEmailArtifacts.evidence : []),
+      ...(homeAttention ? homeAttention.evidence : []),
     ],
     sourceRecords: [
       ...(hasRecord ? [weatherRead.record] : []),
       ...(calendarRead.batch ? calendarRead.batch.records : []),
       ...(gmailRead.batch ? gmailRead.batch.records : []),
+      ...(nestRead.batch ? nestRead.batch.records : []),
     ],
     connections: [
       ...base.connections.map((connection) =>
@@ -250,6 +312,7 @@ export async function buildOrbitSnapshot(
       ),
       calendarConnection(calendarRead),
       gmailConnection(gmailRead),
+      nestConnection(nestRead),
     ],
     weather: {
       status: weatherStatus,
@@ -297,6 +360,32 @@ export async function buildOrbitSnapshot(
         : {}),
       ...(calendarEmailAttention ? { attention: calendarEmailAttention } : {}),
       ...(gmailRead.failure ? { failure: gmailRead.failure } : {}),
+    },
+    home: {
+      status: nestRead.status,
+      authorization: nestRead.authorization,
+      mode: nestRead.mode,
+      records: nestRead.batch?.records ?? [],
+      complete: nestRead.batch?.completeness === "complete",
+      structureCount:
+        nestRead.batch?.records[0]?.payload.structures.length ?? 0,
+      roomCount: nestRead.batch?.records[0]?.payload.rooms.length ?? 0,
+      deviceCount: nestRead.batch?.records[0]?.payload.devices.length ?? 0,
+      supportedDeviceCount:
+        nestRead.batch?.records[0]?.payload.devices.filter(
+          (device) => device.supported,
+        ).length ?? 0,
+      unsupportedDeviceCount:
+        nestRead.batch?.records[0]?.payload.devices.filter(
+          (device) => !device.supported,
+        ).length ?? 0,
+      audit: nestRead.audit,
+      ...(nestRead.batch ? { lastSyncedAt: nestRead.batch.retrievedAt } : {}),
+      ...(nestRead.nextSyncEligibleAt
+        ? { nextSyncEligibleAt: nestRead.nextSyncEligibleAt }
+        : {}),
+      ...(homeAttention ? { attention: homeAttention } : {}),
+      ...(nestRead.failure ? { failure: nestRead.failure } : {}),
     },
   };
 }

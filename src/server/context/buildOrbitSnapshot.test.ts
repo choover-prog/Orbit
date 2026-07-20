@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createConnectorRegistry } from "@/server/connectors/registry";
 import { MemoryGoogleCalendarCredentialStore } from "@/server/connectors/google-calendar/credential-store";
+import { MemoryGoogleNestCredentialStore } from "@/server/connectors/google-nest/credential-store";
 import { buildOrbitSnapshot } from "./buildOrbitSnapshot";
 
 const NOW = new Date("2026-07-18T16:00:00.000Z");
@@ -218,6 +219,82 @@ describe("buildOrbitSnapshot", () => {
 
     expect(snapshot.selectedAttentionId).toBeNull();
     expect(snapshot.email).toMatchObject({
+      status: "disconnected",
+      authorization: "disconnected",
+      records: [],
+    });
+  });
+
+  it("normalizes one bounded Nest home and selects only a read-only attention item", async () => {
+    const registry = createConnectorRegistry({ nestMode: "fixture" });
+    await registry.nest.beginAuthorization(NOW);
+
+    const snapshot = await buildOrbitSnapshot({
+      now: NOW,
+      contextPreference: "home",
+      registry,
+    });
+    const selected = snapshot.attention.find(
+      (bundle) => bundle.id === snapshot.selectedAttentionId,
+    );
+
+    expect(snapshot.home).toMatchObject({
+      status: "fresh",
+      authorization: "connected",
+      complete: true,
+      structureCount: 1,
+      supportedDeviceCount: 2,
+      unsupportedDeviceCount: 1,
+    });
+    expect(selected).toMatchObject({
+      kind: "home_temperature_attention",
+      actionability: "read_only",
+    });
+    expect(selected?.actionProposal).toBeUndefined();
+    expect(JSON.stringify(snapshot)).not.toContain("fixture/thermostat");
+  });
+
+  it("ordinary snapshot reads never invoke a connected Nest provider", async () => {
+    const credentials = new MemoryGoogleNestCredentialStore();
+    await credentials.save({
+      version: 1,
+      refreshToken: "fixture-test-token",
+      grantedScopes: ["https://www.googleapis.com/auth/sdm.service"],
+      connectedAt: NOW.toISOString(),
+    });
+    const nestFetchImpl = vi.fn<typeof fetch>();
+    const registry = createConnectorRegistry({
+      nestMode: "live",
+      nestCredentialStore: credentials,
+      nestFetchImpl,
+      nestEnvironment: {
+        ORBIT_GOOGLE_NEST_MODE: "live",
+        ORBIT_GOOGLE_NEST_CLIENT_ID: "fake-client.apps.googleusercontent.com",
+        ORBIT_GOOGLE_NEST_CLIENT_SECRET: "fake-publisher-secret",
+        ORBIT_GOOGLE_NEST_PROJECT_ID: "fake-device-access-project",
+        ORBIT_GOOGLE_NEST_REDIRECT_URI: "http://127.0.0.1:3000",
+      },
+    });
+
+    const snapshot = await buildOrbitSnapshot({ now: NOW, registry });
+
+    expect(nestFetchImpl).not.toHaveBeenCalled();
+    expect(snapshot.home).toMatchObject({
+      status: "connected",
+      authorization: "connected",
+      records: [],
+    });
+  });
+
+  it("stays quiet when home context is requested but Nest is disconnected", async () => {
+    const snapshot = await buildOrbitSnapshot({
+      now: NOW,
+      contextPreference: "home",
+      registry: createConnectorRegistry({ nestMode: "fixture" }),
+    });
+
+    expect(snapshot.selectedAttentionId).toBeNull();
+    expect(snapshot.home).toMatchObject({
       status: "disconnected",
       authorization: "disconnected",
       records: [],
