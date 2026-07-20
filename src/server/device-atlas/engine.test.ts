@@ -93,4 +93,14 @@ describe("Device Atlas", () => {
     expect(device.preferredPath).toBeUndefined();
     expect(device.monitoring.strategy).toBe("manual_refresh");
   });
+
+  it("does not activate declared event monitoring for unknown status", () => {
+    const observation = {
+      ...deviceAtlasFixtureObservations[2],
+      status: "unknown" as const,
+    };
+    expect(reconcileDevices([observation])[0].monitoring.strategy).toBe(
+      "manual_refresh",
+    );
+  });
 });

@@ -84,7 +84,7 @@ function monitoringFor(
   const eventSource = observations.find(
     (item) =>
       item.consent.granted &&
-      item.status !== "offline" &&
+      item.status === "online" &&
       item.monitoringModes.includes("event_subscription"),
   );
   if (eventSource) {

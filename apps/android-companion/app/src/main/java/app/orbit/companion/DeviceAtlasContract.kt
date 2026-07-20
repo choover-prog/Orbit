@@ -47,10 +47,7 @@ interface OrbitLocalBridge {
 }
 
 data class SignedBridgeMessage(
-    val protocol: String = "orbit.device-atlas.v1",
     val sessionId: String,
-    val sequence: Long,
-    val capturedAt: String,
     val rawPayloadUtf8: ByteArray,
     val signature: ByteArray,
 )

@@ -19,7 +19,7 @@ Orbit will build one provider-neutral Device Atlas and treat every provider as a
 6. Event subscriptions are preferred only when an adapter declares them for that observation. Polling is bounded to a documented interval and active use. Unknown-status devices remain observe-only.
 7. Automation output stops at draft and simulation. Activation and command execution require future approval, execution, verification, audit, and undo work.
 
-The local bridge protocol is versioned, runtime-schema and byte bounded, freshness checked, and replay protected. Signatures cover the exact received UTF-8 payload rather than a language-specific reserialization. There is no ingest route until device-bound key storage and transport are implemented and reviewed.
+The local bridge protocol is versioned, runtime-schema and byte bounded, freshness checked, and replay protected. The authenticated session identifier is transport metadata; sequence, capture time, and observations exist only inside the signed payload. Signatures cover the exact received bytes before strict UTF-8 decoding rather than a language-specific reserialization. There is no ingest route until device-bound key storage and transport are implemented and reviewed.
 
 ## Consequences
 

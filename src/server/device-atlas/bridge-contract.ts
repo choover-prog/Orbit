@@ -11,16 +11,15 @@ export const DEVICE_ATLAS_BRIDGE_LIMITS = {
 
 export interface DeviceAtlasBridgePayload {
   protocol: "orbit.device-atlas.v1";
-  sessionId: string;
   sequence: number;
   capturedAt: string;
   observations: DeviceSourceObservation[];
 }
 
 export type BridgeSignatureVerifier = (
-  receivedPayload: string,
+  receivedPayload: Uint8Array,
   signature: string,
-  sessionId: string,
+  authenticatedSessionId: string,
 ) => Promise<boolean>;
 
 export class BridgeReplayGuard {
@@ -38,11 +37,18 @@ function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function boundedText(value: unknown, allowEmpty = false): value is string {
+function onlyKeys(value: Record<string, unknown>, allowed: string[]): boolean {
+  return Object.keys(value).every((key) => allowed.includes(key));
+}
+
+function boundedText(
+  value: unknown,
+  maximum: number = DEVICE_ATLAS_BRIDGE_LIMITS.maximumTextCharacters,
+): value is string {
   return (
     typeof value === "string" &&
-    (allowEmpty || value.length > 0) &&
-    value.length <= DEVICE_ATLAS_BRIDGE_LIMITS.maximumTextCharacters &&
+    value.length > 0 &&
+    value.length <= maximum &&
     !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(value)
   );
 }
@@ -64,7 +70,12 @@ function boundedStringArray(
 }
 
 function validIdentity(value: unknown): boolean {
-  if (!record(value) || !boundedText(value.value)) return false;
+  if (
+    !record(value) ||
+    !onlyKeys(value, ["kind", "value", "strength"]) ||
+    !boundedText(value.value)
+  )
+    return false;
   if (value.strength === "strong")
     return stringMember(value.kind, [
       "provider_link",
@@ -78,7 +89,26 @@ function validIdentity(value: unknown): boolean {
 }
 
 function validObservation(value: unknown): value is DeviceSourceObservation {
-  if (!record(value)) return false;
+  if (
+    !record(value) ||
+    !onlyKeys(value, [
+      "id",
+      "source",
+      "sourceLabel",
+      "displayName",
+      "category",
+      "roomLabel",
+      "observedAt",
+      "freshnessSeconds",
+      "capabilities",
+      "identity",
+      "consent",
+      "transport",
+      "status",
+      "monitoringModes",
+    ])
+  )
+    return false;
   if (
     !boundedText(value.id) ||
     !stringMember(value.source, [
@@ -118,6 +148,7 @@ function validObservation(value: unknown): value is DeviceSourceObservation {
     value.identity.length > DEVICE_ATLAS_BRIDGE_LIMITS.maximumIdentityItems ||
     !value.identity.every(validIdentity) ||
     !record(value.consent) ||
+    !onlyKeys(value.consent, ["granted", "scope"]) ||
     typeof value.consent.granted !== "boolean" ||
     !boundedText(value.consent.scope) ||
     !stringMember(value.transport, ["local", "cloud", "hybrid"]) ||
@@ -133,18 +164,19 @@ function validObservation(value: unknown): value is DeviceSourceObservation {
 }
 
 function parsePayload(
-  rawPayload: string,
+  rawPayload: Uint8Array,
 ): DeviceAtlasBridgePayload | undefined {
   let value: unknown;
   try {
-    value = JSON.parse(rawPayload);
+    const text = new TextDecoder("utf-8", { fatal: true }).decode(rawPayload);
+    value = JSON.parse(text);
   } catch {
     return undefined;
   }
   if (
     !record(value) ||
+    !onlyKeys(value, ["protocol", "sequence", "capturedAt", "observations"]) ||
     value.protocol !== "orbit.device-atlas.v1" ||
-    !boundedText(value.sessionId) ||
     !Number.isSafeInteger(value.sequence) ||
     (value.sequence as number) < 0 ||
     !boundedText(value.capturedAt) ||
@@ -158,8 +190,9 @@ function parsePayload(
 }
 
 export async function validateBridgeMessage(
-  rawPayload: string,
+  rawPayload: Uint8Array,
   signature: string,
+  authenticatedSessionId: string,
   now: Date,
   replayGuard: BridgeReplayGuard,
   verify: BridgeSignatureVerifier,
@@ -168,12 +201,16 @@ export async function validateBridgeMessage(
   | { ok: false; reason: string }
 > {
   if (
-    typeof rawPayload !== "string" ||
-    new TextEncoder().encode(rawPayload).byteLength >
-      DEVICE_ATLAS_BRIDGE_LIMITS.maximumPayloadBytes
+    !ArrayBuffer.isView(rawPayload) ||
+    rawPayload.BYTES_PER_ELEMENT !== 1 ||
+    rawPayload.byteLength > DEVICE_ATLAS_BRIDGE_LIMITS.maximumPayloadBytes
   )
     return { ok: false, reason: "Bridge payload exceeds the byte limit" };
-  if (!boundedText(signature) || signature.length > 512)
+  if (!boundedText(authenticatedSessionId, 128))
+    return { ok: false, reason: "Invalid bridge session" };
+  if (!boundedText(signature, 512))
+    return { ok: false, reason: "Bridge signature is invalid" };
+  if (!(await verify(rawPayload, signature, authenticatedSessionId)))
     return { ok: false, reason: "Bridge signature is invalid" };
   const payload = parsePayload(rawPayload);
   if (!payload) return { ok: false, reason: "Bridge payload is invalid" };
@@ -187,9 +224,7 @@ export async function validateBridgeMessage(
       ok: false,
       reason: "Inventory timestamp is outside the accepted window",
     };
-  if (!(await verify(rawPayload, signature, payload.sessionId)))
-    return { ok: false, reason: "Bridge signature is invalid" };
-  if (!replayGuard.accept(payload.sessionId, payload.sequence))
+  if (!replayGuard.accept(authenticatedSessionId, payload.sequence))
     return { ok: false, reason: "Bridge message was replayed or out of order" };
   return { ok: true, payload };
 }

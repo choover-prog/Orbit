@@ -10,7 +10,7 @@
 | Credential guessing or unsafe probing | Explicit non-goal; no port scanner, login attempt, or credential field exists. |
 | Wrong-device merge | Only strong identifiers merge. Same name, address, or service instance alone remains separate. |
 | Provider object leakage | Only versioned provider-neutral observations cross into Orbit Core. |
-| Malicious companion or bridge replay | Future messages require an authenticated session, exact-received-byte signature verification, runtime schema and field/byte bounds, five-minute freshness, monotonic sequence, and record cap. No ingest route exists yet. |
+| Malicious companion or bridge replay | Future messages bind an external authenticated session to exact-received-byte signature verification before strict UTF-8 decoding, reject undeclared fields, enforce field/byte bounds and five-minute freshness, and require a monotonic signed sequence. No ingest route exists yet. |
 | Path score grants authority | Scores rank already-consented candidates only; absence of consent prevents preferred-path selection. |
 | Hidden monitoring | Event-first plans are visible; polling is bounded to 15 minutes while active; otherwise refresh is manual. |
 | Automation executes from a draft | Draft state and `requiredApproval: true` are structural. Sprint 1 exposes no activation or execution endpoint. |
