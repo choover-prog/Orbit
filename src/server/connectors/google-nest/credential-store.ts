@@ -130,7 +130,7 @@ function dpapi(input: Buffer, protect: boolean): Promise<Buffer> {
 export function googleNestCredentialPath(
   localAppData = process.env.LOCALAPPDATA,
 ): string {
-  if (!localAppData?.trim() || !path.isAbsolute(localAppData))
+  if (!localAppData?.trim() || !path.win32.isAbsolute(localAppData))
     throw new GoogleNestCredentialStoreError(
       "storage_unavailable",
       "Live Google Nest credentials require a local Windows application-data directory.",

@@ -66,7 +66,7 @@ describe("GoogleNestConnectionPanel", () => {
             session: {
               fixture: true,
               sessionId: "session",
-              expiresAt: "2026-07-19T12:05:00Z",
+              expiresAt: new Date(Date.now() + 5 * 60_000).toISOString(),
             },
           });
         return new Response(null, { status: 204 });

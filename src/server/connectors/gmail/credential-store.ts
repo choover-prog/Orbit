@@ -276,7 +276,7 @@ export function gmailCredentialPath(
   localAppData = process.env.LOCALAPPDATA,
 ): string {
   const root = localAppData?.trim();
-  if (!root || !path.isAbsolute(root)) {
+  if (!root || !path.win32.isAbsolute(root)) {
     throw new GmailCredentialStoreError(
       "storage_unavailable",
       "Live Gmail credentials require a local Windows application-data directory.",

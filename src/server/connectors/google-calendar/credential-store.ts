@@ -290,7 +290,7 @@ export function googleCalendarCredentialPath(
   localAppData = process.env.LOCALAPPDATA,
 ): string {
   const root = localAppData?.trim();
-  if (!root || !path.isAbsolute(root)) {
+  if (!root || !path.win32.isAbsolute(root)) {
     throw new GoogleCalendarCredentialStoreError(
       "storage_unavailable",
       "Live Google Calendar credentials require a local Windows application-data directory.",
