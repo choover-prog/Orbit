@@ -1,7 +1,7 @@
 # Device Atlas fixture qualification
 
-- Status: TypeScript fixture qualified; native qualification pending
-- Date: 2026-07-19
+- Status: TypeScript fixture and native harness qualified; private SDK consent pending
+- Date: 2026-07-20
 
 ## Automated evidence
 
@@ -19,16 +19,18 @@ The qualification suite must prove:
 - the Connections panel communicates privacy and simulated authority;
 - the fixture API is non-cacheable.
 
-## Native evidence pending
+## Native harness evidence
 
-Kotlin compilation, Android accessibility inspection, Google Home SDK permission selection, real inventory count, foreground/background behavior, and physical-device bridge transport remain pending because this workstation does not have Android Studio, a JDK 17 development kit, or Android SDK installed.
+The companion now compiles with JDK 17 and Android SDK 35. Sixteen Kotlin tests, debug APK assembly, and Android lint pass. Consent state, read-only normalization, provider-ID pseudonymization, canonical bridge encoding, and device-bound bridge signing are covered. The manifest remains free of location, nearby-device, camera, microphone, multicast, and background permissions.
+
+Official Google Home SDK artifacts, app registration, physical-device consent, real inventory reconciliation, Android accessibility inspection, and pinned bridge transport remain pending. See [Google Home private qualification](google-home-live-qualification.md).
 
 ## Recorded result
 
 - TypeScript type check: passed on Node 24.14.0
 - Targeted Device Atlas suite: 10 tests passed
-- Full repository suite: 283 tests passed across 44 files
+- Full repository suite: 293 tests passed across 45 files
 - Targeted ESLint: passed
 - Next.js production build: passed; `/connections` and `/api/device-atlas` included
 - Browser: desktop render and phone breakpoint passed; no console errors; no horizontal overflow
-- Android build: not run; required toolchain is absent
+- Android build: 16 tests, debug assembly, and lint passed with JDK 17 / SDK 35

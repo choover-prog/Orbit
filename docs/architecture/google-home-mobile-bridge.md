@@ -18,6 +18,17 @@ The bridge must never expose native SDK objects to product components. It must u
 
 Nest Device Access and a future Home Assistant adapter map into the same provider-neutral home contracts. Neither adapter owns Orbit's attention, approval, audit, or undo policy.
 
-The fixture companion foundation and Device Atlas bridge contract now live under `apps/android-companion` and `src/server/device-atlas`. See `docs/adr/ADR-device-atlas-companion.md` for the accepted reconciliation, path-scoring, and privacy decisions.
+The compiled companion foundation and Device Atlas bridge contract live under
+`apps/android-companion` and `src/server/device-atlas`. The native app now owns
+explicit consent state, bounded read-only normalization, non-exportable
+provider-ID pseudonyms, and a P-256 device-bound signing session. The server owns
+strict payload validation, freshness, and replay rejection. Google SDK objects
+never cross the `GoogleHomeSdkClient` seam.
+
+The checked-in build uses an unprovisioned client that fails closed because the
+official Home SDK artifact and app registration require Google Home Developers
+access. It must not be replaced with an invented public dependency or committed
+SDK binary. See `docs/adr/ADR-device-atlas-companion.md` for the accepted
+reconciliation, path-scoring, and privacy decisions.
 
 Native Google Home SDK integration, commissioning, activated automations, background presence, microphone input, hosted relay, and household multi-user policy remain deferred.
