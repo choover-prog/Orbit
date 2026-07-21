@@ -16,11 +16,15 @@ readonly HAOS_REPOSITORY="home-assistant/operating-system"
 readonly HAOS_API_ROOT="https://api.github.com/repos/${HAOS_REPOSITORY}/releases"
 readonly VM_NAME="Home Assistant"
 readonly LAUNCHD_LABEL="com.orbit.home-assistant-vm"
+readonly ANDROID_COMPILE_SDK="35"
+readonly ANDROID_BUILD_TOOLS="35.0.0"
+readonly ANDROID_MIN_DEVICE_API="29"
 
 PHASE="all"
 DRY_RUN=0
 REPOSITORY_DIR="${DEFAULT_REPOSITORY_DIR}"
 HAOS_VERSION="latest"
+GOOGLE_HOME_SDK_REPO="${ORBIT_GOOGLE_HOME_SDK_REPO:-}"
 STATE_DIR="${XDG_STATE_HOME:-${HOME}/.local/state}/orbit-bootstrap"
 LOG_DIR="${HOME}/Library/Logs/Orbit"
 DOWNLOAD_DIR="${HOME}/Library/Caches/Orbit/bootstrap"
@@ -39,9 +43,12 @@ Usage: bootstrap-macos.sh [options]
 Prepare a dedicated Apple-silicon Mac mini for Home Assistant OS and Orbit.
 
 Options:
-  --phase <name>          all, preflight, tooling, haos, orbit, host, or verify
+  --phase <name>          all, preflight, tooling, stage2c, haos, orbit, host,
+                          or verify
   --repo-dir <path>       Orbit checkout path (default: ~/src/Orbit)
   --haos-version <value>  Home Assistant OS release tag (default: latest)
+  --google-home-sdk-repo <path>
+                          Authenticated Google Home SDK local Maven directory
   --dry-run               Print mutating commands without running them
   --help                  Show this help
   --version               Show the script version
@@ -167,6 +174,11 @@ while (($#)); do
       HAOS_VERSION="$2"
       shift 2
       ;;
+    --google-home-sdk-repo)
+      (($# >= 2)) || die "--google-home-sdk-repo requires a value"
+      GOOGLE_HOME_SDK_REPO="$2"
+      shift 2
+      ;;
     --dry-run)
       DRY_RUN=1
       shift
@@ -186,12 +198,13 @@ while (($#)); do
 done
 
 case "${PHASE}" in
-  all|preflight|tooling|haos|orbit|host|verify) ;;
+  all|preflight|tooling|stage2c|haos|orbit|host|verify) ;;
   *) die "Unsupported phase: ${PHASE}" ;;
 esac
 
 [[ "${REPOSITORY_DIR}" = /* ]] || die "--repo-dir must be an absolute path"
 [[ "${HAOS_VERSION}" =~ ^(latest|[0-9]+([.][0-9]+)*)$ ]] || die "Invalid --haos-version value"
+[[ -z "${GOOGLE_HOME_SDK_REPO}" || "${GOOGLE_HOME_SDK_REPO}" = /* ]] || die "--google-home-sdk-repo must be an absolute path"
 
 if ((!DRY_RUN)); then
   mkdir -p -- "${STATE_DIR}" "${LOG_DIR}" "${DOWNLOAD_DIR}"
@@ -403,6 +416,199 @@ phase_tooling() {
   fi
 
   mark_state tooling
+}
+
+ensure_android_profile_paths() {
+  local profile="${HOME}/.zprofile"
+  local begin="# >>> Orbit Android paths >>>"
+
+  if [[ -f "${profile}" ]] && grep -qxF "${begin}" "${profile}"; then
+    log "Orbit Android PATH block already exists in ${profile}"
+    return 0
+  fi
+
+  if ((DRY_RUN)); then
+    log "Dry run: would append the Orbit Android PATH block to ${profile}"
+    return 0
+  fi
+
+  cat >>"${profile}" <<'EOF'
+
+# >>> Orbit Android paths >>>
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+export ANDROID_HOME="/opt/homebrew/share/android-commandlinetools"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+# <<< Orbit Android paths <<<
+EOF
+  log "Added the Orbit Android PATH block to ${profile}"
+}
+
+read_env_setting() {
+  local file="$1"
+  local key="$2"
+  local value
+  value="$(awk -v key="${key}" '
+    index($0, key "=") == 1 {
+      sub(/^[^=]*=/, "")
+      print
+      exit
+    }
+  ' "${file}")"
+  value="${value%$'\r'}"
+  if [[ "${value}" == \"*\" && "${value}" == *\" ]]; then
+    value="${value:1:${#value}-2}"
+  elif [[ "${value}" == \'*\' && "${value}" == *\' ]]; then
+    value="${value:1:${#value}-2}"
+  fi
+  printf '%s' "${value}"
+}
+
+check_nest_device_access_config() {
+  local env_file="${REPOSITORY_DIR}/.env.local"
+  local required_keys=(
+    ORBIT_GOOGLE_NEST_CLIENT_ID
+    ORBIT_GOOGLE_NEST_CLIENT_SECRET
+    ORBIT_GOOGLE_NEST_PROJECT_ID
+  )
+  local key value
+
+  if [[ ! -f "${env_file}" ]]; then
+    log "Stage 2c blocked: Google Nest Device Access configuration is absent (${env_file} not found)"
+    return 1
+  fi
+  if ! git -C "${REPOSITORY_DIR}" check-ignore -q .env.local; then
+    log "Stage 2c blocked: .env.local is not ignored by Git"
+    return 1
+  fi
+  if [[ "$(read_env_setting "${env_file}" ORBIT_GOOGLE_NEST_MODE)" != "live" ]]; then
+    log "Stage 2c blocked: ORBIT_GOOGLE_NEST_MODE is not live"
+    return 1
+  fi
+  for key in "${required_keys[@]}"; do
+    value="$(read_env_setting "${env_file}" "${key}")"
+    if [[ -z "${value}" ]]; then
+      log "Stage 2c blocked: ${key} is absent from private local configuration"
+      return 1
+    fi
+  done
+  if [[ "$(read_env_setting "${env_file}" ORBIT_GOOGLE_NEST_REDIRECT_URI)" != "http://127.0.0.1:3000" ]]; then
+    log "Stage 2c blocked: the Google Nest redirect URI is not the exact approved loopback root"
+    return 1
+  fi
+
+  log "Google Nest local publisher configuration is present and ignored; Device Access console state and supported hardware still require private verification"
+  return 0
+}
+
+check_google_home_sdk_artifacts() {
+  local framework_aar types_aar framework_version types_version
+  if [[ -z "${GOOGLE_HOME_SDK_REPO}" ]]; then
+    log "Stage 2c blocked: official Google Home SDK artifacts were not provided; use --google-home-sdk-repo after the authenticated download"
+    return 1
+  fi
+  if [[ ! -d "${GOOGLE_HOME_SDK_REPO}" ]]; then
+    log "Stage 2c blocked: Google Home SDK Maven directory does not exist"
+    return 1
+  fi
+
+  framework_aar="$(find "${GOOGLE_HOME_SDK_REPO}" -type f -name 'play-services-home-*.aar' ! -name 'play-services-home-types-*.aar' -print -quit 2>/dev/null || true)"
+  types_aar="$(find "${GOOGLE_HOME_SDK_REPO}" -type f -name 'play-services-home-types-*.aar' -print -quit 2>/dev/null || true)"
+  if [[ -z "${framework_aar}" || -z "${types_aar}" ]]; then
+    log "Stage 2c blocked: both Google Home framework and types AARs are required"
+    return 1
+  fi
+
+  framework_version="$(basename "${framework_aar}")"
+  framework_version="${framework_version#play-services-home-}"
+  framework_version="${framework_version%.aar}"
+  types_version="$(basename "${types_aar}")"
+  types_version="${types_version#play-services-home-types-}"
+  types_version="${types_version%.aar}"
+  if [[ "${framework_version}" != "${types_version}" ]]; then
+    log "Stage 2c blocked: Google Home framework and types artifacts have different versions"
+    return 1
+  fi
+
+  log "Google Home SDK framework and types artifacts are present at one matching version; files remain outside Git"
+  return 0
+}
+
+check_android_consent_device() {
+  local devices_file="${TEMP_DIR}/adb-devices"
+  local serial device_count device_api
+  adb start-server >/dev/null
+  adb devices >"${devices_file}"
+  serial="$(awk '$2 == "device" && $1 !~ /^emulator-/ {print $1; exit}' "${devices_file}")"
+  device_count="$(awk '$2 == "device" && $1 !~ /^emulator-/ {count++} END {print count + 0}' "${devices_file}")"
+  if [[ "${device_count}" -ne 1 || -z "${serial}" ]]; then
+    log "Stage 2c blocked: attach exactly one authorized physical Android device for the private consent run"
+    return 1
+  fi
+
+  device_api="$(adb -s "${serial}" shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r')"
+  if [[ ! "${device_api}" =~ ^[0-9]+$ ]] || ((device_api < ANDROID_MIN_DEVICE_API)); then
+    log "Stage 2c blocked: the attached physical device must run Android 10 (API 29) or newer"
+    return 1
+  fi
+
+  log "Exactly one authorized Android 10+ physical device is attached; its identifier was not logged"
+  return 0
+}
+
+phase_stage2c() {
+  phase_preflight
+  detect_brew
+  [[ -n "${BREW_BIN}" ]] || die "Homebrew is unavailable; run --phase tooling first"
+  [[ -d "${REPOSITORY_DIR}/.git" ]] || die "Orbit checkout not found; run --phase orbit before --phase stage2c"
+
+  log "Installing and validating Stage 2c Android prerequisites"
+  run "${BREW_BIN}" install openjdk@17
+  run "${BREW_BIN}" install --cask android-commandlinetools android-studio
+  ensure_android_profile_paths
+
+  local java_home android_home sdkmanager
+  java_home="$(${BREW_BIN} --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
+  android_home="$(${BREW_BIN} --prefix)/share/android-commandlinetools"
+  sdkmanager="${android_home}/cmdline-tools/latest/bin/sdkmanager"
+  export JAVA_HOME="${java_home}"
+  export ANDROID_HOME="${android_home}"
+  export PATH="${JAVA_HOME}/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+
+  if ((DRY_RUN)); then
+    log "Dry run: would request Android SDK license review, install platform 35/build tools 35.0.0/platform-tools, run the companion build, and report external Stage 2c gates"
+    return 0
+  fi
+
+  [[ -x "${sdkmanager}" ]] || die "sdkmanager was not found at the Homebrew Android SDK root"
+  confirm "Review Android SDK licenses and install the pinned Orbit packages?" || die "Android SDK packages are required for Stage 2c"
+  "${sdkmanager}" --sdk_root="${ANDROID_HOME}" \
+    "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
+  "${sdkmanager}" --sdk_root="${ANDROID_HOME}" --licenses
+
+  require_command java
+  require_command adb
+  java -version
+  adb version
+  [[ -d "${ANDROID_HOME}/platforms/android-${ANDROID_COMPILE_SDK}" ]] || die "Android SDK platform ${ANDROID_COMPILE_SDK} is absent"
+  [[ -d "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}" ]] || die "Android build tools ${ANDROID_BUILD_TOOLS} are absent"
+
+  (
+    cd "${REPOSITORY_DIR}/apps/android-companion"
+    run /bin/bash ./gradlew --no-daemon testDebugUnitTest assembleDebug lintDebug
+  )
+  mark_state android_tooling
+
+  local blockers=0
+  check_nest_device_access_config || blockers=$((blockers + 1))
+  check_google_home_sdk_artifacts || blockers=$((blockers + 1))
+  check_android_consent_device || blockers=$((blockers + 1))
+
+  if ((blockers == 0)); then
+    log "Automated Stage 2c prerequisites pass. Android app/OAuth registration, Google Home permission selection, and the private consent evidence remain manual checkpoints."
+    mark_state stage2c_prerequisites
+  else
+    log "Stage 2c remains blocked on ${blockers} external prerequisite group(s). Android tooling and fixture validation are complete."
+  fi
 }
 
 resolve_haos_release() {
@@ -824,6 +1030,21 @@ phase_verify() {
     die "Orbit checkout not found at ${REPOSITORY_DIR}"
   fi
 
+  if has_state android_tooling; then
+    local android_home
+    android_home="$(${BREW_BIN} --prefix)/share/android-commandlinetools"
+    [[ -d "${android_home}/platforms/android-${ANDROID_COMPILE_SDK}" ]] || die "Android SDK platform ${ANDROID_COMPILE_SDK} is absent"
+    [[ -d "${android_home}/build-tools/${ANDROID_BUILD_TOOLS}" ]] || die "Android build tools ${ANDROID_BUILD_TOOLS} are absent"
+    log "JDK 17, Android SDK ${ANDROID_COMPILE_SDK}, build tools ${ANDROID_BUILD_TOOLS}, and the Android companion fixture gate were installed"
+    if has_state stage2c_prerequisites; then
+      log "The automated Stage 2c external-prerequisite checks previously passed"
+    else
+      log "Stage 2c remains blocked until Nest configuration, Google Home SDK artifacts, and one Android 10+ consent device are all present"
+    fi
+  else
+    log "Stage 2c Android tooling has not been installed; run --phase stage2c"
+  fi
+
   local launchd_path="/Library/LaunchDaemons/${LAUNCHD_LABEL}.plist"
   if [[ -f "${launchd_path}" ]]; then
     plutil -lint "${launchd_path}" >/dev/null
@@ -843,8 +1064,11 @@ Manual acceptance checkpoints:
      on a separate trusted device.
   4. Create one backup and confirm it appears locally and in Google Drive.
   5. Reboot the Mac and confirm Home Assistant returns without a user login.
-  6. Start Orbit with: cd $(quote_command "${REPOSITORY_DIR}") && npm run dev
-  7. From another computer, tunnel Orbit with:
+  6. Open Android Studio, sign into the Google Home developer account, and
+     attach one authorized Android 10+ physical device before the private
+     Google Home consent run.
+  7. Start Orbit with: cd $(quote_command "${REPOSITORY_DIR}") && npm run dev
+  8. From another computer, tunnel Orbit with:
        ssh -L 3000:127.0.0.1:3000 ${CURRENT_USER:-<user>}@<mac-mini-address>
 EOF
   mark_state verify
@@ -854,6 +1078,7 @@ run_selected_phase() {
   case "${PHASE}" in
     preflight) phase_preflight ;;
     tooling) phase_tooling ;;
+    stage2c) phase_stage2c ;;
     haos) phase_haos ;;
     orbit) phase_orbit ;;
     host) phase_host ;;
@@ -863,6 +1088,7 @@ run_selected_phase() {
       phase_haos
       pause_for_user "Complete Home Assistant's local account onboarding, then return here. Do not enter OAuth secrets into this script."
       phase_orbit
+      phase_stage2c
       phase_host
       phase_verify
       ;;

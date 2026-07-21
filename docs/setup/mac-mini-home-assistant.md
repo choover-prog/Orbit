@@ -15,6 +15,8 @@ container when Home Assistant OS cannot be installed.
 - Home Assistant reachable on the home LAN
 - Orbit bound only to `127.0.0.1` and reached locally or through SSH
 - Node.js 24, Codex CLI, Git, and the locked Orbit dependencies
+- JDK 17, Android Studio, Android command-line tools 14742923, SDK platform 35,
+  build tools 35.0.0, and `adb`
 - Native encrypted Home Assistant backups copied to Google Drive
 
 Home Assistant OS is the selected installation because it includes the managed
@@ -36,6 +38,9 @@ Apple silicon and UTM only as a fallback when VirtualBox is unsupported:
    Drive account as the backups.
 5. Keep the Mac attached to a display and keyboard for the first pass. Later
    administration can use Screen Sharing or SSH.
+6. For the Stage 2c private qualification, have an Android 10+ physical device,
+   a data-capable USB cable, and the Google account that owns the private test
+   home. Do not use a personal production home for development evidence.
 
 ## Obtain and inspect the bootstrap
 
@@ -188,7 +193,79 @@ Orbit deliberately rejects direct LAN hosts. Do not change its bind address or
 place it behind a LAN proxy until a separately reviewed authentication and
 remote-access design exists.
 
-### 5. Dedicated-host settings
+### 5. Stage 2c Android and Google prerequisites
+
+The Stage 2c phase installs and validates the local Android development gate:
+
+- Homebrew `openjdk@17`;
+- Android Studio;
+- Android command-line tools 14742923;
+- Android SDK platform 35 and build tools 35.0.0;
+- Android platform tools, including `adb`; and
+- the companion's unit tests, debug APK assembly, and Android lint.
+
+The script asks before presenting Android SDK licenses; it never pipes an
+automatic `yes` response into the license manager. It adds a separate marked
+Android block to `~/.zprofile` defining `JAVA_HOME`, `ANDROID_HOME`, and the
+command-line/platform-tools paths.
+
+Run this phase after the Orbit checkout exists:
+
+```bash
+/bin/bash /tmp/orbit-bootstrap-macos.sh --phase stage2c
+```
+
+The buildable Android fixture is necessary but not sufficient for the private
+live qualification. The phase reports these external prerequisite groups
+independently:
+
+1. **Google Nest Device Access configuration.** Create the publisher-owned
+   Device Access project, matching Web OAuth client, supported-device grant,
+   and exact `http://127.0.0.1:3000` redirect. Put only the required runtime
+   values in ignored `.env.local`; the script checks presence without printing
+   values. Orbit's current live Nest credential vault still requires Windows
+   DPAPI, so the Mac can prepare publisher metadata but cannot perform Orbit's
+   live Nest token-storage qualification until a separately reviewed macOS
+   Keychain store exists. Home Assistant's own Nest integration inside HAOS is
+   independent of that Orbit limitation.
+2. **Official Google Home SDK artifacts.** Sign into
+   [Google Home Developers](https://developers.home.google.com/apis/android/sdk)
+   from Android Studio, download the official Home APIs SDK, and keep its local
+   Maven repository outside Git. Both matching `play-services-home` and
+   `play-services-home-types` AARs are required. Pass their parent directory to
+   the bootstrap without copying them into Orbit:
+
+   ```bash
+   /bin/bash /tmp/orbit-bootstrap-macos.sh --phase stage2c \
+     --google-home-sdk-repo "$HOME/Library/Developer/GoogleHomeSdk/m2repository"
+   ```
+
+3. **Physical Android consent device.** In Android Studio, sign into the Google
+   Home developer account. On exactly one Android 10+ physical device signed
+   into the private test home, enable Developer options and USB debugging,
+   attach it, unlock it, and approve the computer's debugging key. The script
+   verifies the API level and authorization state without logging the device
+   serial number. An emulator does not satisfy the private consent gate.
+
+Google Home app/OAuth registration, the explicit Home permission-selection
+screen, accessibility inspection on the device, and retention of redacted
+private consent evidence remain manual checkpoints. SDK AARs, OAuth IDs,
+device identifiers, home/device labels, screenshots containing personal data,
+and consent tokens must never be committed.
+
+Useful checks after connecting the device:
+
+```bash
+adb devices -l
+cd ~/src/Orbit/apps/android-companion
+/bin/bash ./gradlew --no-daemon testDebugUnitTest assembleDebug lintDebug
+```
+
+The phase can complete Android tooling while truthfully leaving Stage 2c
+blocked on any missing external gate. Rerun it after each prerequisite is
+provided; completed installs and downloads are reused.
+
+### 6. Dedicated-host settings
 
 After one successful manual Home Assistant boot, the host phase can:
 
@@ -293,6 +370,11 @@ Completion requires:
 
 - Codex is installed and signed in.
 - Node reports major version 24.
+- JDK 17, Android SDK platform 35, build tools 35.0.0, and `adb` are installed.
+- The Android companion unit, assembly, and lint gate passed.
+- Stage 2c explicitly reports whether Nest configuration, both Google Home SDK
+  artifacts, and one authorized Android 10+ physical device are present; a
+  missing external prerequisite remains visibly blocked.
 - Orbit's check and E2E suites passed during the Orbit phase.
 - The VM is registered, running, and reachable through mDNS or its DHCP address.
 - Home Assistant returns after a Mac reboot without an interactive login.
